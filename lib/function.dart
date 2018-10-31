@@ -5,14 +5,14 @@
  */
 
 main() {
-  functionToParameter(8);
-  functionToVar();
+  functionAsParameter(8);
+  functionAsVar();
 }
 
 /**
  * 函数作为一类对象你可以将一个函数作为参数传给另一个函数，比如下面的代码：
  */
-functionToParameter(int i) {
+functionAsParameter(int i) {
   var array = [1, 2, 3];
   array.forEach(print);
 }
@@ -20,12 +20,12 @@ functionToParameter(int i) {
 /**
  * 函数作为一类对象将一个函数赋值给某个变量，比如下面的代码：
  */
-functionToVar() {
+functionAsVar() {
 
   var f1 = print;
   f1 = print;
-  var f = functionToParameter;
-  f = functionToParameter;
+  var f = functionAsParameter;
+  f = functionAsParameter;
   Function f2 = print;
   var f3 = (var v) => print('v=$v');
   f1('f1');

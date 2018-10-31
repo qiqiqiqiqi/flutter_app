@@ -64,6 +64,7 @@ void defineVar() {
   /**
    * list
    */
+  List commonList = new List();
   List<dynamic> dynamicList = [1, 2, 3];
   List<dynamic> dynamicList2 = [5, 2, 3];
   dynamicList.add(4);
@@ -113,10 +114,33 @@ void defineVar() {
 
 ///
 void modifier() {
-  List<int> constList = const [1, 2];
+  ///The const variable ';' must be initialized.
+  //const int test;
+  ///Members can't be declared to be both 'const' and 'var.
+  // const var a = 7;
+  ///const 不能直接放在基本类型的前面
+  const dynamic a = 8;
+  const int b = 7;
+  const String s = "abcd";
+  const bool bo = true;
+
+  ///实例变量可以是final的但不能是const的,即通过new创建的对象不能使用cons修饰
+  ///const List list = new List();
+  /// const Map map = new Map();
+  final List list = new List();
+
+  var commonList = [];
+  commonList.add(1);
+  commonList.add("abc");
+  print("list:commonList=$commonList");
+
+  const dynamic constList = [1, 2, "haha"];
   //const 修饰的list长度不可改变 Cannot add to an unmodifiable list
   //constList.add(3);
+  print("list:constList=$constList");
+
   final List<dynamic> finalList = [3, 4];
   //final 修饰的list长度可改变
   finalList.add(5);
+  print("list:finalList=$finalList");
 }
