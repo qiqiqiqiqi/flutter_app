@@ -98,6 +98,7 @@ void defineVar() {
 }
 
 /**
+ * 链接：https://juejin.im/post/5b5005866fb9a04fea589561
  * 注意：实例变量可以是final的但不能是const的
  *
  * 如果你绝不想改变一个变量，使用final或const，不要使用var或其他类型，
@@ -108,36 +109,42 @@ void defineVar() {
     区别一：final 要求变量只能初始化一次，并不要求赋的值一定是编译时常量，可以是常量也可以不是。而 const 要求在声明时初始化，并且赋值必需为编译时常量。
     区别二：final 是惰性初始化，即在运行时第一次使用前才初始化。而 const 是在编译时就确定值了
 
-    链接：https://juejin.im/post/5b5005866fb9a04fea589561
-
+    小结：
+    1.const 不能直接放在基本类型的前面，可以放在内容不变的list（...）的前面，
+    2.
  */
 
 ///
 void modifier() {
   ///The const variable ';' must be initialized.
-  //const int test;
-  ///Members can't be declared to be both 'const' and 'var.
-  // const var a = 7;
+  /// const int test; //error
+
   ///const 不能直接放在基本类型的前面
+  ///  dynamic a = const 8;
+  ///Members can't be declared to be both 'const' and 'var.同理其他的基本数据类型
+  /// const var a = 7; //error
   const dynamic a = 8;
   const int b = 7;
   const String s = "abcd";
   const bool bo = true;
 
   ///实例变量可以是final的但不能是const的,即通过new创建的对象不能使用cons修饰
-  ///const List list = new List();
-  /// const Map map = new Map();
-  final List list = new List();
+  /// const List list = new List(); //error
+  /// const Map map = new Map();//error
+  /// final List list = new List();
 
   var commonList = [];
   commonList.add(1);
   commonList.add("abc");
   print("list:commonList=$commonList");
 
+  ///const 可放在内容不变list的前后
   const dynamic constList = [1, 2, "haha"];
+  dynamic constList1 = const [1, 2, "haha"];
+
   //const 修饰的list长度不可改变 Cannot add to an unmodifiable list
   //constList.add(3);
-  print("list:constList=$constList");
+  print("list:constList=$constList，constList1=$constList1");
 
   final List<dynamic> finalList = [3, 4];
   //final 修饰的list长度可改变
