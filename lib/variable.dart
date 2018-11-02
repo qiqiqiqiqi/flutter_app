@@ -111,12 +111,16 @@ void defineVar() {
 
     小结：
     1.const 不能直接放在基本类型的前面，可以放在内容不变的list（...）的前面，
-    2.
+    2.实例变量可以是final的但不能是const的,即通过new创建的对象不能使用const修饰
+    3.const 可放在内容不变list的前后
+    4.var 可以接收任意对象，并且自动推断其数据类型；
+    dynamic也可以接收任意对象但是不能自动推断其数据类型,如果要使用特定对象的方法需要进行强转
+    5.var 和const或final不能同时使用，var修饰接收的是一个可变的量而final/const修饰的是一个常量.
  */
 
 ///
 void modifier() {
-  ///The const variable ';' must be initialized.
+  ///The const variable (...) must be initialized.
   /// const int test; //error
 
   ///const 不能直接放在基本类型的前面
@@ -141,13 +145,28 @@ void modifier() {
   ///const 可放在内容不变list的前后
   const dynamic constList = [1, 2, "haha"];
   dynamic constList1 = const [1, 2, "haha"];
-
   //const 修饰的list长度不可改变 Cannot add to an unmodifiable list
   //constList.add(3);
   print("list:constList=$constList，constList1=$constList1");
 
+  /// final修饰的常量内容是可变的
   final List<dynamic> finalList = [3, 4];
   //final 修饰的list长度可改变
   finalList.add(5);
   print("list:finalList=$finalList");
+
+  /// dynamic 接收特定的数据，如果要使用特定对象的方法需要进行强转
+  dynamic dynamicList = [1, 3];
+  (dynamicList as List).add(4);
+  print("list:dynamicList=$dynamicList.");
+
+  /// var 接收特定的数据，自动推断其数据类型,集合中的泛型
+  var varList = [1, 5, 7];//=>List<int>
+  varList.add(0);
+  print("list:varList=$varList.");
+
+  /// 定义一个定长的list ，list中的所有元素默认值为null，
+  /// 同时意味着不能再通过add()的方法添加元素或remove()的方法删除元素（定长的list禁止使用会改变list长度的方法）
+  var fixedLengthList = new List(3);
+  print("list:fixedLengthList=$fixedLengthList.");
 }
