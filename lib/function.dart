@@ -5,23 +5,23 @@
  */
 
 /// 小结：
-/// 1.函数没有重载
+/// 1.函数不能重名，函数的重载是通过可选“命名参数”或“位置参数”是否赋值来重载同名函数
 /// 2.函数作为一个对象他的具体类型是Function ，也可用var和dynamic接收；
 /// 3.命名参数、位置参数调用时可以不传参数，说明其是有默认值的（默认值为null）；
-/// 4.函数如果没有标明返回值，默认的返回值类型是dynamic；函数如果定义了返回值但是没有返回值，返回值是null；
+/// 4.函数如果没有声明返回值，默认的返回值类型是dynamic；函数如果定义了返回值但是没有返回值，返回值是null；
 /// 5.dynamic，Function，Object 定义函数的变量是可变的；
-///   var定义的函数变量，一旦被赋值了会自动推断函数的返回值及参数的类型和参数个数；再次赋值时如果匹配不上则会报错
+///    var定义的函数变量，一旦被赋值了会自动推断函数的返回值及参数的类型和参数个数；再次赋值时如果匹配不上则会报错(返回值(自上而下的规则),参数的类型(自下而上的规则))
 ///
 main() {
   functionReturnValue();
+  //函数如果没有标明返回值，默认的返回值类型是dynamic；函数如果定义了返回值但是没有返回值，返回值是null；
+  dynamic functionAsParameterReturnValue = functionAsParameter();
+  print("functionAsParameterReturnValue=$functionAsParameterReturnValue");
   functionNamedParam(name: "named param");
   functionNameParam2(name: "named param 2");
   functionLocationParam("zhangsan");
   functionLocationParam("zhangsan", 18);
   functionLocationParam("zhangsan", 18, "play game");
-  //函数如果没有标明返回值，默认的返回值类型是dynamic；函数如果定义了返回值但是没有返回值，返回值是null；
-  dynamic functionAsParameterReturnValue = functionAsParameter();
-  print("functionAsParameterReturnValue=$functionAsParameterReturnValue");
   functionAsVar();
 }
 
@@ -29,7 +29,7 @@ main() {
 void functionReturnValue() {
   int sum = add(3, 4);
   int sum2 = add2(3, 5);
-  double sum3 = add3(3, 6);
+  dynamic sum3 = add3(3, 6);
 
   String addNumStr = addNumString(7, "haha");
   String addStr = addString("hello", ",world");
@@ -49,7 +49,15 @@ add2(int a, int b) {
 }
 
 ///return 的简写
-add3(int a, double b) => a + b;
+num add3(num a, num b) => a + b;
+
+String add4(dynamic a, String b) {
+  return "$a+$b";
+}
+
+int add5(var a, var b) {
+  return 0;
+}
 
 ///num 与string不能通过“+”来相加来拼接成一个字符串
 addNumString(int a, String str) => "$a$str";
@@ -61,7 +69,7 @@ addString(String str1, String str2) => str1 + str2;
 ///可选命名参数
 ///命名参数不是必须的传递的,使用花括号将函数的参数括起来就是定义了命名参数
 /// 命名参数、位置参数调用时可以不传参数，说明其是有默认值的（默认值为null）
-functionNamedParam({String name, int age}) {
+functionNamedParam({String name, int age = 18}) {
   //可设置默认值
   print("functionNamedParam():name=$name,age=$age");
 }
@@ -80,7 +88,7 @@ void functionLocationParam(String name, [int age = 18, String hobby]) {
 }
 
 ///函数作为一类对象你可以将一个函数作为参数传给另一个函数
- functionAsParameter() {
+functionAsParameter() {
   var array = [1, 2, 3];
   array.forEach(print);
 }
@@ -103,16 +111,17 @@ functionAsVar() {
   (object_f as Function)("functionAsVar:object_f");
   object_f = add; // Object定义的函数变量是可变的，并且使用时需要强转成函数再调用
   (object_f as Function)(3, 6);
-  print(
-      "functionAsVar:(object_f as Function)(3,6)=${(object_f as Function)(3, 6)}");
+  print("functionAsVar:(object_f as Function)(3,6)=${(object_f as Function)(3, 6)}");
 
   var var_f = add2;
   print("functionAsVar:add2(3,9)=${var_f(3, 9)}");
-  //var_f = add3;//error  var定义的函数变量，一旦被赋值了会自动推断函数的返回值及参数的类型和参数个数；再次赋值时如果匹配不上则会报错
+  var_f = add3; //error  var定义的函数变量，一旦被赋值了会自动推断函数的返回值及参数的类型和参数个数；再次赋值时如果匹配不上则会报错(返回值(自上而下的规则),参数的类型(自下而上的规则))，var 定义的function 变量不建议修改变量
+  print("functionAsVar:add4(3,9)=${var_f(3, 9)}");
+  var_f=add5;
+  print("functionAsVar:add5(3,9)=${var_f(3, 9)}");
 
-  dynamic f3 = (int a,int b) => add(a, b);
-  f3(4,9);
+
+  dynamic f3 = (int a, int b) => a+b;
+  f3(4, 9);
   print("functionAsVar:f3(4,9)=${f3(4, 9)}");
 }
-
-

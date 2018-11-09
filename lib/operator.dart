@@ -1,5 +1,6 @@
 main() {
   operator();
+//  operatorOverLoading();
 }
 
 void operator() {
@@ -17,9 +18,11 @@ void operator() {
   print("operator(is):${str is String}");
   print("operator(is!): ${str is! int}");
 
-  //除法,取整，取余
+  //除法
   print("operator(/):1/3=${1 / 3}");
+  //取整
   print("operator(~/):1~/3=${1 ~/ 3}");
+  //取余
   print("operator(%):1%3=${1 % 3}");
 
   // ??= 操作符左边的变量如果为null则赋值，否则不赋值
@@ -73,4 +76,16 @@ class Person {
       print(e);
     }
   }
+
+  void operatorOverLoading() {}
+}
+
+class Vector {
+  num x, y;
+
+  Vector(this.x, this.y);
+
+  Vector operator +(Vector v) => new Vector(this.x + v.x, this.y + v.y);
+
+  Vector operator -(Vector v) => new Vector(this.x - v.x, this.y - v.y);
 }

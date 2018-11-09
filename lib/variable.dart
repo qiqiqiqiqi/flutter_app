@@ -31,10 +31,11 @@ void defineVar() {
   /**
    * numbers
    */
+  num d=9;
   int a = 7;
   var b = 8;
   dynamic c = 9;
-  print("int:a=$a," + "b=$b," + "c=$c");
+  print("int:a=$a," + "b=$b," + "c=${c+9}");
 
   double dou = 2.7;
   dou.toInt();
@@ -81,8 +82,9 @@ void defineVar() {
    * map
    */
   Map map = new Map();
-  map["name"] = "lilei";
-  map["age"] = 18;
+  map={"name":"lili","age":18};
+//  map["name"] = "lilei";
+//  map["age"] = 18;
 
   print("map:map=$map, map is Map ${map is Map}");
 
@@ -114,7 +116,7 @@ void defineVar() {
     2.实例变量可以是final的但不能是const的,即通过new创建的对象不能使用const修饰
     3.const 可放在内容不变list的前后
     4.var 可以接收任意对象，并且自动推断其数据类型；
-    dynamic也可以接收任意对象但是不能自动推断其数据类型,如果要使用特定对象的方法需要进行强转
+    dynamic也可以接收任意对象但是不能自动推断其数据类型,如果要使用特定对象的专属方法需要进行强转
     5.var 和const或final不能同时使用，var修饰接收的是一个可变的量而final/const修饰的是一个常量.
  */
 
