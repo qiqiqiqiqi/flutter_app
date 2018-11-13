@@ -1,6 +1,6 @@
 main() {
   operator();
-//  operatorOverLoading();
+  operatorOverLoading();
 }
 
 void operator() {
@@ -76,8 +76,15 @@ class Person {
       print(e);
     }
   }
-
-  void operatorOverLoading() {}
+}
+///运算符重载
+void operatorOverLoading() {
+  Vector vector1 = new Vector(6, 8);
+  Vector vector2 = new Vector(3, 4);
+  var vector3 = vector1 - vector2;
+  vector3.printVector();
+  var vector4 = vector1 + vector2;
+  vector4.printVector();
 }
 
 class Vector {
@@ -85,7 +92,13 @@ class Vector {
 
   Vector(this.x, this.y);
 
-  Vector operator +(Vector v) => new Vector(this.x + v.x, this.y + v.y);
+  Vector operator +(Vector v) {
+    return new Vector(this.x + v.x, this.y + v.y);
+  }
 
   Vector operator -(Vector v) => new Vector(this.x - v.x, this.y - v.y);
+
+  void printVector() {
+    print("printVector():Vector($x,$y)");
+  }
 }
