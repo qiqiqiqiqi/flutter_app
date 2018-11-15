@@ -10,7 +10,7 @@ main() {
   person = Person.name2("jack");
   person.printPersonInfo();
 
-  var human = new Human("lilei", 17, "eat");
+  var human = new Human("lilei", 17, "eat", 170.5);
   human.printPersonInfo();
 }
 
@@ -21,16 +21,18 @@ class Person {
   int age;
   String hobby;
 
-//  Person(String name, int age, String hobby) {
-//    this.name = name;
-//    this.age = age;
-//    this.hobby = hobby;
-//  }
-
-  /// 构造函数的简写
-  Person(this.name, this.age, this.hobby) {
-    print("Person():name=$name,age=$age,hobby=$hobby.");
+  Person(String name, int age, String hobby) {
+    print("Person():name=${this.name},age=${this.age},hobby=${this.hobby}.");
+    this.name = name;
+    this.age = age;
+    this.hobby = hobby;
   }
+
+//  /// 构造函数的简写
+//  Person(this.name, this.age, this.hobby) {
+//    this.age += 10;
+//    print("Person():name=$name,age=$age,hobby=$hobby.");
+//  }
 
   /// Person(); //error 构造函数和函数一样也没有重载
 
@@ -39,15 +41,23 @@ class Person {
 
   Person.name2(this.name);
 
-  printPersonInfo() {
+  void printPersonInfo() {
     print("my name is $name ,I am $age year old and my hobby is $hobby .");
   }
 }
 
 class Human extends Person {
+  double weight;
+
   ///继承父类的构造函数
-  Human(String name, int age, String hobby) : super(name, age,hobby) {
-    print("Human():name=$name,age=$age,hobby=$hobby.");
+//  Human(String name, int age, String hobby) : super(name, age, hobby) {
+//    print("Human():name=$name,age=${this.age},hobby=$hobby.");
+//  }
+  Human(String name, int age, String hobby, [double weight])
+      : weight = weight,///在构造函数的函数体运行前执行,只初始化自己的成员变量
+        super(name, age, hobby) {
+    print(
+        "Human():name=${this.name},age=${this.age},hobby=${this.hobby},weight=${this.weight}.");
   }
 
   ///  继承父类的命名构造函数

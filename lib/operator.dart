@@ -6,12 +6,34 @@ main() {
 void operator() {
   //自增
   int a = 1;
-  var a1 = a++; //先赋值，再加1
-  var a2 = ++a; //先加1，再赋值
-  print("operator:a1=$a1,a2=$a2");
+  var a1 = a++; //先赋值给a1，a再加1
+  var a2 = ++a; //先加1，再赋值给a，再赋值给a2
+  print("operator:a=1,a++=$a1,++a=$a2");
 
   //三元运算符
   a1 == a2 ? print("a1==a2 is true") : print("a1==a2 is false");
+
+  //~expr 按位补码（0成为1；1变成0）
+  const b = 0X79;
+  const bitMask = 0x0f;
+
+  print("operator(&exper):${b & bitMask == 0x09}"); //and
+  print("operator(~exper):${b & ~bitMask == 0x70}"); //and not
+  print("operator(|exper):${b | bitMask == 0x7f}"); //or
+  print("operator(^exper):${b ^ bitMask == 0X76}"); //xor 异或
+  print("operator(>>):${b >> 4 == 0x07}"); //右移4位
+  print("operator(<<):${b << 4 == 0x790}"); //左移4位
+
+  const value = 0x22;
+  final bitmask = 0x0f;
+
+  assert((value & bitmask) == 0x02); // AND
+  assert((value & ~bitmask) == 0x20); // AND NOT
+
+  assert((value | bitmask) == 0x2f); // OR
+  assert((value ^ bitmask) == 0x2d); // XOR
+  assert((value << 4) == 0x220); // Shift left
+  assert((value >> 4) == 0x02); // Shift right
 
   //is
   var str = "zhangsan";
@@ -77,6 +99,7 @@ class Person {
     }
   }
 }
+
 ///运算符重载
 void operatorOverLoading() {
   Vector vector1 = new Vector(6, 8);
