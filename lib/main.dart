@@ -1,18 +1,65 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(new MyApp());
+main() => runApp(new MyStatefulWidget());
 
-class MyApp extends StatelessWidget {
+class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Welcome to Flutter',
+      title: "first flutter",
       home: new Scaffold(
         appBar: new AppBar(
-          title: new Text('Welcome to Flutter'),
+          title: new Text("first app"),
         ),
         body: new Center(
-          child: new Text('Hello World'),
+          child: new Text("first flutter demo"),
+        ),
+      ),
+    );
+  }
+}
+
+class MyStatefulWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return new MyStatefulWidgetfulState();
+  }
+}
+
+class MyStatefulWidgetfulState extends State<MyStatefulWidget> {
+  String text = "点击切换1";
+
+  changeText() {
+    if (text == "点击切换1") {
+      setState(() {
+        text = "点击切换2";
+      });
+
+    } else {
+      setState(() {
+        text = "点击切换1";
+      });
+
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: "first stateful flutter",
+      theme: new ThemeData(primaryColor: const Color(0xffff0000)),
+      home: new Scaffold(
+        appBar: new AppBar(
+          title: new Text("first stateful flutter"),
+
+        ),
+        body: new Center(
+          child: new InkWell(
+            child: new Text(text),
+            onTap: () {
+              changeText();
+            },
+          ),
         ),
       ),
     );
