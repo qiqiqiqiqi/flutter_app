@@ -34,12 +34,10 @@ class MyStatefulWidgetfulState extends State<MyStatefulWidget> {
       setState(() {
         text = "点击切换2";
       });
-
     } else {
       setState(() {
         text = "点击切换1";
       });
-
     }
   }
 
@@ -50,12 +48,19 @@ class MyStatefulWidgetfulState extends State<MyStatefulWidget> {
       theme: new ThemeData(primaryColor: const Color(0xffff0000)),
       home: new Scaffold(
         appBar: new AppBar(
-          title: new Text("first stateful flutter"),
-
+          title: new Text(
+            "first stateful flutter",
+            style: new TextStyle(color: Colors.blue, fontSize: 20),
+          ),
         ),
         body: new Center(
           child: new InkWell(
-            child: new Text(text),
+            child: new Padding(
+              padding: new EdgeInsets.all(10),
+              child: new Text(text,
+                  style: new TextStyle(
+                      color: const Color(0xffff0000), fontSize: 30)),
+            ),
             onTap: () {
               changeText();
             },
