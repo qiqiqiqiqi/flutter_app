@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+///https://docs.flutter.io/flutter/material/MaterialApp-class.html
 main() => runApp(new MaterialApp(
       title: "text demo",
       home: new Scaffold(
@@ -24,10 +25,10 @@ main() => runApp(new MaterialApp(
               style: new TextStyle(
                 color: Colors.red,
                 fontSize: 50,
-                fontWeight: FontWeight.bold,
                 //字体加粗
-                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold,
                 //斜体
+                fontStyle: FontStyle.italic,
                 decoration: new TextDecoration.combine([
                   TextDecoration.underline, //文本加下划线
                   TextDecoration.overline, //文本加上划线
