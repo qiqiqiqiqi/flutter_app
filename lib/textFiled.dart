@@ -6,13 +6,13 @@ main() => runApp(new MaterialApp(
         appBar: new AppBar(
           title: new Text("textFiled demo"),
         ),
-        body: new Padding(padding: EdgeInsets.all(16),
+        body: new Padding(padding: EdgeInsets.all(8),
         child: new TextField(
           maxLines: 7,
           maxLength: 30,
-          decoration: new InputDecoration.collapsed(hintText: "请输入...",
+          decoration: new InputDecoration(hintText: "请输入...",
           border: new OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(1.0)),
+            borderRadius: BorderRadius.all(Radius.circular(4.0)),
 
           )),
 
