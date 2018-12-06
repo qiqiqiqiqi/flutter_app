@@ -7,10 +7,10 @@ main() {
   person.printPersonInfo();
   person = new Person.name("wangwu", 12, "sleep");
   person.printPersonInfo();
-  person = Person.name2("jack");
+  person = Person.name2(9);
   person.printPersonInfo();
 
-  var human = new Human("lilei", 17, "eat", 170.5);
+  var human = new Human("lilei", 17, "eat");
   human.printPersonInfo();
 }
 
@@ -20,8 +20,9 @@ class Person {
   String name;
   int age;
   String hobby;
+  final int sex;
 
-  Person(String name, int age, String hobby) {
+  Person(String name, int age, String hobby) : sex = 0 {
     print("Person():name=${this.name},age=${this.age},hobby=${this.hobby}.");
     this.name = name;
     this.age = age;
@@ -37,9 +38,9 @@ class Person {
   /// Person(); //error 构造函数和函数一样也没有重载
 
   /// 命名构造方法
-  Person.name(this.name, this.age, this.hobby);
+  Person.name(this.name, this.age, this.hobby) : sex = 0;
 
-  Person.name2(this.name);
+  Person.name2(int sex) : sex = sex;
 
   void printPersonInfo() {
     print("my name is $name ,I am $age year old and my hobby is $hobby .");
@@ -54,7 +55,9 @@ class Human extends Person {
 //    print("Human():name=$name,age=${this.age},hobby=$hobby.");
 //  }
   Human(String name, int age, String hobby, [double weight])
-      : weight = weight,///在构造函数的函数体运行前执行,只初始化自己的成员变量
+      : weight = weight,
+
+        ///在构造函数的函数体运行前执行,只初始化自己的成员变量
         super(name, age, hobby) {
     print(
         "Human():name=${this.name},age=${this.age},hobby=${this.hobby},weight=${this.weight}.");
