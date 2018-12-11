@@ -10,7 +10,7 @@ main() {
   person = Person.name2(9);
   person.printPersonInfo();
 
-  var human = new Human("lilei", 17, "eat");
+  var human = new Human("lilei", 17, "eat",weight: 45);
   human.printPersonInfo();
 }
 
@@ -22,7 +22,7 @@ class Person {
   String hobby;
   final int sex;
 
-  Person(String name, int age, String hobby) : sex = 0 {
+   Person(String name, int age, String hobby) : sex = 0 {
     print("Person():name=${this.name},age=${this.age},hobby=${this.hobby}.");
     this.name = name;
     this.age = age;
@@ -48,16 +48,16 @@ class Person {
 }
 
 class Human extends Person {
-  double weight;
+  var weight;
 
   ///继承父类的构造函数
 //  Human(String name, int age, String hobby) : super(name, age, hobby) {
 //    print("Human():name=$name,age=${this.age},hobby=$hobby.");
 //  }
-  Human(String name, int age, String hobby, [double weight])
+  Human(String name, int age, String hobby, {var weight})
       : weight = weight,
 
-        ///在构造函数的函数体运行前执行,只初始化自己的成员变量
+        ///在构造函数的函数体运行前执行,只初始化自己的成员变量,不能初始化父类的成员变量
         super(name, age, hobby) {
     print(
         "Human():name=${this.name},age=${this.age},hobby=${this.hobby},weight=${this.weight}.");
