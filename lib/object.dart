@@ -10,8 +10,11 @@ main() {
   person = Person.name2(9);
   person.printPersonInfo();
 
-  var human = new Human("lilei", 17, "eat",weight: 45);
+  var human = new Human("lilei", 17, "eat", weight: 45);
   human.printPersonInfo();
+
+  var human2 = Human.name2(0);
+  human2.printPersonInfo();
 }
 
 ///1.Dart类的成员没有访问限制,成员变量或成员方法不需要private，protected，public修饰
@@ -22,7 +25,7 @@ class Person {
   String hobby;
   final int sex;
 
-   Person(String name, int age, String hobby) : sex = 0 {
+  Person(String name, int age, String hobby) : sex = 0 {
     print("Person():name=${this.name},age=${this.age},hobby=${this.hobby}.");
     this.name = name;
     this.age = age;
@@ -66,4 +69,6 @@ class Human extends Person {
   ///  继承父类的命名构造函数
   Human.name(String name, int age, String hobby)
       : super.name(name, age, hobby) {}
+
+  Human.name2(int sex) : this(null, null, null);
 }
