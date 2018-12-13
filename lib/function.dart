@@ -6,7 +6,7 @@
 /// 1.函数不能重名，函数的重载是通过可选“命名参数”或“位置参数”是否赋值来重载同名函数
 /// 2.函数作为一个对象他的具体类型是Function ，也可用var和dynamic接收；
 /// 3.命名参数、位置参数调用时可以不传参数，说明其是有默认值的（默认值为null）；
-/// 4.函数如果没有声明返回值，默认的返回值类型是dynamic；函数如果定义了返回值但是没有返回值，返回值是null；
+/// 4.函数如果没有声明返回值类型，默认的返回值类型是dynamic；函数如果定义了返回值类型但是没有返回值，返回值是null；
 /// 5.dynamic，Function，Object 定义函数的变量是可变的；
 /// Object 和 dynamic 都使得我们可以接收任意类型的参数，但两者的区别非常的大。
 /// 使用 Object 时，我们只是在说接受任意类型，我们需要的是一个 Object。类型系统会保证其类型安全。
@@ -15,10 +15,10 @@
 ///
 main() {
   functionReturnValue();
-  //函数如果没有标明返回值，默认的返回值类型是dynamic；函数如果定义了返回值但是没有返回值，返回值是null；
+  //函数如果没有标明返回值类型，默认的返回值类型是dynamic；函数如果定义了返回值类型但是没有返回值，返回值是null；
   dynamic functionAsParameterReturnValue = functionAsParameter();
   print("functionAsParameterReturnValue=$functionAsParameterReturnValue");
-  functionNamedParam(name: "named param");
+  functionNamedParam( "named param",age:12);
   functionNameParam2(name: "named param 2");
   functionLocationParam("zhangsan");
   functionLocationParam("zhangsan", 19);
@@ -31,6 +31,7 @@ void functionReturnValue() {
   int sum = add(3, 4);
   int sum2 = add2(3, 5);
   dynamic sum3 = add3(3, 6);
+
 
   String addNumStr = addNumString(7, "haha");
   String addStr = addString("hello", ",world");
@@ -46,12 +47,12 @@ int add(int a, int b) {
 }
 
 ///不声明返回值
-add2(int a, int b) {
+add2(dynamic a, int b) {
   return a + b;
 }
 
 ///return 的简写
-num add3(num a, num b) => a + b;
+ add3(dynamic a, num b) => a + b;
 
 String add4(dynamic a, String b) {
   return "$a+$b";
@@ -71,7 +72,7 @@ addString(String str1, String str2) => str1 + str2;
 ///可选命名参数
 ///命名参数不是必须的传递的,使用花括号将函数的参数括起来就是定义了命名参数
 /// 命名参数、位置参数调用时可以不传参数，说明其是有默认值的（默认值为null）
-functionNamedParam({String name, int age = 18}) {
+functionNamedParam(String name,{ int age }) {
   //可设置默认值
   print("functionNamedParam():name=$name,age=$age");
 }

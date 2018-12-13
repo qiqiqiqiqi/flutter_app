@@ -78,7 +78,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     print("loadData() await beforce:");
     String dataURL = "https://jsonplaceholder.typicode.com/posts";
     http.Response response = await request(
-        dataURL); //等一等，等 数据返回，await表达式的表达式部分通常是一个Future类型，即在await处挂起后交出代码的执行权限直到该Future完成再继续向下执行
+        dataURL); //等一等，等数据返回，await表达式的表达式部分通常是一个Future类型，即在await处挂起后交出代码的执行权限直到该Future完成再继续向下执行
     print("loadData() await after:");
     setState(() {
       widgets = JSON.jsonDecode(response.body);
