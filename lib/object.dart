@@ -15,6 +15,7 @@ main() {
 
   var human2 = Human.name2(0);
   human2.printPersonInfo();
+  SmartTelevision("aaaa")._bootNetworkInterface();
 }
 
 ///1.Dart类的成员没有访问限制,成员变量或成员方法不需要private，protected，public修饰
@@ -71,4 +72,60 @@ class Human extends Person {
       : super.name(name, age, hobby) {}
 
   Human.name2(int sex) : this(null, null, null);
+}
+
+class Television {
+  String telev;
+  Television();
+  Television.name(this.telev);
+  void turnOn() {
+    _illuminateDisplay();
+  }
+
+  void _illuminateDisplay() {}
+}
+
+class Carton {
+  String cartonName = "carton";
+
+  void playCarton() {}
+}
+
+class Movie {
+  void playMovie() {}
+}
+
+class Update {
+  void updateApp() {}
+}
+
+class Charge {
+  void chargeVip() {}
+}
+
+class SmartTelevision extends Television
+    with Update, Charge
+    implements Carton, Movie {
+  @override
+  String cartonName = "SmartTelevision carton";
+
+  SmartTelevision(this.cartonName);
+
+  void turnOn() {
+    super.turnOn();
+    _bootNetworkInterface();
+    updateApp();
+    chargeVip();
+  }
+  void _bootNetworkInterface() {}
+
+  @override
+  void playCarton() {
+    // TODO: implement playCarton
+  }
+
+  @override
+  void playMovie() {
+    // TODO: implement playMovie
+  }
 }

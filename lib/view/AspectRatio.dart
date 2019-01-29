@@ -25,7 +25,7 @@ class AspectRatioApp extends StatelessWidget {
               color: Colors.indigoAccent,
               child: new Container(
                   alignment: Alignment.center,
-                  width: 100,//AspectRatio的maxWidth=100，maxHeight=200
+                  width: 100, //AspectRatio的maxWidth=100，maxHeight=200
                   child: new AspectRatio(
                       aspectRatio: 0.51, //宽高比0.51的
                       child: Container(

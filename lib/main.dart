@@ -59,7 +59,7 @@ class MyStatefulWidgetfulState extends State<MyStatefulWidget> {
               padding: new EdgeInsets.all(10),
               child: new Text(text,
                   style: new TextStyle(
-                      color: const Color(0xffff0000), fontSize: 30)),
+                      color: const Color(0xffff00ff), fontSize: 30)),
             ),
             onTap: () {
               changeText();

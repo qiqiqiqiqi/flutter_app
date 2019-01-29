@@ -84,11 +84,14 @@ class _SampleAppPageState extends State<SampleAppPage> {
   }
 
   loadData() async {
-    ReceivePort receivePort = new ReceivePort();//main isolate中的ReceivePort用于接收child isolate中发送过来的消息
-    await Isolate.spawn(dataLoader, receivePort.sendPort);//
+    ReceivePort receivePort =
+        new ReceivePort(); //main isolate中的ReceivePort用于接收child isolate中发送过来的消息
+    Isolate.spawn(dataLoader, receivePort.sendPort); //
     // The 'echo' isolate sends it's SendPort as the first message
-    SendPort sendPort = await receivePort.first;//1挂起等待receivePort接收消息//接收从child isolate中发送过来的消息，这里是接收从child isolate中发送过来的SendPort用于main isolate向child isolate中发送消息
-    List msg = await sendReceive(sendPort, "https://jsonplaceholder.typicode.com/posts");//3
+    SendPort sendPort = await receivePort
+        .first; //1挂起等待receivePort接收消息//接收从child isolate中发送过来的消息，这里是接收从child isolate中发送过来的SendPort用于main isolate向child isolate中发送消息
+    List msg = await sendReceive(
+        sendPort, "https://jsonplaceholder.typicode.com/posts"); //3
     //List msg = await sendReceive2(receivePort,sendPort, "https://jsonplaceholder.typicode.com/posts");//3
     setState(() {
       widgets = msg;
@@ -99,10 +102,12 @@ class _SampleAppPageState extends State<SampleAppPage> {
   //该方法必须设置为static？
   static dataLoader(SendPort sendPort) async {
     // Open the ReceivePort for incoming messages.
-    ReceivePort receivePort = new ReceivePort();//child isolate中的ReceivePort用于接收main isolate中发送过来的消息
+    ReceivePort receivePort =
+        new ReceivePort(); //child isolate中的ReceivePort用于接收main isolate中发送过来的消息
     // Notify any other isolates what port this isolate listens to.
-    sendPort.send(receivePort.sendPort);//2
-    await for (var msg in receivePort) {//4//挂起等待receivePort接收消息
+    sendPort.send(receivePort.sendPort); //2
+    await for (var msg in receivePort) {
+      //4//挂起等待receivePort接收消息
       String data = msg[0];
       SendPort replyTo = msg[1];
       String dataURL = data;
@@ -118,7 +123,8 @@ class _SampleAppPageState extends State<SampleAppPage> {
     port.send([msg, response.sendPort]);
     return response.first;
   }
-  Future sendReceive2( ReceivePort response ,SendPort port, msg) {
+
+  Future sendReceive2(ReceivePort response, SendPort port, msg) {
     port.send([msg, response.sendPort]);
     return response.last;
   }
