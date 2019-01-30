@@ -8,7 +8,6 @@ class FlutterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-        title: "flutter app",
         theme: new ThemeData(
             primaryColor: Colors.brown,
             backgroundColor: Colors.orange,
@@ -17,7 +16,7 @@ class FlutterApp extends StatelessWidget {
                 body1: new TextStyle(color: Colors.blueGrey, fontSize: 16.0)),
             iconTheme:
                 new IconThemeData(color: Colors.deepPurpleAccent, size: 40.0)),
-        home: new Text("empty"));
+        home: new FlutterHomePage());
   }
 }
 
@@ -28,39 +27,67 @@ class FlutterHomePage extends StatefulWidget {
   }
 }
 
-class FlutterHomePageState extends State<FlutterHomePage>  with SingleTickerProviderStateMixin{
+class FlutterHomePageState extends State<FlutterHomePage>
+    with SingleTickerProviderStateMixin {
+  TabController tabController;
+
   @override
   void initState() {
     super.initState();
-    TabController tabController = buildTabController();
-    //tabController.addListener(new V)
+    tabController = buildTabController();
+    tabController.addListener(() {
+      if (tabController.indexIsChanging) {
+        print("tabchange:index=${tabController.index}");
+      }
+    });
   }
 
-  TabController buildTabController() => new TabController(length: 4,initialIndex: 0,vsync: this);
+  TabController buildTabController() =>
+      new TabController(length: 4, initialIndex: 0, vsync: this);
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return new Scaffold(
       appBar: new AppBar(title: Text("flutter app")),
       body: new TabBarView(children: <Widget>[
-        new Text("main0"),
+        ListView.separated(
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: new Text("title${index}"),
+                onTap: () {
+                  print("onTap():item=$index");
+                },
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) => Divider(
+                  height: 1,
+                  color: Colors.blue,
+                ),
+            itemCount: 10),
         new Text("main1"),
         new Text("main2"),
         new Text("main3")
-      ], controller: buildTabController()),
-      bottomNavigationBar: new TabBar(tabs: <Tab>[
-        new Tab(text: "main0"),
-        new Tab(text: "main1"),
-        new Tab(text: "main2"),
-        new Tab(text: "main3")
-      ]),
+      ], controller: tabController),
+      bottomNavigationBar: Container(
+        color: Colors.blueGrey,
+        child: new TabBar(
+          indicatorColor: Colors.red,
+          labelColor: Colors.red,
+          unselectedLabelColor: Colors.black,
+          tabs: <Tab>[
+            new Tab(text: "组件"),
+            new Tab(text: "main1"),
+            new Tab(text: "main2"),
+            new Tab(text: "main3")
+          ],
+          controller: tabController,
+        ),
+      ),
     );
   }
 
   @override
   void setState(fn) {
-    // TODO: implement setState
     super.setState(fn);
   }
 }
