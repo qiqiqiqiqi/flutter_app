@@ -21,7 +21,8 @@ main() => runApp(new MaterialApp(
           ),
         )),
         body: new Center(
-          child: new Text("test style,test style,test style,test style",
+          child: new Text(
+              "test style,test style,test style,test style,test style,test style,test style,test style",
               style: new TextStyle(
                 color: Colors.red,
                 fontSize: 50,
@@ -39,8 +40,9 @@ main() => runApp(new MaterialApp(
               textAlign: TextAlign.left,
               textDirection: TextDirection.ltr,
               overflow: //TextOverflow.ellipsis,//显示不下的内容以...显示
-                  //TextOverflow.fade
-                  TextOverflow.clip),
+                  TextOverflow.fade
+                 // TextOverflow.clip
+          ),
         ),
       ),
     ));
