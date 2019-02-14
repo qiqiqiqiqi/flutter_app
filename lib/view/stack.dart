@@ -54,7 +54,7 @@ class StackApp extends StatelessWidget {
                         child: new Opacity(
                             opacity: 0.9,
                             child: new Align(
-                              alignment: Alignment.bottomCenter,
+                              alignment: Alignment.topCenter,
                               child: new Container(
                                   width: 150,
                                   height: 150,
