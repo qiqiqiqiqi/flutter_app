@@ -72,6 +72,8 @@ class FlutterHomePageState extends State<FlutterHomePage>
         color: Colors.blueGrey,
         child: new TabBar(
           indicatorColor: Colors.red,
+          indicator: new ShapeDecoration(
+              shape: Border()),
           labelColor: Colors.red,
           unselectedLabelColor: Colors.black,
           tabs: <Tab>[
