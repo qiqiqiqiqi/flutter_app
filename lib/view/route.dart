@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/pagerouterbuilder/fadepagerouterbuilder.dart';
+import 'package:flutter_app/pagerouterbuilder/slidepagerrouterbuilder.dart';
+import 'package:flutter_app/pagerouterbuilder/rotationpagerouterbuilder.dart';
 
 main() {
   runApp(new MaterialApp(
@@ -40,8 +43,10 @@ class FirstPager extends StatelessWidget {
 }
 
 navigatorToSecondPager(BuildContext context, Product product) async {
+//  Product result = await Navigator.push(
+//      context, MaterialPageRoute(builder: (context) => SecondPager(product)));
   Product result = await Navigator.push(
-      context, MaterialPageRoute(builder: (context) => SecondPager(product)));
+      context, RotationPageRouterBuilder(SecondPager(product)));
   Scaffold.of(context)
       .showSnackBar(new SnackBar(content: new Text("${result.toString()}")));
 }
