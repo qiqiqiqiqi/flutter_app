@@ -50,30 +50,16 @@ class FlutterHomePageState extends State<FlutterHomePage>
     return new Scaffold(
       appBar: new AppBar(title: Text("flutter app")),
       body: new TabBarView(children: <Widget>[
-        ListView.separated(
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: new Text("title${index}"),
-                onTap: () {
-                  print("onTap():item=$index");
-                },
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => Divider(
-                  height: 1,
-                  color: Colors.blue,
-                ),
-            itemCount: 10),
-        new Text("main1"),
-        new Text("main2"),
-        new Text("main3")
+        new PageBody("组件"),
+        new PageBody("main1"),
+        new PageBody("main2"),
+        new PageBody("main3"),
       ], controller: tabController),
       bottomNavigationBar: Container(
         color: Colors.blueGrey,
         child: new TabBar(
           indicatorColor: Colors.red,
-          indicator: new ShapeDecoration(
-              shape: Border()),
+          indicator: new ShapeDecoration(shape: Border()),
           labelColor: Colors.red,
           unselectedLabelColor: Colors.black,
           tabs: <Tab>[
@@ -92,4 +78,41 @@ class FlutterHomePageState extends State<FlutterHomePage>
   void setState(fn) {
     super.setState(fn);
   }
+}
+
+class PageBody extends StatefulWidget {
+  String title;
+
+  PageBody(this.title);
+
+  @override
+  State<StatefulWidget> createState() {
+    return PageBodyState();
+  }
+}
+
+class PageBodyState extends State<PageBody> with AutomaticKeepAliveClientMixin{
+  int count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print("PageBodyState:this=$this");
+          setState(() {
+            count++;
+          });
+        },
+        child: Icon(Icons.add),
+      ),
+      body: Center(
+        child: Text("${widget.title},count=$count"),
+      ),
+    );
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;//wantKeepAlive=true时state不会重置
 }
