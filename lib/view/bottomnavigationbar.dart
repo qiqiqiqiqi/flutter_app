@@ -13,6 +13,7 @@ class MainPager extends StatefulWidget {
     return MainState();
   }
 }
+
 //https://www.jianshu.com/p/c3c9beacbb94
 //Widget 是临时对象，用于构建当前状态下的应用程序，而 State 对象在多次调用build()之间保持不变，允许它们记住信息(状态)。
 class MainState extends State<MainPager> {
@@ -56,7 +57,8 @@ class MainState extends State<MainPager> {
         ],
         currentIndex: index,
         onTap: (int i) {
-          setState(() {//每当调用 States.setState() 时，都会重新build一次 ，然后将新的 Views代替原先的，并显示给用户
+          setState(() {
+            //每当调用 States.setState() 时，都会重新build一次 ，然后将新的 Views代替原先的，并显示给用户
             print("${pagerBodys[index].state}");
             index = i;
             currentPagerBody = pagerBodys[index];
@@ -82,8 +84,7 @@ class PagerBody extends StatefulWidget {
   }
 }
 
-class PagerBodyState
-    extends State<PagerBody> /*with AutomaticKeepAliveClientMixin*/ {
+class PagerBodyState extends State<PagerBody> {
   int _count = 0;
 
   @override
@@ -114,6 +115,5 @@ class PagerBodyState
   void dispose() {
     super.dispose();
   }
-/* @override
-  bool get wantKeepAlive => false;*/
+
 }

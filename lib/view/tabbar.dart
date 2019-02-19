@@ -113,6 +113,5 @@ class PageBodyState extends State<PageBody> with AutomaticKeepAliveClientMixin{
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;//wantKeepAlive=true时state不会重置
 }
