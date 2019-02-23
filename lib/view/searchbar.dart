@@ -15,6 +15,7 @@ class SearchBar extends StatefulWidget {
 }
 
 class SearchBarState extends State<SearchBar> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

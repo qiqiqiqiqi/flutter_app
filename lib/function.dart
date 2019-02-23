@@ -65,9 +65,9 @@ int add5(var a, var b) {
 ///num 与string不能通过“+”来相加来拼接成一个字符串
 addNumString(int a, String str) => "$a$str";
 
-addString(String str1, String str2) => str1 + str2;
-
 ///****************************函数的返回值 end********************************************************
+
+addString(String str1, String str2) => str1 + str2;
 
 ///可选命名参数
 ///命名参数不是必须的传递的,使用花括号将函数的参数括起来就是定义了命名参数
