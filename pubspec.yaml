@@ -39,6 +39,14 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/ic_img_default.jpg
+    - images/bg_gym.png
+    - images/icon_waiting.png
+    - images/icon_pass.png
+    - images/icon_wrong.png
+    - images/icon_ads.png
+    - images/btn_gym_holiday.png
+    - images/btn_gym_leave.png
+    - images/btn_gym_work_time.png
   fonts:
     - family: digital
       fonts:
