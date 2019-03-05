@@ -34,7 +34,7 @@ class StatefulRoundButton extends StatefulWidget {
       this.disableBackgroundColor = defaultDisableBackgroundColor,
       this.disable,
       this.onPress})
-      : background = defaultNormalBackgroundColor;
+      : background = normalBackgroundColor;
 }
 
 class StatefulRoundButtonState extends State<StatefulRoundButton> {

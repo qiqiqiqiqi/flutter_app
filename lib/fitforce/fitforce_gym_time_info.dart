@@ -10,9 +10,11 @@ class FitforceGymTimeInfo extends StatelessWidget {
           children: <Widget>[
             Expanded(
                 child: InkWell(
-              onTap: () {},
+              onTap: () {
+                print("");
+              },
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -31,34 +33,46 @@ class FitforceGymTimeInfo extends StatelessWidget {
                 ],
               ),
             )),
+            Container(
+              width: 1,
+              height: 20,
+              color: Color(0XFFD8D8D8),
+            ),
             Expanded(
-                child: InkWell(
-              onTap: () {},
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'images/btn_gym_leave.png',
-                    width: 30,
-                    height: 19,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 5),
-                    child: Text(
-                      "请假",
-                      style: TextStyle(color: Color(0XFF8597A1), fontSize: 12),
+              child: InkWell(
+                onTap: () {},
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      'images/btn_gym_leave.png',
+                      width: 30,
+                      height: 19,
                     ),
-                  )
-                ],
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Text(
+                        "请假",
+                        style:
+                            TextStyle(color: Color(0XFF8597A1), fontSize: 12),
+                      ),
+                    )
+                  ],
+                ),
               ),
-            )),
+            ),
+            Container(
+              width: 1,
+              height: 20,
+              color: Color(0XFFD8D8D8),
+            ),
             Expanded(
                 child: InkWell(
               onTap: () {},
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[

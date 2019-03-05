@@ -69,7 +69,7 @@ class FitforceGymUserInfo extends StatelessWidget {
               borderColor: Color(0XFF20C6BA),
               onPress: () {
                 final snackBar = new SnackBar(content: new Text("更新认证信息"));
-                Scaffold.of(context).showSnackBar(snackBar);
+               // Scaffold.of(context).showSnackBar(snackBar);
               }),
           Text(
             "更新信息将重新提交申请",
