@@ -32,6 +32,7 @@ class BezierWavePainter extends CustomPainter {
     drawWave(canvas, size, offSetX1, Colors.blueAccent, true);
     drawWave(canvas, size, offSetX1, Colors.blueAccent[100], false);
     drawWave(canvas, size, offSetX2, Colors.blueAccent, false);
+    drawCenter(canvas,size);
   }
 
   void drawWave(
@@ -86,7 +87,23 @@ class BezierWavePainter extends CustomPainter {
     }
     canvas.restore();
   }
-
+  void drawCenter(Canvas canvas, Size size) {
+    canvas.save();
+    TextPainter textPainter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+            text: "偶的人生全靠浪...",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold)));
+    textPainter.layout();
+    textPainter.paint(
+        canvas,
+        Offset(size.width / 2 - textPainter.size.width / 2,
+            size.height  - textPainter.size.height / 2-50));
+    canvas.restore();
+  }
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
