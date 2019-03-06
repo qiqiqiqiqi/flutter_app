@@ -55,7 +55,8 @@ class CircularSeekBar extends CustomPainter {
       colors: <Color>[
         Color(0XFF00ADEF),
         Color(0XFF10BDDE),
-        Color(0XFF3FCDB2),
+       /* Color(0XFF3FCDB2)*/Colors.redAccent,
+
         Color(0XFFB1C04F),
         Color(0XFFF9B512)
       ],

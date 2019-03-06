@@ -47,6 +47,7 @@ flutter:
     - images/btn_gym_holiday.png
     - images/btn_gym_leave.png
     - images/btn_gym_work_time.png
+    - images/boat.png
   fonts:
     - family: digital
       fonts:
