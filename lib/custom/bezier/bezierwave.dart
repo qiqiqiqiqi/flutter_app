@@ -29,14 +29,15 @@ class BezierWavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    drawWave(canvas, size,  offSetX1, Colors.blueAccent[100], true);
-    drawWave(canvas, size,  offSetX2, Colors.blueAccent, false);
+    drawWave(canvas, size, offSetX1, Colors.blueAccent, true);
+    drawWave(canvas, size, offSetX1, Colors.blueAccent[100], false);
+    drawWave(canvas, size, offSetX2, Colors.blueAccent, false);
   }
 
   void drawWave(
       Canvas canvas, Size size, double offSetX, Color color, bool draw) {
     canvas.save();
-     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
+    canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     double waveLength = size.width / 2;
     int waveCount = (size.width / waveLength).ceil() + 1;
     Path path = Path();
@@ -50,25 +51,22 @@ class BezierWavePainter extends CustomPainter {
       path.quadraticBezierTo(-1 / 4 * waveLength + i * waveLength + offSetX,
           waveHeight - wavePeak, i * waveLength + offSetX, waveHeight);
     }
-    path.lineTo(size.width + offSetX, size.height);
-    path.lineTo(-waveLength + offSetX, size.height);
-    path.close();
+
     Paint paint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.fill
       ..color = color;
-    canvas.drawPath(path, paint);
+
     if (draw && image != null) {
       final PathMetrics pathMetrics = path.computeMetrics(forceClosed: false);
       final PathMetric pathMetric = pathMetrics.elementAt(0);
       double length = pathMetric.length;
-      Path extractPath = pathMetric.extractPath(0, size.width,startWithMoveTo: true);
-      extractPath.close();
+      Path extractPath = pathMetric.extractPath(offSetX1,
+          length * (size.width / (waveCount * waveLength)) + offSetX1);
+      paint.style = PaintingStyle.stroke;
       canvas.drawPath(extractPath, paint);
       Tangent tangentForOffset =
-          pathMetric.getTangentForOffset(size.width * progress+offSetX);
-      
-      
+          pathMetric.getTangentForOffset(length * progress);
       Offset position = tangentForOffset.position;
       double angle = tangentForOffset.angle;
       canvas.translate(position.dx, position.dy);
@@ -78,9 +76,14 @@ class BezierWavePainter extends CustomPainter {
           Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
           Rect.fromLTRB(-20, -20 - 2 * wavePeak / 3, 20, 20 - 2 * wavePeak / 3),
           paint);
-      print("drawWave():position=${position},angle=$angle,progress=$progress,extractPath=${extractPath.computeMetrics().elementAt(0).length},width=${size.width}");
+      print(
+          "drawWave():position=${position},angle=$angle,progress=$progress,extractPath=${extractPath.computeMetrics().elementAt(0).length},width=${size.width}");
+    } else {
+      path.lineTo(size.width + offSetX, size.height);
+      path.lineTo(-waveLength + offSetX, size.height);
+      path.close();
+      canvas.drawPath(path, paint);
     }
-
     canvas.restore();
   }
 
