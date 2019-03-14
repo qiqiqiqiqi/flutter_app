@@ -16,7 +16,7 @@ class CircularSeekBarApp extends StatefulWidget {
 class CircularSeekBarState extends State<CircularSeekBarApp> {
   Size cirularSize;
   GlobalKey globalKey;
-  double angle=135.0;
+  double angle = 135.0;
 
   @override
   void initState() {
@@ -41,10 +41,19 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
             });
           },
           onPanUpdate: (DragUpdateDetails dragUpdateDetails) {
+            print(
+                "build():dragUpdateDetails.delta.dy=${dragUpdateDetails.delta.dy},"
+                    "dragUpdateDetails.delta.dx=${dragUpdateDetails.delta.dx},dragUpdateDetails.primaryDelta=${dragUpdateDetails.primaryDelta}");
             setState(() {
               angle =
                   caculateRadianByTouchPoint(dragUpdateDetails.globalPosition);
             });
+          },
+          onVerticalDragUpdate: (DragUpdateDetails dragUpdateDetails){
+            print(
+                "build():onVerticalDragUpdate.delta.dy=${dragUpdateDetails.delta.dy},"
+                    "dragUpdateDetails.delta.dx=${dragUpdateDetails.delta.dx},"
+                    "dragUpdateDetails.primaryDelta=${dragUpdateDetails.primaryDelta}");
           },
           onPanCancel: () {},
           onPanEnd: (DragEndDetails dragEndDetails) {},
@@ -61,8 +70,10 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
   double caculateRadianByTouchPoint(Offset globalPosition) {
     RenderBox renderBox = globalKey.currentContext.findRenderObject();
     Offset globalToLocal = renderBox.globalToLocal(globalPosition);
+    print("caculateRadianByTouchPoint():globalPosition=$globalPosition,globalToLocal=$globalToLocal");
     double tan = ((globalToLocal.dy - cirularSize.height / 2) /
-        (globalToLocal.dx - cirularSize.width / 2)).abs();
+            (globalToLocal.dx - cirularSize.width / 2))
+        .abs();
     double radian = Math.atan(tan);
     double angle = radian / Math.pi * 180;
     if ((globalToLocal.dy - cirularSize.height / 2) < 0 &&
@@ -73,8 +84,8 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
         (globalToLocal.dx - cirularSize.width / 2) < 0) {
       //第二象限
       angle = 45 + angle;
-    } else if ((globalToLocal.dy - cirularSize.height / 2) >0 &&
-        (globalToLocal.dx - cirularSize.width / 2) <0) {
+    } else if ((globalToLocal.dy - cirularSize.height / 2) > 0 &&
+        (globalToLocal.dx - cirularSize.width / 2) < 0) {
       //第三象限
       angle = 45 - angle;
     } else if ((globalToLocal.dy - cirularSize.height / 2) > 0 &&
