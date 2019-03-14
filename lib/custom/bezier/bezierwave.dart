@@ -29,7 +29,7 @@ class BezierWavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    drawWave(canvas, size, offSetX1, Colors.blueAccent, true);
+    drawWave(canvas, size, offSetX1, Colors.blueAccent[100], true);
     drawWave(canvas, size, offSetX1, Colors.blueAccent[100], false);
     drawWave(canvas, size, offSetX2, Colors.blueAccent, false);
   }

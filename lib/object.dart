@@ -1,26 +1,27 @@
 main() {
   var person = new Person("zhangsan", 18, "play game");
-  person..printPersonInfo();
+  person.._printPersonInfo();
   person.name = "lisi";
   person.age = 17;
   person.hobby = "trip";
-  person.printPersonInfo();
+  person._printPersonInfo();
   person = new Person.name("wangwu", 12, "sleep");
-  person.printPersonInfo();
+  person._printPersonInfo();
   person = Person.name2(9);
-  person.printPersonInfo();
+  person._printPersonInfo();
 
   var human = new Human("lilei", 17, "eat", weight: 45);
-  human.printPersonInfo();
+  human._printPersonInfo();
 
   var human2 = Human.name2(0);
-  human2.printPersonInfo();
+  human2._printPersonInfo();
   SmartTelevision("aaaa")._bootNetworkInterface();
 }
 
 ///1.Dart类的成员没有访问限制,成员变量或成员方法不需要private，protected，public修饰
 ///2.Dart类如果没有自定义构造函数，内部则会自动定义一个空的构造函数，如果自己自定义了一个构造函数
 class Person {
+  String _name2;
   String name;
   int age;
   String hobby;
@@ -46,6 +47,10 @@ class Person {
 
   Person.name2(int sex) : sex = sex;
 
+  void _printPersonInfo() {
+    print("my name is $name ,I am $age year old and my hobby is $hobby .");
+  }
+
   void printPersonInfo() {
     print("my name is $name ,I am $age year old and my hobby is $hobby .");
   }
@@ -63,6 +68,7 @@ class Human extends Person {
 
         ///在构造函数的函数体运行前执行,只初始化自己的成员变量,不能初始化父类的成员变量
         super(name, age, hobby) {
+    _name2 = "00";
     print(
         "Human():name=${this.name},age=${this.age},hobby=${this.hobby},weight=${this.weight}.");
   }
@@ -74,10 +80,44 @@ class Human extends Person {
   Human.name2(int sex) : this(null, null, null);
 }
 
+abstract class Human2 extends Person {
+  var weight;
+
+  ///继承父类的构造函数
+//  Human(String name, int age, String hobby) : super(name, age, hobby) {
+//    print("Human():name=$name,age=${this.age},hobby=$hobby.");
+//  }
+  Human2(String name, int age, String hobby, {var weight})
+      : weight = weight,
+
+        ///在构造函数的函数体运行前执行,只初始化自己的成员变量,不能初始化父类的成员变量
+        super(name, age, hobby) {
+    _name2 = "00";
+    print(
+        "Human():name=${this.name},age=${this.age},hobby=${this.hobby},weight=${this.weight}.");
+    _privateMethod();
+  }
+
+  ///  继承父类的命名构造函数
+  Human2.name(String name, int age, String hobby)
+      : super.name(name, age, hobby) {}
+
+  Human2.name2(int sex) : this(null, null, null);
+
+  String get _human2;
+
+  String get human2;
+
+  bool _privateMethod();
+}
+
 class Television {
   String telev;
+
   Television();
+
   Television.name(this.telev);
+
   void turnOn() {
     _illuminateDisplay();
   }
@@ -117,6 +157,7 @@ class SmartTelevision extends Television
     updateApp();
     chargeVip();
   }
+
   void _bootNetworkInterface() {}
 
   @override
