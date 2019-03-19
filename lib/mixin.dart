@@ -1,5 +1,9 @@
 //https://juejin.im/post/5c44382d51882523f0261bb5
 main() {
+  //class WidgetsFlutterBinding2 extends BindingBase with GestureBinding, RendererBinding {}
+  //WidgetsFlutterBinding2先混入了GestureBinding，后混入
+  //WidgetsFlutterBinding2().hitTest()调用的是RendererBinding中的hitTest()方法
+
   WidgetsFlutterBinding2().hitTest();
   print("*******************************");
   WidgetsFlutterBinding().hitTest();
@@ -82,16 +86,15 @@ mixin RendererBinding on BindingBase, HitTestable {
   }
 }
 mixin GestureBinding on BindingBase implements HitTestable {
-  /*@override
+  @override
   void hitTest() {
     print("GestureBinding:hitTest()");
     super.hitTest();
-  }*/
+  }
 
   void testhitTest() {}
 }
 
 class WidgetsFlutterBinding extends BindingBase with GestureBinding {}
 
-class WidgetsFlutterBinding2 extends BindingBase
-    with GestureBinding, RendererBinding {}
+class WidgetsFlutterBinding2 extends BindingBase with GestureBinding, RendererBinding {}
