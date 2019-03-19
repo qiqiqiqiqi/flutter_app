@@ -1,12 +1,15 @@
 //https://juejin.im/post/5c44382d51882523f0261bb5
 main() {
+  WidgetsFlutterBinding().hitTest();
+  print("*******************************");
   //class WidgetsFlutterBinding2 extends BindingBase with GestureBinding, RendererBinding {}
-  //WidgetsFlutterBinding2先混入了GestureBinding，后混入
+  //WidgetsFlutterBinding2先混入了GestureBinding，后混入RendererBinding
   //WidgetsFlutterBinding2().hitTest()调用的是RendererBinding中的hitTest()方法
-
   WidgetsFlutterBinding2().hitTest();
   print("*******************************");
-  WidgetsFlutterBinding().hitTest();
+  WidgetsFlutterBinding2().testhitTest();
+  print("*******************************");
+  WidgetsFlutterBinding3().hitTest();
 }
 
 //这次，on只能用于被mixins标记的类，例如mixins X on A，
@@ -88,13 +91,32 @@ mixin RendererBinding on BindingBase, HitTestable {
 mixin GestureBinding on BindingBase implements HitTestable {
   @override
   void hitTest() {
+    //HitTestable和BindingBase中都有hitTest()方法，根据mixin的线性规则此处复写的是HitTestable中的hitTest()方法
     print("GestureBinding:hitTest()");
+    super.hitTest(); //super指在GestureBinding前一个具有hitTest()方法的混入类或超类
+  }
+
+  void testhitTest() {
+    hitTest();
+  }
+}
+
+mixin TestBinding on BindingBase, HitTestable {
+  @override
+  void hitTest() {
+    print("TestBinding:hitTest()");
     super.hitTest();
   }
 
-  void testhitTest() {}
+  void testHitTest() {
+    hitTest();
+  }
 }
 
 class WidgetsFlutterBinding extends BindingBase with GestureBinding {}
 
-class WidgetsFlutterBinding2 extends BindingBase with GestureBinding, RendererBinding {}
+class WidgetsFlutterBinding2 extends BindingBase
+    with GestureBinding, RendererBinding {}
+
+class WidgetsFlutterBinding3 extends BindingBase
+    with GestureBinding, TestBinding, RendererBinding {}
