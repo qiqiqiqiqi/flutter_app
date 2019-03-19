@@ -10,7 +10,7 @@ class PullContentContainer extends StatefulWidget {
 
 class PullContentState extends State<PullContentContainer> {
   List<Widget> widgets;
-  Offset offset=Offset(0, 0);
+  Offset offset = Offset(0, 0);
 
   @override
   void initState() {
@@ -25,17 +25,39 @@ class PullContentState extends State<PullContentContainer> {
         offset: offset,
       );
       if (i == 0) {
-        widgets.add(GestureDetector(
+        widgets.add(/*GestureDetector(
           onPanUpdate: onPanUpdate,
           onPanEnd: onPanEnd,
           child: dragCard,
-        ));
+        )*/
+            Listener(
+              onPointerMove: onPointerMove,
+              onPointerUp: onPointerUp,
+              child: dragCard,
+            ));
       } else {
         widgets.add(dragCard);
       }
     }
     widgets = widgets.reversed.toList();
     return widgets;
+  }
+
+  void onPointerMove(PointerMoveEvent dragUpdateDetails) {
+    print("PullContentContainer:onPanUpdate():"
+        "dragUpdateDetails.delta=${dragUpdateDetails.delta}");
+    setState(() {
+      offset == null
+          ? offset = dragUpdateDetails.delta
+          : offset += dragUpdateDetails.delta;
+    });
+  }
+
+  void onPointerUp(PointerUpEvent dragEndDetails) {
+    print("PullContentContainer:onPanEnd():");
+    setState(() {
+      offset = Offset(0, 0);
+    });
   }
 
   void onPanUpdate(DragUpdateDetails dragUpdateDetails) {

@@ -27,6 +27,7 @@ class PullDragState extends State<PullDragContiner>
   onOffsetYChange(double offsetY) {
     setState(() {
       this.offsetY = offsetY;
+      print("onOffsetYChange():offsetY=${this.offsetY}");
     });
   }
 
@@ -53,7 +54,10 @@ class PullDragState extends State<PullDragContiner>
               top: offsetY,
               left: 0,
               right: 0,
-              child: widget.contentWidget)
+              child: IgnorePointer(
+                child: widget.contentWidget,
+                ignoring: offsetY.abs() > 0 ? true : false,
+              ))
         ],
       ),
     );
