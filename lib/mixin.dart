@@ -7,9 +7,11 @@ main() {
   //WidgetsFlutterBinding2().hitTest()调用的是RendererBinding中的hitTest()方法
   WidgetsFlutterBinding2().hitTest();
   print("*******************************");
+  WidgetsFlutterBinding3().hitTest();
+  print("*******************************");
   WidgetsFlutterBinding2().testhitTest();
   print("*******************************");
-  WidgetsFlutterBinding3().hitTest();
+  WidgetsFlutterBinding3().testHitTest();
 }
 
 //这次，on只能用于被mixins标记的类，例如mixins X on A，
