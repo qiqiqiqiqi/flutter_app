@@ -158,7 +158,7 @@ class BottomCustomClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper oldClipper) {
-    return true;
+    return false;
   }
 
   BottomCustomClipper({this.offsetY});
