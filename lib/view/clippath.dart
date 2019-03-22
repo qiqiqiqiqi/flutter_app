@@ -29,7 +29,7 @@ class ClipPathState extends State<ClipPathDemo> {
                 top: 0,
                 height: 240,
                 child: ClipPath(
-                  clipper: BottomCustomClipper(offsetY: offsetY),
+                  clipper: null/*BottomCustomClipper(offsetY: offsetY)*/,
                   child: Container(
                     color: Colors.redAccent,
                     child: Image.asset(
@@ -59,6 +59,7 @@ class ClipPathState extends State<ClipPathDemo> {
                     child: ListView.builder(
                       primary: true,
                       shrinkWrap: true,
+                      padding: EdgeInsets.all(0),
                       itemBuilder: (context, index) {
                         return Column(
                           children: <Widget>[
