@@ -65,7 +65,7 @@ class DragCardState extends State<DragCard> {
                     : -constrains.maxWidth / 2)
                 : widget.offset.dx) /
             (constrains.maxWidth / 2);
-        rotate = -(widget.position != 0 ? 0.0 : Math.pi / 6 * radioX);
+        rotate = (widget.position != 0 ? 0.0 : Math.pi / 6 * radioX);
       } else {
         radio = (widget.offset.dx.abs() > constrains.maxWidth / 2
                 ? (widget.offset.dx > 0
@@ -73,7 +73,7 @@ class DragCardState extends State<DragCard> {
                     : -constrains.maxWidth / 2)
                 : widget.offset.dx) /
             (constrains.maxWidth / 2);
-        rotate = -(widget.position != 0 ? 0.0 : Math.pi / 6 * radio);
+        rotate = (widget.position != 0 ? 0.0 : Math.pi / 6 * radio);
       }
       caculate(radio);
       return Transform(

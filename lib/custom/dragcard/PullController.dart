@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-typedef OnOffsetYChange = void Function(double offsetY);
+typedef OnOffsetYChange = void Function(double offsetY,PullState pullState);
 typedef OnRefresh = void Function();
 
 class PullController {
@@ -78,12 +78,12 @@ class PullController {
     animation
       ..addListener(() {
         offsetY = animation.value;
-        onOffsetYChange(offsetY);
+        onOffsetYChange(offsetY,currentPullState);
         print("PullController:addListener():offsetY=$offsetY");
       })
       ..addStatusListener((AnimationStatus animationStatus) {
         if (animationStatus == AnimationStatus.completed) {
-          if (currentPullState == PullState.pull_refreshing) {}
+          currentPullState = PullState.pull_close;
         }
       });
     animationController.forward(from: 0);
@@ -101,12 +101,14 @@ class PullController {
       ..addListener(() {
         offsetY = animation.value;
         if (onOffsetYChange != null) {
-          onOffsetYChange(offsetY);
+          onOffsetYChange(offsetY,currentPullState);
         }
         print("PullController:addListener():offsetY=$offsetY");
       })
       ..addStatusListener((AnimationStatus animationStatus) {
-        if (animationStatus == AnimationStatus.completed) {}
+        if (animationStatus == AnimationStatus.completed) {
+          currentPullState = PullState.pull_refreshing;
+        }
       });
     animationController.forward(from: 0);
   }
@@ -120,7 +122,10 @@ enum PullState {
   pull_release,
 
   ///正在刷新
-  pull_refreshing
+  pull_refreshing,
+
+  ///关闭
+  pull_close,
 }
 
 enum TouchState {

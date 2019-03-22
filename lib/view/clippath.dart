@@ -57,6 +57,7 @@ class ClipPathState extends State<ClipPathDemo> {
                       }
                     },
                     child: ListView.builder(
+                      padding: EdgeInsets.all(0),
                       primary: true,
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
