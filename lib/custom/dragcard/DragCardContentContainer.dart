@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/custom/dragcard/custom_drag_gesture_recognizer.dart';
 import 'DragCard.dart';
-
+import 'custom_gesture_detector.dart';
 class PullContentContainer extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -25,16 +26,17 @@ class PullContentState extends State<PullContentContainer> {
         offset: offset,
       );
       if (i == 0) {
-        widgets.add(/*GestureDetector(
+        widgets.add(CustomGestureDetector(
           onPanUpdate: onPanUpdate,
           onPanEnd: onPanEnd,
           child: dragCard,
-        )*/
-            Listener(
+          direction: Direction.top | Direction.left | Direction.right,
+        )
+           /* Listener(
               onPointerMove: onPointerMove,
               onPointerUp: onPointerUp,
               child: dragCard,
-            ));
+            )*/);
       } else {
         widgets.add(dragCard);
       }

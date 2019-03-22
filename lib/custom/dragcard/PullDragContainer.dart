@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'PullController.dart';
+import 'custom_gesture_detector.dart';
+import 'custom_drag_gesture_recognizer.dart';
 
 class PullDragContiner extends StatefulWidget {
   Widget headWidget, contentWidget;
@@ -16,6 +18,7 @@ class PullDragState extends State<PullDragContiner>
     with SingleTickerProviderStateMixin {
   double offsetY = 0;
   PullController pullController;
+  bool isOpen = false;
 
   @override
   void initState() {
@@ -24,9 +27,10 @@ class PullDragState extends State<PullDragContiner>
     super.initState();
   }
 
-  onOffsetYChange(double offsetY) {
+  onOffsetYChange(double offsetY, PullState pullState) {
     setState(() {
       this.offsetY = offsetY;
+      this.isOpen = pullState == PullState.pull_refreshing;
       print("onOffsetYChange():offsetY=${this.offsetY}");
     });
   }
@@ -38,7 +42,8 @@ class PullDragState extends State<PullDragContiner>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return CustomGestureDetector(
+      direction: Direction.bottom|Direction.top,
       onPanUpdate: onPanUpdate,
       onPanEnd: onPanEnd,
       child: Stack(
@@ -54,9 +59,9 @@ class PullDragState extends State<PullDragContiner>
               top: offsetY,
               left: 0,
               right: 0,
-              child: IgnorePointer(
+              child: AbsorbPointer(
                 child: widget.contentWidget,
-                ignoring: offsetY.abs() > 0 ? true : false,
+                absorbing: isOpen,
               ))
         ],
       ),
