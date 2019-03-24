@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'PullDragContainer.dart';
+import 'PullContainer.dart';
 import 'DragCardContentContainer.dart';
-import 'package:flutter_app/view/listview.dart';
+import 'pullHeadContainer.dart';
+
 main() {
   runApp(MaterialApp(
     home: DragCardDemo(),
@@ -23,12 +24,8 @@ class DragCardState extends State<DragCardDemo> {
           title: Text("DragCard Demo"),
         ),
         body: PullDragContiner(
-          headWidget: Container(
-            color: Colors.cyan,
-            child: Center(
-              child: Text("head"),
-            ),
-          ),
+          //todo 把refresh...方法移出
+          headWidget: PullHeadContainer(),
           contentWidget: PullContentContainer(),
         ));
   }

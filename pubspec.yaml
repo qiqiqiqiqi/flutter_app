@@ -50,6 +50,8 @@ flutter:
     - images/boat.png
     - images/bg_rank.png
     - images/no1.png
+    - images/refresh_arrow_down.png
+    - images/refresh_arrow_loading.png
 
   fonts:
     - family: digital

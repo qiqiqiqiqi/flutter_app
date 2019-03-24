@@ -1,61 +1,80 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as Math;
 
-typedef OnOffsetYChange = void Function(double offsetY,PullState pullState);
+typedef OnOffsetYChange = void Function(double offsetY);
 typedef OnRefresh = void Function();
+typedef OnStateChange = void Function(PullState pullState);
 
 class PullController {
-  static const double REFRESH_HEIGHT = 100;
+  static const double REFRESH_HEIGHT = 50;
   double offsetY = 0;
   OnOffsetYChange onOffsetYChange;
   OnRefresh onRefresh;
+  OnStateChange onStateChange;
   PullState currentPullState = PullState.pull_refresh;
   AnimationController animationController;
 
   PullController(TickerProvider tickerProvider,
-      {this.onOffsetYChange, this.onRefresh}) {
+      {this.onOffsetYChange, this.onRefresh, this.onStateChange}) {
     animationController = AnimationController(
         duration: Duration(milliseconds: 1000), vsync: tickerProvider);
   }
 
-  void caculateCurrentState(TouchState touchState) {
-//    if (currentPullState == PullState.pull_refreshing) {
-//      return;
-//    }
-    if (offsetY < REFRESH_HEIGHT) {
-      currentPullState = PullState.pull_refresh;
-      if (touchState == TouchState.no_touch) {
-        smoothClose();
+  void judgeCurrentState(TouchState touchState, PullState pullState) {
+    if (currentPullState != PullState.pull_refreshing &&
+        currentPullState != PullState.pull_refreshing_hide) {
+      if (offsetY > 0 && offsetY < REFRESH_HEIGHT) {
+        currentPullState = PullState.pull_refresh;
+        if (touchState == TouchState.no_touch) {
+          smoothClose();
+        }
+      } else if (offsetY >= REFRESH_HEIGHT) {
+        if (touchState == TouchState.touch) {
+          currentPullState = PullState.pull_release;
+        } else {
+          if (onRefresh != null) {
+            onRefresh();
+          }
+          smoothToRefresh();
+        }
+      } else if (offsetY <= 0) {
+        currentPullState = PullState.pull_close;
       }
     } else {
-      if (touchState == TouchState.touch) {
-        currentPullState = PullState.pull_release;
-      } else {
-        currentPullState = PullState.pull_refreshing;
-        if (onRefresh != null) {
-          onRefresh();
+      if (offsetY >= REFRESH_HEIGHT) {
+        if (touchState == TouchState.no_touch) {
+          smoothToRefresh();
         }
-        smoothToRefresh();
+      } else if (offsetY <= 0) {
+        currentPullState = PullState.pull_refreshing_hide;
       }
+    }
+    if (currentPullState != pullState) {
+      onStateChange(currentPullState);
     }
   }
 
   double caculatePullHeight(double dy, TouchState touchState) {
     if (touchState == TouchState.touch) {
-      if (offsetY < 20) {
-        offsetY += dy * 9 / 10;
-      } else if (offsetY < 40) {
-        offsetY += dy * 8 / 10;
-      } else if (offsetY < 60) {
-        offsetY += dy * 7 / 10;
-      } else if (offsetY < 80) {
-        offsetY += dy * 6 / 10;
-      } else if (offsetY < 100) {
-        offsetY += dy * 5 / 10;
-      } else {
-        offsetY += dy * 1 / 10;
-      }
+//      if (offsetY < REFRESH_HEIGHT / 10) {
+//        offsetY += dy * 9 / 10;
+//      } else if (offsetY < REFRESH_HEIGHT * 2 / 10) {
+//        offsetY += dy * 8 / 10;
+//      } else if (offsetY < REFRESH_HEIGHT * 3 / 10) {
+//        offsetY += dy * 7 / 10;
+//      } else if (offsetY < REFRESH_HEIGHT * 4 / 10) {
+//        offsetY += dy * 6 / 10;
+//      } else if (offsetY < REFRESH_HEIGHT * 5 / 10) {
+//        offsetY += dy * 5 / 10;
+//      } else {
+//        offsetY += dy * 1 / 10;
+//      }
+      offsetY += dy;
     }
-    caculateCurrentState(touchState);
+    if (offsetY <= 0) {
+      offsetY = 0;
+    }
+    judgeCurrentState(touchState, currentPullState);
     return offsetY;
   }
 
@@ -78,12 +97,13 @@ class PullController {
     animation
       ..addListener(() {
         offsetY = animation.value;
-        onOffsetYChange(offsetY,currentPullState);
+        onOffsetYChange(offsetY);
         print("PullController:addListener():offsetY=$offsetY");
       })
       ..addStatusListener((AnimationStatus animationStatus) {
         if (animationStatus == AnimationStatus.completed) {
           currentPullState = PullState.pull_close;
+          onStateChange(currentPullState);
         }
       });
     animationController.forward(from: 0);
@@ -101,13 +121,14 @@ class PullController {
       ..addListener(() {
         offsetY = animation.value;
         if (onOffsetYChange != null) {
-          onOffsetYChange(offsetY,currentPullState);
+          onOffsetYChange(offsetY);
         }
         print("PullController:addListener():offsetY=$offsetY");
       })
       ..addStatusListener((AnimationStatus animationStatus) {
         if (animationStatus == AnimationStatus.completed) {
           currentPullState = PullState.pull_refreshing;
+          onStateChange(currentPullState);
         }
       });
     animationController.forward(from: 0);
@@ -126,6 +147,7 @@ enum PullState {
 
   ///关闭
   pull_close,
+  pull_refreshing_hide,
 }
 
 enum TouchState {

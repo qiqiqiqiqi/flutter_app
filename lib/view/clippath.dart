@@ -60,7 +60,6 @@ class ClipPathState extends State<ClipPathDemo> {
                       padding: EdgeInsets.all(0),
                       primary: true,
                       shrinkWrap: true,
-                      padding: EdgeInsets.all(0),
                       itemBuilder: (context, index) {
                         return Column(
                           children: <Widget>[
