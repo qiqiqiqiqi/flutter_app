@@ -62,6 +62,8 @@ class PullDragState extends State<PullDragContiner>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0XFFD8D8D8),
+      appBar: AppBar(),
       body: CustomGestureDetector(
         direction: Direction.bottom | Direction.top,
         onPanUpdate: onPanUpdate,
