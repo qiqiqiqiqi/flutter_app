@@ -24,9 +24,11 @@ class PullRefreshState extends State<PullRefresh> {
   double headHeight = 0;
   double scrollY = 0;
   double marginTop = 0;
+  ScrollController scrollController;
 
   @override
   void initState() {
+    scrollController = ScrollController();
     WidgetsBinding widgetsBinding = WidgetsBinding.instance;
     widgetsBinding.addPostFrameCallback((Duration duration) {
       setState(() {
@@ -48,7 +50,6 @@ class PullRefreshState extends State<PullRefresh> {
         SliverToBoxAdapter(
           child: Container(
             color: Colors.redAccent,
-            margin: EdgeInsets.only(top: marginTop),
             key: headGlobalKey,
             child: headWidget,
           ),
@@ -65,6 +66,7 @@ class PullRefreshState extends State<PullRefresh> {
               child: NotificationListener(
                 child: CustomScrollView(
                   physics: BouncingScrollPhysics(),
+                  controller: scrollController,
                   slivers: widgets,
                 ),
                 onNotification: (ScrollNotification scrollNotification) {
@@ -81,20 +83,14 @@ class PullRefreshState extends State<PullRefresh> {
       print("handleScrollNotification():ScrollStartNotification");
     } else if (scrollNotification is ScrollUpdateNotification) {
       print("handleScrollNotification():ScrollUpdateNotification");
-      double dy = scrollNotification.dragDetails.delta.dy;
-      scrollY += dy;
-      setState(() {
-        if (scrollY > headHeight) {
-         // marginTop=headHeight;
-        }
-
-      });
-      print(
-          "handleScrollNotification():ScrollUpdateNotification--offsetY=$offsetY");
     } else if (scrollNotification is ScrollEndNotification) {
+      scrollController.animateTo(headHeight,
+          duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
       setState(() {
-        if (scrollY > headHeight) {
+        if (offsetY > 0) {
           offsetY = 0;
+        } else {
+          offsetY = -headHeight;
         }
       });
       print("handleScrollNotification():ScrollEndNotification");
@@ -102,9 +98,13 @@ class PullRefreshState extends State<PullRefresh> {
       //CustomScrollView设置BouncingScrollPhysics后无OverscrollNotification
       print("handleScrollNotification():OverscrollNotification");
       double dy = scrollNotification.dragDetails.delta.dy;
-      double distance = scrollNotification.dragDetails.delta.distance;
+      scrollY += dy;
+      setState(() {
+        offsetY += dy;
+      });
+
       print(
-          "handleScrollNotification():OverscrollNotification--dy=$dy,distance=$distance");
+          "handleScrollNotification():OverscrollNotification--dy=$dy,offsetY=$offsetY");
     }
   }
 }

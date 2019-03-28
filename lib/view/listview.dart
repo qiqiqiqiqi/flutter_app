@@ -9,7 +9,7 @@ class ListviewApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-
+    ScrollController scrollController=ScrollController();
     return new MaterialApp(
         title: "listview demo",
         home: Scaffold(
@@ -19,6 +19,7 @@ class ListviewApp extends StatelessWidget {
           body: ListView.builder(
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
+                print("ListviewApp():index=$index");
                 return Column(
                   children: <Widget>[
                     ListTile(

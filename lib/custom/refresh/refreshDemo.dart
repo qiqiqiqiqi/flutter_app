@@ -40,6 +40,7 @@ class RefreshState extends State<RefreshDemo>
           );
         },
         child: ListView.builder(
+            physics: BouncingScrollPhysics(),
             itemCount: 100,
             itemBuilder: (BuildContext context, int index) {
               return Column(
