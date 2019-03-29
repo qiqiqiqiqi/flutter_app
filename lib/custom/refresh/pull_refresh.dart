@@ -51,7 +51,9 @@ class PullRefreshState extends State<PullRefresh> {
           child: Container(
             color: Colors.redAccent,
             key: headGlobalKey,
-            child: headWidget,
+            child: Column(children: <Widget>[
+              SizeTransition(),
+              headWidget],),
           ),
         ));
     return LayoutBuilder(
@@ -61,7 +63,7 @@ class PullRefreshState extends State<PullRefresh> {
           Positioned(
               left: 0,
               right: 0,
-              top: offsetY,
+              top:offsetY,
               bottom: 0,
               child: NotificationListener(
                 child: CustomScrollView(
@@ -79,29 +81,27 @@ class PullRefreshState extends State<PullRefresh> {
   }
 
   handleScrollNotification(ScrollNotification scrollNotification) {
+    double pixels=scrollNotification.metrics.pixels;
+    print("handleScrollNotification():pixels=$pixels");
     if (scrollNotification is ScrollStartNotification) {
       print("handleScrollNotification():ScrollStartNotification");
+
     } else if (scrollNotification is ScrollUpdateNotification) {
+      if(pixels.abs()>headHeight){
+
+      }
       print("handleScrollNotification():ScrollUpdateNotification");
     } else if (scrollNotification is ScrollEndNotification) {
-      scrollController.animateTo(headHeight,
-          duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
       setState(() {
-        if (offsetY > 0) {
-          offsetY = 0;
-        } else {
-          offsetY = -headHeight;
-        }
+
       });
+
       print("handleScrollNotification():ScrollEndNotification");
     } else if (scrollNotification is OverscrollNotification) {
       //CustomScrollView设置BouncingScrollPhysics后无OverscrollNotification
       print("handleScrollNotification():OverscrollNotification");
       double dy = scrollNotification.dragDetails.delta.dy;
       scrollY += dy;
-      setState(() {
-        offsetY += dy;
-      });
 
       print(
           "handleScrollNotification():OverscrollNotification--dy=$dy,offsetY=$offsetY");
