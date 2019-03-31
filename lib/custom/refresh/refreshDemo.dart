@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pull_refresh.dart';
-import 'pullHeadContainer.dart';
+import 'defualt_refresh_head.dart';
 import 'PullController.dart';
 
 main() {
@@ -26,40 +26,47 @@ class RefreshState extends State<RefreshDemo>
     pullController = PullController(this);
   }
 
+  Future<void> onRefresh() async {
+    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey,
       appBar: AppBar(
         title: Text("pullRefreshDemo"),
       ),
-      body: PullRefresh(
-        pullController: pullController,
-        headBuilder: (PullController pullController) {
-          return PullHeadContainer(
-            pullState: pullController.currentPullState,
-          );
-        },
-        child: ListView.builder(
-            physics: BouncingScrollPhysics(),
-            itemCount: 100,
-            itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: <Widget>[
-                  ListTile(
-                    title: new Text("data$index"),
-                    leading: new Icon(Icons.add_box),
-                    subtitle: new Text("data$index"),
-                    isThreeLine: false,
-                    trailing: new Icon(Icons.arrow_right),
-                    onTap: () {},
-                  ),
-                  new Divider(
-                    height: 1,
-                    color: Colors.orangeAccent,
-                  )
-                ],
-              );
-            }),
+      body: Container(
+        color: Colors.white,
+        child: PullRefresh(
+          onRefresh: onRefresh,
+          headBuilder: (BuildContext context) {
+            return DefualtRefreshHead();
+          },
+          child: ListView.builder(
+              itemCount: 15,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  children: <Widget>[
+                    ListTile(
+                      title: new Text("data$index"),
+                      leading: new Icon(Icons.add_box),
+                      subtitle: new Text("data$index"),
+                      isThreeLine: false,
+                      trailing: new Icon(Icons.arrow_right),
+                      onTap: () {},
+                    ),
+                    new Divider(
+                      height: 1,
+                      color: Colors.orangeAccent,
+                    )
+                  ],
+                );
+              }),
+        ),
       ),
     );
   }

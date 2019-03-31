@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'PullController.dart';
-import 'pullHeadContainer.dart';
 import 'dart:math' as math;
+import 'refresh_head_wrapper.dart';
+import 'refresh_observer.dart';
+import 'refresh_state.dart';
 
-typedef HeadBuilder = Widget Function(PullController pullController);
+typedef Future<void> OnRefresh();
 
 class PullRefresh extends StatefulWidget {
   HeadBuilder headBuilder;
   ScrollView child;
-  PullController pullController;
+  OnRefresh onRefresh;
 
-  PullRefresh({this.pullController, this.headBuilder, this.child});
+  PullRefresh({this.headBuilder, this.child, this.onRefresh});
 
   @override
   State<StatefulWidget> createState() {
@@ -18,22 +19,31 @@ class PullRefresh extends StatefulWidget {
   }
 }
 
-class PullRefreshState extends State<PullRefresh> {
+class PullRefreshState extends State<PullRefresh>
+    with TickerProviderStateMixin {
   double offsetY = 0;
   GlobalKey headGlobalKey = GlobalKey();
   double headHeight = 0;
   double scrollY = 0;
-  double marginTop = 0;
+  double offsetHeight = 0;
   ScrollController scrollController;
+  AnimationController animationController;
+  AnimationController animationController_size;
+  RefreshState currentRefreshState;
 
   @override
   void initState() {
+    animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    animationController_size =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     scrollController = ScrollController();
     WidgetsBinding widgetsBinding = WidgetsBinding.instance;
     widgetsBinding.addPostFrameCallback((Duration duration) {
       setState(() {
         headHeight = headGlobalKey.currentContext.size.height;
         offsetY = -headHeight;
+        offsetHeight = headHeight;
         print("initState():headHeight=$headHeight");
       });
     });
@@ -42,18 +52,24 @@ class PullRefreshState extends State<PullRefresh> {
 
   @override
   Widget build(BuildContext context) {
-    Widget headWidget = widget.headBuilder(widget.pullController);
     List<Widget> widgets =
         List.from(widget.child.buildSlivers(context), growable: true);
     widgets.insert(
         0,
         SliverToBoxAdapter(
-          child: Container(
-            color: Colors.redAccent,
-            key: headGlobalKey,
-            child: headWidget,
-          ),
-        ));
+            child: Column(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                RefreshHeadWrapper(
+                  key: headGlobalKey,
+                  headBuilder: widget.headBuilder,
+                  height: headHeight,
+                )
+              ],
+            )
+          ],
+        )));
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       return Stack(
@@ -65,10 +81,9 @@ class PullRefreshState extends State<PullRefresh> {
               bottom: 0,
               child: NotificationListener(
                 child: CustomScrollView(
-                  physics: BouncingScrollPhysics(),
-                  controller: scrollController,
-                  slivers: widgets,
-                ),
+                    physics: BouncingScrollPhysics(),
+                    controller: scrollController,
+                    slivers: widgets),
                 onNotification: (ScrollNotification scrollNotification) {
                   handleScrollNotification(scrollNotification);
                 },
@@ -79,32 +94,50 @@ class PullRefreshState extends State<PullRefresh> {
   }
 
   handleScrollNotification(ScrollNotification scrollNotification) {
+    print(
+        "handleScrollNotification():currentRefreshState=$currentRefreshState");
+    RefreshObserve refreshObserve =
+        headGlobalKey.currentState as RefreshObserve;
+    double extentInside = scrollNotification.metrics.extentInside;
+    double maxScrollExtent = scrollNotification.metrics.maxScrollExtent;
+    double minScrollExtent = scrollNotification.metrics.minScrollExtent;
+    double pixels = scrollNotification.metrics.pixels;
+    double viewportHeight = extentInside;
+    if (pixels < 0) {
+      viewportHeight = viewportHeight - pixels;
+    }
+    double offset = viewportHeight - extentInside;
     if (scrollNotification is ScrollStartNotification) {
       print("handleScrollNotification():ScrollStartNotification");
     } else if (scrollNotification is ScrollUpdateNotification) {
-      print("handleScrollNotification():ScrollUpdateNotification");
-    } else if (scrollNotification is ScrollEndNotification) {
-      scrollController.animateTo(headHeight,
-          duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
-      setState(() {
-        if (offsetY > 0) {
-          offsetY = 0;
-        } else {
-          offsetY = -headHeight;
+      DragUpdateDetails dragUpdateDetails = scrollNotification.dragDetails;
+
+      if (offset > headHeight) {
+        if (dragUpdateDetails == null) {
+          currentRefreshState = RefreshState.pull_refreshing;
+          // 调用刷新接口
+          Future onRefresh = widget.onRefresh();
+          onRefresh.whenComplete(() {
+            currentRefreshState = RefreshState.pull_reset;
+             refreshObserve.onRefreshState(RefreshState.pull_reset, offset);
+          });
+        } else if (currentRefreshState != RefreshState.pull_refreshing) {
+          currentRefreshState = RefreshState.pull_release_to_refresh;
         }
-      });
-      print("handleScrollNotification():ScrollEndNotification");
+        print(
+            "handleScrollNotification():ScrollUpdateNotification:offsetHeight=$offsetHeight,headHeight=$headHeight");
+      } else {
+        if (dragUpdateDetails != null&&currentRefreshState!=RefreshState.pull_refreshing) {
+          currentRefreshState = RefreshState.pull_reset;
+        }
+      }
+    } else if (scrollNotification is ScrollEndNotification) {
     } else if (scrollNotification is OverscrollNotification) {
       //CustomScrollView设置BouncingScrollPhysics后无OverscrollNotification
       print("handleScrollNotification():OverscrollNotification");
-      double dy = scrollNotification.dragDetails.delta.dy;
-      scrollY += dy;
-      setState(() {
-        offsetY += dy;
-      });
-
-      print(
-          "handleScrollNotification():OverscrollNotification--dy=$dy,offsetY=$offsetY");
+    } else if (scrollNotification is UserScrollNotification) {
+      print("handleScrollNotification():UserScrollNotification");
     }
+    refreshObserve.onRefreshState(currentRefreshState, offset);
   }
 }
