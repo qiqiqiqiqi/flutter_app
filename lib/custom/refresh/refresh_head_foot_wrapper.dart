@@ -5,8 +5,8 @@ import 'refresh_observer.dart';
 typedef HeadFootBuilder = Widget Function(BuildContext context);
 
 class BaseRefreshWrapper extends StatefulWidget {
-  HeadFootBuilder headFootBuilder;
-  double height;
+  final HeadFootBuilder headFootBuilder;
+  final double height;
 
   BaseRefreshWrapper({Key key, this.headFootBuilder, this.height})
       : super(key: key);
@@ -104,7 +104,7 @@ class RefreshFootWrapper extends BaseRefreshWrapper {
 }
 
 class HeadFootContainerInheritedWidget extends InheritedWidget {
-  RefreshObserver refreshObserver;
+  final RefreshObserver refreshObserver;
 
   static HeadFootContainerInheritedWidget of(BuildContext context) {
     return context
