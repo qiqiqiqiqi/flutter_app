@@ -33,6 +33,7 @@ class PullRefreshState extends State<PullRefresh>
   GlobalKey headGlobalKey = GlobalKey();
   GlobalKey footGlobalKey = GlobalKey();
   double headHeight = 0;
+  double footHeight = 0;
   ScrollController scrollController;
   AnimationController animationController;
   RefreshState currentRefreshState;
@@ -43,16 +44,44 @@ class PullRefreshState extends State<PullRefresh>
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     scrollController = ScrollController();
     WidgetsBinding widgetsBinding = WidgetsBinding.instance;
-    widgetsBinding.addPostFrameCallback((Duration duration) {
-      setState(() {
-        headHeight = headGlobalKey.currentContext.size.height;
-        var maxScrollExtent = scrollController.position.maxScrollExtent;
-        if (maxScrollExtent > 0) {}
-        print(
-            "initState():headHeight=$headHeight,maxScrollExtent=$maxScrollExtent");
-      });
+//    widgetsBinding.addPostFrameCallback((Duration duration) {
+//      setState(() {
+//        if (headGlobalKey.currentContext != null) {
+//          headHeight = headGlobalKey.currentContext.size.height;
+//        }
+//        if (footGlobalKey.currentContext != null) {
+//          footHeight = footGlobalKey.currentContext.size.height;
+//        }
+//        print("initState():headHeight=$headHeight,footHeight=$footHeight");
+//      });
+//    });
+    widgetsBinding.addPersistentFrameCallback((Duration duration) {
+      if (headGlobalKey.currentContext != null) {
+        double headHeight = headGlobalKey.currentContext.size.height;
+        if (this.headHeight == 0 && headHeight != 0) {
+          setState(() {
+            this.headHeight = headHeight;
+          });
+        }
+      }
+      if (footGlobalKey.currentContext != null) {
+        double footHeight = footGlobalKey.currentContext.size.height;
+        if (this.footHeight == 0 && footHeight != 0) {
+          setState(() {
+            this.footHeight = footHeight;
+          });
+        }
+      }
+
+      print("initState():headHeight=$headHeight,footHeight=$footHeight");
     });
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    print("didChangeDependencies()");
+    super.didChangeDependencies();
   }
 
   @override
@@ -78,6 +107,9 @@ class PullRefreshState extends State<PullRefresh>
     if (scrollController.positions.isNotEmpty &&
         scrollController.position != null &&
         scrollController.position.maxScrollExtent > 0) {
+      var maxScrollExtent = scrollController.position.maxScrollExtent;
+     // footHeight = headHeight;
+      print("build():maxScrollExtent=$maxScrollExtent");
       widgets.add(SliverToBoxAdapter(
           child: Column(
         children: <Widget>[
@@ -86,7 +118,7 @@ class PullRefreshState extends State<PullRefresh>
               RefreshFootWrapper(
                 key: footGlobalKey,
                 headFootBuilder: widget.footBuilder,
-                height: headHeight,
+                height: footHeight,
               )
             ],
           )
@@ -101,7 +133,7 @@ class PullRefreshState extends State<PullRefresh>
               left: 0,
               right: 0,
               top: -headHeight,
-              bottom: -headHeight,
+              bottom: -footHeight,
               child: NotificationListener(
                 child: CustomScrollView(
                     physics: custom.BouncingScrollPhysics(),
@@ -152,7 +184,8 @@ class PullRefreshState extends State<PullRefresh>
         RefreshObserve refreshObserve =
             headGlobalKey.currentState as RefreshObserve;
         if (offset.abs() > headHeight) {
-          if (dragUpdateDetails == null) {
+          if (dragUpdateDetails == null &&
+              currentRefreshState != RefreshState.pull_refreshing) {
             currentRefreshState = RefreshState.pull_refreshing;
             // 调用刷新接口
             Future onRefresh = widget.onRefresh();
@@ -174,7 +207,8 @@ class PullRefreshState extends State<PullRefresh>
         RefreshObserve refreshObserve =
             footGlobalKey.currentState as RefreshObserve;
         if (offset > headHeight) {
-          if (dragUpdateDetails == null) {
+          if (dragUpdateDetails == null &&
+              currentRefreshState != RefreshState.pull_loading) {
             currentRefreshState = RefreshState.pull_loading;
             // 调用加载更多接口
             Future onRefresh = widget.onLoadMore();

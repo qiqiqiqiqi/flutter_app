@@ -18,20 +18,27 @@ class RefreshDemo extends StatefulWidget {
 
 class RefreshState extends State<RefreshDemo>
     with SingleTickerProviderStateMixin {
-
+  int itemCount = 4;
 
   @override
   void initState() {
     super.initState();
-
   }
 
   Future<void> onRefresh() async {
-    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {});
+    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {
+      setState(() {
+        itemCount++;
+      });
+    });
   }
 
   Future<void> onLoadMore() async {
-    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {});
+    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {
+      setState(() {
+        itemCount++;
+      });
+    });
   }
 
   @override
@@ -53,7 +60,7 @@ class RefreshState extends State<RefreshDemo>
             return DefualtRefreshFoot();
           },
           child: ListView.builder(
-              itemCount: 4,
+              itemCount: itemCount,
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: <Widget>[
