@@ -47,7 +47,7 @@ class RefreshState extends State<RefreshDemo>
             return DefualtRefreshHead();
           },
           child: ListView.builder(
-              itemCount: 15,
+              itemCount: 14,
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: <Widget>[

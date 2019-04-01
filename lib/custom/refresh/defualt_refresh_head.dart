@@ -23,6 +23,7 @@ class DefualtRefreshHeadState extends BaseRefreshHeadState<DefualtRefreshHead>
     super.initState();
     animationController = AnimationController(
         duration: Duration(milliseconds: 1000), vsync: this);
+
   }
 
   @override
@@ -40,7 +41,7 @@ class DefualtRefreshHeadState extends BaseRefreshHeadState<DefualtRefreshHead>
     animationController.stop();
     if (pullState == RefreshState.pull_refreshing) {
       animationController.duration = Duration(milliseconds: 1000);
-      Tween tween = Tween(begin: 0, end: 2 * Math.pi);
+      Tween tween = Tween(begin: 0.0, end: 2 * Math.pi);
       Animation animate = tween.animate(animationController);
       animate.addStatusListener((AnimationStatus animationStatus) {
         if (animationStatus == AnimationStatus.forward) {}

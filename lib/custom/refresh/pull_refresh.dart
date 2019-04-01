@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'refresh_head_wrapper.dart';
 import 'refresh_observer.dart';
 import 'refresh_state.dart';
+import 'custom_scroll_physics.dart' as custom;
 
 typedef Future<void> OnRefresh();
 
@@ -44,7 +44,10 @@ class PullRefreshState extends State<PullRefresh>
         headHeight = headGlobalKey.currentContext.size.height;
         offsetY = -headHeight;
         offsetHeight = headHeight;
-        print("initState():headHeight=$headHeight");
+        var maxScrollExtent = scrollController.position.maxScrollExtent;
+        if (maxScrollExtent > 0) {}
+        print(
+            "initState():headHeight=$headHeight,maxScrollExtent=$maxScrollExtent");
       });
     });
     super.initState();
@@ -70,6 +73,22 @@ class PullRefreshState extends State<PullRefresh>
             )
           ],
         )));
+    if (scrollController.positions.isNotEmpty &&scrollController.position!=null&&
+        scrollController.position.maxScrollExtent > 0) {
+      widgets.add(SliverToBoxAdapter(
+          child: Column(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              RefreshHeadWrapper(
+                headBuilder: widget.headBuilder,
+                height: headHeight,
+              )
+            ],
+          )
+        ],
+      )));
+    }
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       return Stack(
@@ -81,7 +100,7 @@ class PullRefreshState extends State<PullRefresh>
               bottom: 0,
               child: NotificationListener(
                 child: CustomScrollView(
-                    physics: BouncingScrollPhysics(),
+                    physics: custom.BouncingScrollPhysics(),
                     controller: scrollController,
                     slivers: widgets),
                 onNotification: (ScrollNotification scrollNotification) {
@@ -115,11 +134,12 @@ class PullRefreshState extends State<PullRefresh>
       if (offset > headHeight) {
         if (dragUpdateDetails == null) {
           currentRefreshState = RefreshState.pull_refreshing;
+
           // 调用刷新接口
           Future onRefresh = widget.onRefresh();
           onRefresh.whenComplete(() {
             currentRefreshState = RefreshState.pull_reset;
-             refreshObserve.onRefreshState(RefreshState.pull_reset, offset);
+            refreshObserve.onRefreshState(RefreshState.pull_reset, offset);
           });
         } else if (currentRefreshState != RefreshState.pull_refreshing) {
           currentRefreshState = RefreshState.pull_release_to_refresh;
@@ -127,11 +147,13 @@ class PullRefreshState extends State<PullRefresh>
         print(
             "handleScrollNotification():ScrollUpdateNotification:offsetHeight=$offsetHeight,headHeight=$headHeight");
       } else {
-        if (dragUpdateDetails != null&&currentRefreshState!=RefreshState.pull_refreshing) {
+        if (dragUpdateDetails != null &&
+            currentRefreshState != RefreshState.pull_refreshing) {
           currentRefreshState = RefreshState.pull_reset;
         }
       }
     } else if (scrollNotification is ScrollEndNotification) {
+      if (currentRefreshState == RefreshState.pull_refreshing) {}
     } else if (scrollNotification is OverscrollNotification) {
       //CustomScrollView设置BouncingScrollPhysics后无OverscrollNotification
       print("handleScrollNotification():OverscrollNotification");
@@ -139,5 +161,9 @@ class PullRefreshState extends State<PullRefresh>
       print("handleScrollNotification():UserScrollNotification");
     }
     refreshObserve.onRefreshState(currentRefreshState, offset);
+    if (currentRefreshState == RefreshState.pull_refreshing) {
+      //scrollController.jumpTo(0);
+
+    }
   }
 }
