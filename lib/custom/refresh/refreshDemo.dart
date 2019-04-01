@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pull_refresh.dart';
 import 'defualt_refresh_head.dart';
-import 'PullController.dart';
+import 'defualt_refresh_foot.dart';
 
 main() {
   runApp(MaterialApp(
@@ -18,18 +18,20 @@ class RefreshDemo extends StatefulWidget {
 
 class RefreshState extends State<RefreshDemo>
     with SingleTickerProviderStateMixin {
-  PullController pullController;
+
 
   @override
   void initState() {
     super.initState();
-    pullController = PullController(this);
+
   }
 
   Future<void> onRefresh() async {
-    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {
+    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {});
+  }
 
-    });
+  Future<void> onLoadMore() async {
+    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {});
   }
 
   @override
@@ -43,11 +45,15 @@ class RefreshState extends State<RefreshDemo>
         color: Colors.white,
         child: PullRefresh(
           onRefresh: onRefresh,
+          onLoadMore: onLoadMore,
           headBuilder: (BuildContext context) {
             return DefualtRefreshHead();
           },
+          footBuilder: (BuildContext context) {
+            return DefualtRefreshFoot();
+          },
           child: ListView.builder(
-              itemCount: 14,
+              itemCount: 4,
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: <Widget>[

@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
-import 'refresh_head_wrapper.dart';
+import 'refresh_head_foot_wrapper.dart';
+
 import 'refresh_observer.dart';
 import 'refresh_state.dart';
 import 'custom_scroll_physics.dart' as custom;
 
 typedef Future<void> OnRefresh();
+typedef Future<void> OnLoadMore();
 
 class PullRefresh extends StatefulWidget {
-  HeadBuilder headBuilder;
+  HeadFootBuilder headBuilder;
+  HeadFootBuilder footBuilder;
   ScrollView child;
   OnRefresh onRefresh;
+  OnLoadMore onLoadMore;
 
-  PullRefresh({this.headBuilder, this.child, this.onRefresh});
+  PullRefresh(
+      {this.headBuilder,
+      this.footBuilder,
+      this.onRefresh,
+      this.onLoadMore,
+      this.child});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,29 +30,22 @@ class PullRefresh extends StatefulWidget {
 
 class PullRefreshState extends State<PullRefresh>
     with TickerProviderStateMixin {
-  double offsetY = 0;
   GlobalKey headGlobalKey = GlobalKey();
+  GlobalKey footGlobalKey = GlobalKey();
   double headHeight = 0;
-  double scrollY = 0;
-  double offsetHeight = 0;
   ScrollController scrollController;
   AnimationController animationController;
-  AnimationController animationController_size;
   RefreshState currentRefreshState;
 
   @override
   void initState() {
     animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
-    animationController_size =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     scrollController = ScrollController();
     WidgetsBinding widgetsBinding = WidgetsBinding.instance;
     widgetsBinding.addPostFrameCallback((Duration duration) {
       setState(() {
         headHeight = headGlobalKey.currentContext.size.height;
-        offsetY = -headHeight;
-        offsetHeight = headHeight;
         var maxScrollExtent = scrollController.position.maxScrollExtent;
         if (maxScrollExtent > 0) {}
         print(
@@ -66,22 +68,24 @@ class PullRefreshState extends State<PullRefresh>
               children: <Widget>[
                 RefreshHeadWrapper(
                   key: headGlobalKey,
-                  headBuilder: widget.headBuilder,
+                  headFootBuilder: widget.headBuilder,
                   height: headHeight,
                 )
               ],
             )
           ],
         )));
-    if (scrollController.positions.isNotEmpty &&scrollController.position!=null&&
+    if (scrollController.positions.isNotEmpty &&
+        scrollController.position != null &&
         scrollController.position.maxScrollExtent > 0) {
       widgets.add(SliverToBoxAdapter(
           child: Column(
         children: <Widget>[
           Column(
             children: <Widget>[
-              RefreshHeadWrapper(
-                headBuilder: widget.headBuilder,
+              RefreshFootWrapper(
+                key: footGlobalKey,
+                headFootBuilder: widget.footBuilder,
                 height: headHeight,
               )
             ],
@@ -96,8 +100,8 @@ class PullRefreshState extends State<PullRefresh>
           Positioned(
               left: 0,
               right: 0,
-              top: offsetY,
-              bottom: 0,
+              top: -headHeight,
+              bottom: -headHeight,
               child: NotificationListener(
                 child: CustomScrollView(
                     physics: custom.BouncingScrollPhysics(),
@@ -115,55 +119,80 @@ class PullRefreshState extends State<PullRefresh>
   handleScrollNotification(ScrollNotification scrollNotification) {
     print(
         "handleScrollNotification():currentRefreshState=$currentRefreshState");
-    RefreshObserve refreshObserve =
-        headGlobalKey.currentState as RefreshObserve;
+
     double extentInside = scrollNotification.metrics.extentInside;
     double maxScrollExtent = scrollNotification.metrics.maxScrollExtent;
     double minScrollExtent = scrollNotification.metrics.minScrollExtent;
+    bool outOfRange = scrollNotification.metrics.outOfRange; //是否越界
+    bool atEdge = scrollNotification.metrics.atEdge; //是否在边界
     double pixels = scrollNotification.metrics.pixels;
-    double viewportHeight = extentInside;
-    if (pixels < 0) {
-      viewportHeight = viewportHeight - pixels;
-    }
-    double offset = viewportHeight - extentInside;
-    if (scrollNotification is ScrollStartNotification) {
-      print("handleScrollNotification():ScrollStartNotification");
-    } else if (scrollNotification is ScrollUpdateNotification) {
-      DragUpdateDetails dragUpdateDetails = scrollNotification.dragDetails;
+    double offset = 0;
 
-      if (offset > headHeight) {
-        if (dragUpdateDetails == null) {
-          currentRefreshState = RefreshState.pull_refreshing;
-
-          // 调用刷新接口
-          Future onRefresh = widget.onRefresh();
-          onRefresh.whenComplete(() {
-            currentRefreshState = RefreshState.pull_reset;
-            refreshObserve.onRefreshState(RefreshState.pull_reset, offset);
-          });
-        } else if (currentRefreshState != RefreshState.pull_refreshing) {
-          currentRefreshState = RefreshState.pull_release_to_refresh;
-        }
-        print(
-            "handleScrollNotification():ScrollUpdateNotification:offsetHeight=$offsetHeight,headHeight=$headHeight");
-      } else {
-        if (dragUpdateDetails != null &&
-            currentRefreshState != RefreshState.pull_refreshing) {
-          currentRefreshState = RefreshState.pull_reset;
-        }
+    ///pixels<0时，下拉；outOfRange==true
+    ///pixels>maxScrollExtent时，上拉；outOfRange==true
+    if (outOfRange) {
+      if (pixels < 0) {
+        offset = pixels;
+      } else if (pixels > maxScrollExtent) {
+        offset = pixels - maxScrollExtent;
       }
-    } else if (scrollNotification is ScrollEndNotification) {
-      if (currentRefreshState == RefreshState.pull_refreshing) {}
-    } else if (scrollNotification is OverscrollNotification) {
-      //CustomScrollView设置BouncingScrollPhysics后无OverscrollNotification
-      print("handleScrollNotification():OverscrollNotification");
-    } else if (scrollNotification is UserScrollNotification) {
-      print("handleScrollNotification():UserScrollNotification");
     }
-    refreshObserve.onRefreshState(currentRefreshState, offset);
-    if (currentRefreshState == RefreshState.pull_refreshing) {
-      //scrollController.jumpTo(0);
 
+    print("handleScrollNotification():ScrollUpdateNotification:offset=$offset,"
+        "extentInside=$extentInside,"
+        "pixels=$pixels,"
+        "maxScrollExtent=$maxScrollExtent,"
+        "minScrollExtent=$minScrollExtent,"
+        "outOfRange=$outOfRange,"
+        "atEdge=$atEdge,"
+        "offset=$offset");
+    if (scrollNotification is ScrollUpdateNotification) {
+      DragUpdateDetails dragUpdateDetails = scrollNotification.dragDetails;
+      if (offset < 0) {
+        RefreshObserve refreshObserve =
+            headGlobalKey.currentState as RefreshObserve;
+        if (offset.abs() > headHeight) {
+          if (dragUpdateDetails == null) {
+            currentRefreshState = RefreshState.pull_refreshing;
+            // 调用刷新接口
+            Future onRefresh = widget.onRefresh();
+            onRefresh.whenComplete(() {
+              currentRefreshState = RefreshState.pull_reset;
+              refreshObserve.onRefreshState(RefreshState.pull_reset, offset);
+            });
+          } else if (currentRefreshState != RefreshState.pull_refreshing) {
+            currentRefreshState = RefreshState.pull_release_to_refresh;
+          }
+        } else {
+          if (dragUpdateDetails != null &&
+              currentRefreshState != RefreshState.pull_refreshing) {
+            currentRefreshState = RefreshState.pull_reset;
+          }
+        }
+        refreshObserve.onRefreshState(currentRefreshState, offset);
+      } else {
+        RefreshObserve refreshObserve =
+            footGlobalKey.currentState as RefreshObserve;
+        if (offset > headHeight) {
+          if (dragUpdateDetails == null) {
+            currentRefreshState = RefreshState.pull_loading;
+            // 调用加载更多接口
+            Future onRefresh = widget.onLoadMore();
+            onRefresh.whenComplete(() {
+              currentRefreshState = RefreshState.pull_reset;
+              refreshObserve.onRefreshState(RefreshState.pull_reset, offset);
+            });
+          } else if (currentRefreshState != RefreshState.pull_loading) {
+            currentRefreshState = RefreshState.pull_release_to_load;
+          }
+        } else {
+          if (dragUpdateDetails != null &&
+              currentRefreshState != RefreshState.pull_loading) {
+            currentRefreshState = RefreshState.pull_reset;
+          }
+        }
+        refreshObserve.onRefreshState(currentRefreshState, offset);
+      }
     }
   }
 }

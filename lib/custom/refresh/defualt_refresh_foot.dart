@@ -3,16 +3,16 @@ import 'dart:math' as Math;
 import 'base_refresh_head.dart';
 import 'refresh_state.dart';
 
-class DefualtRefreshHead extends BaseRefreshHead {
+class DefualtRefreshFoot extends BaseRefreshHead {
   @override
   State<StatefulWidget> createState() {
-    return DefualtRefreshHeadState();
+    return DefualtRefreshFootState();
   }
 
-  DefualtRefreshHead();
+  DefualtRefreshFoot();
 }
 
-class DefualtRefreshHeadState extends BaseRefreshHeadState<DefualtRefreshHead>
+class DefualtRefreshFootState extends BaseRefreshHeadState<DefualtRefreshFoot>
     with SingleTickerProviderStateMixin {
   double rotateAngle = 0.0;
   AnimationController animationController;
@@ -37,7 +37,7 @@ class DefualtRefreshHeadState extends BaseRefreshHeadState<DefualtRefreshHead>
 
   void startAnimation(RefreshState pullState) {
     animationController.stop();
-    if (pullState == RefreshState.pull_refreshing) {
+    if (pullState == RefreshState.pull_loading) {
       animationController.duration = Duration(milliseconds: 1000);
       Tween tween = Tween(begin: 0.0, end: 2 * Math.pi);
       Animation animate = tween.animate(animationController);
@@ -51,9 +51,9 @@ class DefualtRefreshHeadState extends BaseRefreshHeadState<DefualtRefreshHead>
         });
       });
       animationController.repeat();
-    } else if (pullState == RefreshState.pull_release_to_refresh) {
+    } else if (pullState == RefreshState.pull_release_to_load) {
       animationController.duration = Duration(milliseconds: 200);
-      Tween tween = Tween(begin: 0.0, end: Math.pi);
+      Tween tween = Tween(begin:Math.pi, end: 0.0 );
       Animation animate = tween.animate(animationController);
       animate.addStatusListener((AnimationStatus animationStatus) {
         if (animationStatus == AnimationStatus.forward) {}
@@ -67,7 +67,7 @@ class DefualtRefreshHeadState extends BaseRefreshHeadState<DefualtRefreshHead>
       animationController.forward();
     } else {
       animationController.duration = Duration(milliseconds: 200);
-      Tween tween = Tween(begin: 0.0, end: -Math.pi);
+      Tween tween = Tween(begin: -Math.pi, end:0.0 );
       Animation animate = tween.animate(animationController);
       animate.addStatusListener((AnimationStatus animationStatus) {
         if (animationStatus == AnimationStatus.forward) {}
@@ -85,11 +85,11 @@ class DefualtRefreshHeadState extends BaseRefreshHeadState<DefualtRefreshHead>
   @override
   void onRefreshState(RefreshState refreshState, double offsetY) {
     print(
-        "DefualtRefreshHead:onRefreshState():refreshState=$refreshState,offsetY=$offsetY");
+        "DefualtRefreshFoot:onRefreshState():refreshState=$refreshState,offsetY=$offsetY");
     switch (refreshState) {
-      case RefreshState.pull_release_to_refresh:
+      case RefreshState.pull_release_to_load:
         break;
-      case RefreshState.pull_refreshing:
+      case RefreshState.pull_loading:
         break;
       case RefreshState.pull_reset:
         break;
@@ -105,15 +105,15 @@ class DefualtRefreshHeadState extends BaseRefreshHeadState<DefualtRefreshHead>
 
   Widget buildHeadWidget(RefreshState pullState) {
     Map statusMap = Map();
-    if (pullState == RefreshState.pull_refreshing) {
+    if (pullState == RefreshState.pull_loading) {
       statusMap['leftIcon'] = 'images/refresh_arrow_loading.png';
-      statusMap['rightText'] = '正在刷新';
-    } else if (pullState == RefreshState.pull_release_to_refresh) {
+      statusMap['rightText'] = '正在加载';
+    } else if (pullState == RefreshState.pull_release_to_load) {
       statusMap['leftIcon'] = 'images/refresh_arrow_down.png';
-      statusMap['rightText'] = '释放刷新';
+      statusMap['rightText'] = '释放加载';
     } else {
       statusMap['leftIcon'] = 'images/refresh_arrow_down.png';
-      statusMap['rightText'] = '下拉刷新';
+      statusMap['rightText'] = '上拉加载';
     }
     startAnimation(pullState);
     return Container(

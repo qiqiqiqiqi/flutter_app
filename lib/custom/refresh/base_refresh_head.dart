@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/custom/refresh/refresh_state.dart';
 import 'refresh_observer.dart';
-import 'refresh_head_wrapper.dart';
+import 'refresh_head_foot_wrapper.dart';
 
 class BaseRefreshHead extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class BaseRefreshHead extends StatefulWidget {
 
 abstract class BaseRefreshHeadState<T extends StatefulWidget> extends State<T>
     with RefreshObserve {
-  HeadContainerInheritedWidget headContainerInheritedWidget;
+  HeadFootContainerInheritedWidget headContainerInheritedWidget;
 
   @override
   void initState() {
@@ -22,7 +22,7 @@ abstract class BaseRefreshHeadState<T extends StatefulWidget> extends State<T>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    headContainerInheritedWidget = HeadContainerInheritedWidget.of(context);
+    headContainerInheritedWidget = HeadFootContainerInheritedWidget.of(context);
     if (headContainerInheritedWidget != null &&
         headContainerInheritedWidget.refreshObserver != null) {
       headContainerInheritedWidget.refreshObserver.subscribe(this);
@@ -31,7 +31,7 @@ abstract class BaseRefreshHeadState<T extends StatefulWidget> extends State<T>
 
   @override
   void dispose() {
-    headContainerInheritedWidget = HeadContainerInheritedWidget.of(context);
+    headContainerInheritedWidget = HeadFootContainerInheritedWidget.of(context);
     if (headContainerInheritedWidget != null &&
         headContainerInheritedWidget.refreshObserver != null) {
       headContainerInheritedWidget.refreshObserver.unsubscribe(this);

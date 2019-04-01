@@ -7,4 +7,13 @@ enum RefreshState {
 
   ///重置
   pull_reset,
+
+  ///释放加载
+  pull_release_to_load,
+
+  ///正在加载
+  pull_loading,
+
+
 }
+
