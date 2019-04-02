@@ -131,31 +131,31 @@ class PullRefreshState extends State<PullRefresh>
         ],
       )));
     }
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      viewPortHeight = constraints.constrainHeight();
-      print("LayoutBuilder():${constraints.constrainHeight()}");
-      return Stack(
-        children: <Widget>[
-          Positioned(
-            left: 0,
-            right: 0,
-            top: -headHeight,
-            bottom: -footHeight,
-            child: NotificationListener(
-              child: CustomScrollView(
-                  key: listGlobalKey,
-                  physics: custom.BouncingScrollPhysics(),
-                  controller: scrollController,
-                  slivers: widgets),
-              onNotification: (ScrollNotification scrollNotification) {
-                handleScrollNotification(scrollNotification);
-              },
-            ),
-          )
-        ],
-      );
-    });
+    return Column(
+      children: <Widget>[
+        Expanded(
+            child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 0,
+              right: 0,
+              top: -headHeight,
+              bottom: -footHeight,
+              child: NotificationListener(
+                key: listGlobalKey,
+                child: CustomScrollView(
+                    physics: custom.BouncingScrollPhysics(),
+                    controller: scrollController,
+                    slivers: widgets),
+                onNotification: (ScrollNotification scrollNotification) {
+                  handleScrollNotification(scrollNotification);
+                },
+              ),
+            )
+          ],
+        ))
+      ],
+    );
   }
 
   handleScrollNotification(ScrollNotification scrollNotification) {

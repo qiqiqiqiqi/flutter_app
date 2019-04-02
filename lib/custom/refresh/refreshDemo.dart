@@ -18,7 +18,7 @@ class RefreshDemo extends StatefulWidget {
 
 class RefreshState extends State<RefreshDemo>
     with SingleTickerProviderStateMixin {
-  int itemCount = 9;
+  int itemCount = 4;
 
   @override
   void initState() {
