@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'refresh_head_foot_wrapper.dart';
-
 import 'refresh_observer.dart';
 import 'refresh_state.dart';
 import 'custom_scroll_physics.dart' as custom;
+import 'package:flutter/gestures.dart';
 
 typedef Future<void> OnRefresh();
 typedef Future<void> OnLoadMore();
@@ -32,11 +32,14 @@ class PullRefreshState extends State<PullRefresh>
     with TickerProviderStateMixin {
   GlobalKey headGlobalKey = GlobalKey();
   GlobalKey footGlobalKey = GlobalKey();
+  GlobalKey listGlobalKey = GlobalKey();
   double headHeight = 0;
   double footHeight = 0;
   ScrollController scrollController;
   AnimationController animationController;
   RefreshState currentRefreshState;
+  double viewPortHeight = 0.0;
+  double listHeight = 0.0;
 
   @override
   void initState() {
@@ -44,17 +47,10 @@ class PullRefreshState extends State<PullRefresh>
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     scrollController = ScrollController();
     WidgetsBinding widgetsBinding = WidgetsBinding.instance;
-//    widgetsBinding.addPostFrameCallback((Duration duration) {
-//      setState(() {
-//        if (headGlobalKey.currentContext != null) {
-//          headHeight = headGlobalKey.currentContext.size.height;
-//        }
-//        if (footGlobalKey.currentContext != null) {
-//          footHeight = footGlobalKey.currentContext.size.height;
-//        }
-//        print("initState():headHeight=$headHeight,footHeight=$footHeight");
-//      });
-//    });
+    widgetsBinding.addPostFrameCallback((callBack) {
+      listHeight = listGlobalKey.currentContext.size.height;
+      print("initState():listHeight=$listHeight");
+    });
     widgetsBinding.addPersistentFrameCallback((Duration duration) {
       if (headGlobalKey.currentContext != null) {
         double headHeight = headGlobalKey.currentContext.size.height;
@@ -104,12 +100,22 @@ class PullRefreshState extends State<PullRefresh>
             )
           ],
         )));
+
     if (scrollController.positions.isNotEmpty &&
         scrollController.position != null &&
         scrollController.position.maxScrollExtent > 0) {
-      var maxScrollExtent = scrollController.position.maxScrollExtent;
-     // footHeight = headHeight;
-      print("build():maxScrollExtent=$maxScrollExtent");
+      double maxScrollExtent = scrollController.position.maxScrollExtent;
+      print("build():"
+          "currentRefreshState=$currentRefreshState,"
+          "extentInside=${scrollController.position.extentInside},"
+          "extentBefore=${scrollController.position.extentBefore},"
+          "extentAfter=${scrollController.position.extentAfter},"
+          "pixels=${scrollController.position.pixels},"
+          "maxScrollExtent=${scrollController.position.maxScrollExtent},"
+          "minScrollExtent=${scrollController.position.minScrollExtent},"
+          "outOfRange=${scrollController.position.outOfRange},"
+          "atEdge=${scrollController.position.atEdge},"
+          "offset=${scrollController.offset}");
       widgets.add(SliverToBoxAdapter(
           child: Column(
         children: <Widget>[
@@ -127,31 +133,32 @@ class PullRefreshState extends State<PullRefresh>
     }
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
+      viewPortHeight = constraints.constrainHeight();
+      print("LayoutBuilder():${constraints.constrainHeight()}");
       return Stack(
         children: <Widget>[
           Positioned(
-              left: 0,
-              right: 0,
-              top: -headHeight,
-              bottom: -footHeight,
-              child: NotificationListener(
-                child: CustomScrollView(
-                    physics: custom.BouncingScrollPhysics(),
-                    controller: scrollController,
-                    slivers: widgets),
-                onNotification: (ScrollNotification scrollNotification) {
-                  handleScrollNotification(scrollNotification);
-                },
-              ))
+            left: 0,
+            right: 0,
+            top: -headHeight,
+            bottom: -footHeight,
+            child: NotificationListener(
+              child: CustomScrollView(
+                  key: listGlobalKey,
+                  physics: custom.BouncingScrollPhysics(),
+                  controller: scrollController,
+                  slivers: widgets),
+              onNotification: (ScrollNotification scrollNotification) {
+                handleScrollNotification(scrollNotification);
+              },
+            ),
+          )
         ],
       );
     });
   }
 
   handleScrollNotification(ScrollNotification scrollNotification) {
-    print(
-        "handleScrollNotification():currentRefreshState=$currentRefreshState");
-
     double extentInside = scrollNotification.metrics.extentInside;
     double maxScrollExtent = scrollNotification.metrics.maxScrollExtent;
     double minScrollExtent = scrollNotification.metrics.minScrollExtent;
@@ -170,17 +177,20 @@ class PullRefreshState extends State<PullRefresh>
       }
     }
 
-    print("handleScrollNotification():ScrollUpdateNotification:offset=$offset,"
+    print("handleScrollNotification():scrollNotification=$scrollNotification,"
+        "currentRefreshState=$currentRefreshState,"
         "extentInside=$extentInside,"
         "pixels=$pixels,"
         "maxScrollExtent=$maxScrollExtent,"
         "minScrollExtent=$minScrollExtent,"
         "outOfRange=$outOfRange,"
         "atEdge=$atEdge,"
-        "offset=$offset");
+        "offset=$offset,"
+        "footHeight=$footHeight,"
+        "headHeight=$headHeight");
     if (scrollNotification is ScrollUpdateNotification) {
       DragUpdateDetails dragUpdateDetails = scrollNotification.dragDetails;
-      if (offset < 0) {
+      if (offset < 0 && currentRefreshState != RefreshState.pull_loading) {
         RefreshObserve refreshObserve =
             headGlobalKey.currentState as RefreshObserve;
         if (offset.abs() > headHeight) {
@@ -191,7 +201,7 @@ class PullRefreshState extends State<PullRefresh>
             Future onRefresh = widget.onRefresh();
             onRefresh.whenComplete(() {
               currentRefreshState = RefreshState.pull_reset;
-              refreshObserve.onRefreshState(RefreshState.pull_reset, offset);
+              refreshObserve?.onRefreshState(RefreshState.pull_reset, offset);
             });
           } else if (currentRefreshState != RefreshState.pull_refreshing) {
             currentRefreshState = RefreshState.pull_release_to_refresh;
@@ -202,19 +212,20 @@ class PullRefreshState extends State<PullRefresh>
             currentRefreshState = RefreshState.pull_reset;
           }
         }
-        refreshObserve.onRefreshState(currentRefreshState, offset);
-      } else {
+        refreshObserve?.onRefreshState(currentRefreshState, offset);
+      } else if (currentRefreshState != RefreshState.pull_refreshing) {
         RefreshObserve refreshObserve =
             footGlobalKey.currentState as RefreshObserve;
-        if (offset > headHeight) {
-          if (dragUpdateDetails == null &&
+        if (offset > footHeight) {
+          if (maxScrollExtent > 0 &&
+              dragUpdateDetails == null &&
               currentRefreshState != RefreshState.pull_loading) {
             currentRefreshState = RefreshState.pull_loading;
             // 调用加载更多接口
             Future onRefresh = widget.onLoadMore();
             onRefresh.whenComplete(() {
               currentRefreshState = RefreshState.pull_reset;
-              refreshObserve.onRefreshState(RefreshState.pull_reset, offset);
+              refreshObserve?.onRefreshState(RefreshState.pull_reset, offset);
             });
           } else if (currentRefreshState != RefreshState.pull_loading) {
             currentRefreshState = RefreshState.pull_release_to_load;
@@ -225,7 +236,7 @@ class PullRefreshState extends State<PullRefresh>
             currentRefreshState = RefreshState.pull_reset;
           }
         }
-        refreshObserve.onRefreshState(currentRefreshState, offset);
+        refreshObserve?.onRefreshState(currentRefreshState, offset);
       }
     }
   }

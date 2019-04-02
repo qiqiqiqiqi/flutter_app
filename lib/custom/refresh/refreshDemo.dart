@@ -18,7 +18,7 @@ class RefreshDemo extends StatefulWidget {
 
 class RefreshState extends State<RefreshDemo>
     with SingleTickerProviderStateMixin {
-  int itemCount = 4;
+  int itemCount = 9;
 
   @override
   void initState() {
@@ -26,15 +26,20 @@ class RefreshState extends State<RefreshDemo>
   }
 
   Future<void> onRefresh() async {
-    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {
+    await Future.delayed(Duration(milliseconds: 1000)).then((onValue) {
       setState(() {
-        itemCount++;
+        if (itemCount > 10) {
+          itemCount = 4;
+        } else {
+          itemCount++;
+        }
       });
     });
   }
 
   Future<void> onLoadMore() async {
-    await Future.delayed(Duration(milliseconds: 5000)).then((onValue) {
+    print("RefreshDemo:onLoadMore()");
+    await Future.delayed(Duration(milliseconds: 1000)).then((onValue) {
       setState(() {
         itemCount++;
       });
@@ -49,7 +54,6 @@ class RefreshState extends State<RefreshDemo>
         title: Text("pullRefreshDemo"),
       ),
       body: Container(
-        color: Colors.white,
         child: PullRefresh(
           onRefresh: onRefresh,
           onLoadMore: onLoadMore,
@@ -60,23 +64,29 @@ class RefreshState extends State<RefreshDemo>
             return DefualtRefreshFoot();
           },
           child: ListView.builder(
+              cacheExtent: 0,
+              padding: EdgeInsets.all(0),
               itemCount: itemCount,
               itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: <Widget>[
-                    ListTile(
-                      title: new Text("data$index"),
-                      leading: new Icon(Icons.add_box),
-                      subtitle: new Text("data$index"),
-                      isThreeLine: false,
-                      trailing: new Icon(Icons.arrow_right),
-                      onTap: () {},
-                    ),
-                    new Divider(
-                      height: 1,
-                      color: Colors.orangeAccent,
-                    )
-                  ],
+                return Container(
+                  color: Colors.white,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                        title: new Text("data$index"),
+                        leading: new Icon(Icons.add_box),
+                        subtitle: new Text("data$index"),
+                        isThreeLine: false,
+                        trailing: new Icon(Icons.arrow_right),
+                        onTap: () {},
+                      ),
+                      new Divider(
+                        height: 1,
+                        color: Colors.orangeAccent,
+                      )
+                    ],
+                  ),
                 );
               }),
         ),

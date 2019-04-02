@@ -52,7 +52,8 @@ class RefreshHeadFootState extends State<BaseRefreshWrapper>
         ],
       );
     } else {
-      return Column(
+      return Container(
+        child: Column(
         children: <Widget>[
           HeadFootContainerInheritedWidget(
               child: widget.headFootBuilder(context),
@@ -61,7 +62,7 @@ class RefreshHeadFootState extends State<BaseRefreshWrapper>
               sizeFactor: animationController,
               child: Container(height: widget.height))
         ],
-      );
+      ),);
     }
   }
 

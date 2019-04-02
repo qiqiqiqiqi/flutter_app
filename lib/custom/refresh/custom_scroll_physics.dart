@@ -29,8 +29,6 @@ class BouncingScrollPhysics extends ScrollPhysics {
 
   @override
   bool shouldAcceptUserOffset(ScrollMetrics position) {
-    print(
-        "BouncingScrollPhysics:shouldAcceptUserOffset():viewPort=${position.extentAfter},position.maxScrollExtent=${position.maxScrollExtent}");
     return true;
   }
 
