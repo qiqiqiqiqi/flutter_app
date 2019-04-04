@@ -34,7 +34,7 @@ class BouncingScrollPhysics extends ScrollPhysics {
 
   @override
   double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
-    print("BouncingScrollPhysics:applyPhysicsToUserOffset():");
+
     assert(offset != 0.0);
     assert(position.minScrollExtent <= position.maxScrollExtent);
 
@@ -56,7 +56,10 @@ class BouncingScrollPhysics extends ScrollPhysics {
         : frictionFactor(overscrollPast / position.viewportDimension);
     final double direction = offset.sign;
 
-    return direction * _applyFriction(overscrollPast, offset.abs(), friction);
+    double userOffset= direction * _applyFriction(overscrollPast, offset.abs(), friction);
+    print("BouncingScrollPhysics:applyPhysicsToUserOffset():userOffset=$userOffset");
+    return userOffset;
+
   }
 
   static double _applyFriction(

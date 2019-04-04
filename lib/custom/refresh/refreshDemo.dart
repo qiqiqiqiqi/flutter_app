@@ -18,7 +18,7 @@ class RefreshDemo extends StatefulWidget {
 
 class RefreshState extends State<RefreshDemo>
     with SingleTickerProviderStateMixin {
-  int itemCount = 4;
+  int itemCount = 7;
 
   @override
   void initState() {
@@ -28,11 +28,7 @@ class RefreshState extends State<RefreshDemo>
   Future<void> onRefresh() async {
     await Future.delayed(Duration(milliseconds: 1000)).then((onValue) {
       setState(() {
-        if (itemCount > 10) {
-          itemCount = 4;
-        } else {
-          itemCount++;
-        }
+        itemCount++;
       });
     });
   }
