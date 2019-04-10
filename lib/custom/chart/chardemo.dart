@@ -15,11 +15,10 @@ class ChartDemo extends StatefulWidget {
 
 class ChartDemoState extends State<ChartDemo> {
   List<double> datas;
-  final int childCount = 7;
+  final int childCount = 31;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     datas = List.generate(100, (int position) {
       return Math.Random().nextDouble();

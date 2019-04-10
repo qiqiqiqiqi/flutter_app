@@ -20,13 +20,13 @@ class LineChartState extends State<LineChart> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      double itemWith = (constraints.maxWidth - 32) / widget.childCount;
+      double itemWith = (constraints.maxWidth - 48) / widget.childCount;
       return Container(
         foregroundDecoration: ChartDecoration(
             itemWith: itemWith,
             scrollController: scrollController,
             datas: widget.datas,
-            leftPadding: 16,
+            leftPadding: 32,
             rightPadding: 16),
         height: 300,
         child: NotificationListener(
@@ -34,7 +34,7 @@ class LineChartState extends State<LineChart> {
               setState(() {});
             },
             child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.only(left: 32,right: 16),
               controller: scrollController,
               itemBuilder: (context, index) {
                 return Container(

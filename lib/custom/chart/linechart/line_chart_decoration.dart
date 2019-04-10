@@ -43,16 +43,17 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
     double extentBefore = scrollController.position.extentBefore;
     double extentInside = scrollController.position.extentInside;
     double extentAfter = scrollController.position.extentAfter;
+    offsetX = pixels % itemWith;
     childCount =
         (configuration.size.width - leftPadding - rightPadding) ~/ itemWith;
-    firstVisiablePosition = (pixels ~/ itemWith);
+    firstVisiablePosition =
+        (pixels ~/ itemWith) + ((offsetX - itemWith).abs() < 0.1 ? 1 : 0);
     lastVisiablePosition = firstVisiablePosition + childCount;
     if (lastVisiablePosition > datas.length - 1) {
       lastVisiablePosition = datas.length - 1;
     }
     //offsetX=46.857142857142854,itemWith=46.857142857142854 当offsetX十分接近itemWith时置offsetX=0
-    offsetX = pixels % itemWith;
-    if ((offsetX - itemWith).abs() < 0.1) {
+    if ((offsetX - itemWith).abs() < 0.001) {
       offsetX = 0;
     }
     print(
@@ -72,6 +73,7 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
     //canvas.drawColor(Colors.orange, BlendMode.difference);
     drawPath(canvas, size);
     drawPoints(canvas, size);
+    drawLine(canvas, size);
   }
 
   void drawPath(Canvas canvas, Size size) {
@@ -116,12 +118,14 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
   }
 
   double getLeft(int position) {
+    int scrollPosition = scrollController.position.pixels ~/ itemWith;
+    if ((scrollController.position.pixels % itemWith - itemWith).abs() < 0.1) {
+      scrollPosition = scrollPosition + 1;
+    }
     double left =
-        (position - scrollController.position.pixels ~/ itemWith) * itemWith -
-            offsetX +
-            leftPadding;
+        (position - scrollPosition) * itemWith - offsetX + leftPadding;
     print(
-        "ChartDecorationBoxPainter:getLeft():left=$left,position=$position,position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWith}");
+        "ChartDecorationBoxPainter:getLeft():left=$left,position=$position,position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWith},offsetX=$offsetX");
     return left;
   }
 
@@ -139,6 +143,23 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
           Offset(getLeft(position) + itemWith / 2,
               size.height * (datas[position] as double)),
           4,
+          paint);
+    }
+    canvas.restore();
+  }
+
+  void drawLine(Canvas canvas, Size size) {
+    canvas.save();
+    Paint paint = Paint()
+      ..color = Colors.blueAccent
+      ..strokeWidth = 1
+      ..isAntiAlias = true
+      ..style = PaintingStyle.fill;
+    double spaceHeight = size.height / 5;
+    for (int i = 0; i < 5; i++) {
+      canvas.drawLine(
+          Offset(leftPadding, size.height - spaceHeight * i),
+          Offset(size.width - rightPadding, size.height - spaceHeight * i),
           paint);
     }
     canvas.restore();
