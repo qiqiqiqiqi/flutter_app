@@ -4,8 +4,18 @@ import 'line_chart_decoration.dart';
 class LineChart<T> extends StatefulWidget {
   final int childCount;
   final List<T> datas;
+  double leftPadding;
+  double rightPadding;
+  double topPadding;
+  double bottomPadding;
 
-  LineChart({this.childCount, this.datas});
+  LineChart(
+      {this.childCount,
+      this.datas,
+      this.leftPadding = 0,
+      this.rightPadding = 0,
+      this.topPadding = 0,
+      this.bottomPadding = 0});
 
   @override
   State<StatefulWidget> createState() {
@@ -13,28 +23,53 @@ class LineChart<T> extends StatefulWidget {
   }
 }
 
-class LineChartState extends State<LineChart> {
+class LineChartState extends State<LineChart> with TickerProviderStateMixin {
   ScrollController scrollController = ScrollController();
+  double animationValue = 1;
+  AnimationController animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 3000));
+    Animation curvedAnimation = CurvedAnimation(parent: animationController, curve: ElasticOutCurve(1.0));
+    animationController.forward();
+    curvedAnimation.addListener(() {
+      setState(() {
+        animationValue = curvedAnimation.value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      double itemWith = (constraints.maxWidth - 48) / widget.childCount;
+      double itemWith =
+          (constraints.maxWidth - (widget.leftPadding + widget.rightPadding)) /
+              widget.childCount;
       return Container(
         foregroundDecoration: ChartDecoration(
             itemWith: itemWith,
             scrollController: scrollController,
             datas: widget.datas,
-            leftPadding: 32,
-            rightPadding: 16),
+            leftPadding: widget.leftPadding,
+            rightPadding: widget.rightPadding,
+            topPadding: widget.topPadding,
+            bottomPadding: widget.bottomPadding,
+            animationValue: animationValue),
         height: 300,
         child: NotificationListener(
             onNotification: (ScrollNotification scrollNotification) {
               setState(() {});
             },
             child: ListView.builder(
-              padding: EdgeInsets.only(left: 32,right: 16),
+              padding: EdgeInsets.only(
+                  left: widget.leftPadding,
+                  top: widget.topPadding,
+                  right: widget.rightPadding,
+                  bottom: widget.bottomPadding),
               controller: scrollController,
               itemBuilder: (context, index) {
                 return Container(
