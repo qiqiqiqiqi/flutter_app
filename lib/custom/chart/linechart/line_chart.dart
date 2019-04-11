@@ -33,12 +33,18 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
     super.initState();
     animationController = AnimationController(
         vsync: this, duration: Duration(milliseconds: 3000));
-    Animation curvedAnimation = CurvedAnimation(parent: animationController, curve: ElasticOutCurve(1.0));
-    animationController.forward();
+    Animation curvedAnimation = CurvedAnimation(
+        parent: animationController, curve: ElasticOutCurve(1.0));
+
     curvedAnimation.addListener(() {
       setState(() {
         animationValue = curvedAnimation.value;
       });
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((callBack) {
+      //  scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      animationController.forward();
     });
   }
 
@@ -58,7 +64,8 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
             rightPadding: widget.rightPadding,
             topPadding: widget.topPadding,
             bottomPadding: widget.bottomPadding,
-            animationValue: animationValue),
+            animationValue: animationValue,
+            bezier: true),
         height: 300,
         child: NotificationListener(
             onNotification: (ScrollNotification scrollNotification) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-main() => runApp(new MyStatefulWidget());
+import 'custom/chart/chartdemo.dart';
+main() => runApp(new ChartDemo());
 
 class MainApp extends StatelessWidget {
   @override

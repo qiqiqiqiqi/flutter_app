@@ -9,6 +9,7 @@ class LineChartDecoration<T> extends Decoration {
   final double topPadding;
   final double bottomPadding;
   final double animationValue;
+  final bool bezier;
 
   LineChartDecoration(
       {this.itemWidth,
@@ -18,7 +19,8 @@ class LineChartDecoration<T> extends Decoration {
       this.rightPadding = 0,
       this.topPadding = 0,
       this.bottomPadding = 0,
-      this.animationValue = 1});
+      this.animationValue = 1,
+      this.bezier = false});
 
   @override
   BoxPainter createBoxPainter([onChanged]) {
@@ -30,7 +32,8 @@ class LineChartDecoration<T> extends Decoration {
         rightPadding: rightPadding,
         topPadding: topPadding,
         bottomPadding: bottomPadding,
-        animationValue: animationValue);
+        animationValue: animationValue,
+        bezier: bezier);
   }
 }
 
@@ -49,6 +52,7 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
   double topPadding;
   double bottomPadding;
   double animationValue;
+  bool bezier;
 
   ChartDecorationBoxPainter(
       {this.itemWidth,
@@ -58,7 +62,8 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
       this.rightPadding,
       this.topPadding,
       this.bottomPadding,
-      this.animationValue});
+      this.animationValue,
+      this.bezier = false});
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
@@ -83,7 +88,8 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
         'ChartDecorationBoxPainter:paint():firstVisiablePosition=$firstVisiablePosition,lastVisiablePosition=$lastVisiablePosition,childCount=$childCount,offsetX=$offsetX');
     print(
         'ChartDecorationBoxPainter:paint():pixels=$pixels,extentBefore=$extentBefore,extentInside=$extentInside,extentAfter=$extentAfter');
-    print('ChartDecorationBoxPainter:paint():itemWith=$itemWidth,offset=$offset,'
+    print(
+        'ChartDecorationBoxPainter:paint():itemWith=$itemWidth,offset=$offset,'
         'configuration.size=${configuration.size}');
 
     drawChart(canvas, offset, configuration.size);
@@ -130,8 +136,25 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
         path.moveTo(getLeft(position) + itemWidth / 2,
             size.height * (1 - (datas[position] as double) * animationValue));
       } else {
-        path.lineTo(getLeft(position) + itemWidth / 2,
-            size.height * (1 - (datas[position] as double) * animationValue));
+        if (!bezier) {
+          path.lineTo(getLeft(position) + itemWidth / 2,
+              size.height * (1 - (datas[position] as double) * animationValue));
+        } else {
+          Offset perPositionOffset = Offset(
+              getLeft(position - 1) + itemWidth / 2,
+              size.height *
+                  (1 - (datas[position - 1] as double) * animationValue));
+          Offset currPositionOffset = Offset(getLeft(position) + itemWidth / 2,
+              size.height * (1 - (datas[position] as double) * animationValue));
+          Offset c_1 = Offset(
+              (perPositionOffset.dx + currPositionOffset.dx) / 2,
+              perPositionOffset.dy);
+          Offset c_2 = Offset(
+              (perPositionOffset.dx + currPositionOffset.dx) / 2,
+              currPositionOffset.dy);
+          path.cubicTo(c_1.dx, c_1.dy, c_2.dx, c_2.dy, currPositionOffset.dx,
+              currPositionOffset.dy);
+        }
       }
     }
     paint
@@ -153,7 +176,8 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
 
   double getLeft(int position) {
     int scrollPosition = scrollController.position.pixels ~/ itemWidth;
-    if ((scrollController.position.pixels % itemWidth - itemWidth).abs() < DETA) {
+    if ((scrollController.position.pixels % itemWidth - itemWidth).abs() <
+        DETA) {
       scrollPosition = scrollPosition + 1;
     }
     double left =
@@ -228,7 +252,7 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
     for (int position = firstVisiablePosition;
         position <= lastVisiablePosition;
         position++) {
-      if (position % 5 == 0) {
+      if (position % 2 == 0) {
         TextPainter textPainter = TextPainter(
             textDirection: TextDirection.ltr,
             text: TextSpan(

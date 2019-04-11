@@ -15,7 +15,7 @@ class ChartDemo extends StatefulWidget {
 
 class ChartDemoState extends State<ChartDemo> {
   List<double> datas;
-  final int childCount = 15;
+  final int childCount = 7;
 
   @override
   void initState() {
