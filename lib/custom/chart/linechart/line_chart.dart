@@ -65,7 +65,7 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
             topPadding: widget.topPadding,
             bottomPadding: widget.bottomPadding,
             animationValue: animationValue,
-            bezier: true),
+            chartType: ChartType.GRAPH),
         height: 300,
         child: GestureDetector(
           onScaleStart: (ScaleStartDetails details) {

@@ -52,6 +52,7 @@ flutter:
     - images/no1.png
     - images/refresh_arrow_down.png
     - images/refresh_arrow_loading.png
+    - images/bg_guide_page2.png
 
   fonts:
     - family: digital
