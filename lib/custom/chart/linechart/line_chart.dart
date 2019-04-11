@@ -46,12 +46,12 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      double itemWith =
+      double itemWidth =
           (constraints.maxWidth - (widget.leftPadding + widget.rightPadding)) /
               widget.childCount;
       return Container(
-        foregroundDecoration: ChartDecoration(
-            itemWith: itemWith,
+        foregroundDecoration: LineChartDecoration(
+            itemWidth: itemWidth,
             scrollController: scrollController,
             datas: widget.datas,
             leftPadding: widget.leftPadding,
@@ -74,7 +74,7 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
               itemBuilder: (context, index) {
                 return Container(
                   alignment: Alignment.center,
-                  width: itemWith,
+                  width: itemWidth,
                   /*child: Row(
                     children: <Widget>[
                       Expanded(

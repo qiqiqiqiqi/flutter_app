@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ChartDecoration<T> extends Decoration {
-  final double itemWith;
+class LineChartDecoration<T> extends Decoration {
+  final double itemWidth;
   final ScrollController scrollController;
   final List<T> datas;
   final double leftPadding;
@@ -10,8 +10,8 @@ class ChartDecoration<T> extends Decoration {
   final double bottomPadding;
   final double animationValue;
 
-  ChartDecoration(
-      {this.itemWith,
+  LineChartDecoration(
+      {this.itemWidth,
       this.scrollController,
       this.datas,
       this.leftPadding = 0,
@@ -23,7 +23,7 @@ class ChartDecoration<T> extends Decoration {
   @override
   BoxPainter createBoxPainter([onChanged]) {
     return ChartDecorationBoxPainter(
-        itemWith: itemWith,
+        itemWidth: itemWidth,
         scrollController: scrollController,
         datas: datas,
         leftPadding: leftPadding,
@@ -36,7 +36,7 @@ class ChartDecoration<T> extends Decoration {
 
 class ChartDecorationBoxPainter<T> extends BoxPainter {
   static final double DETA = 0.5;
-  double itemWith;
+  double itemWidth;
   ScrollController scrollController;
   int firstVisiablePosition;
   int lastVisiablePosition;
@@ -51,7 +51,7 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
   double animationValue;
 
   ChartDecorationBoxPainter(
-      {this.itemWith,
+      {this.itemWidth,
       this.scrollController,
       this.datas,
       this.leftPadding,
@@ -66,24 +66,24 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
     double extentBefore = scrollController.position.extentBefore;
     double extentInside = scrollController.position.extentInside;
     double extentAfter = scrollController.position.extentAfter;
-    offsetX = pixels % itemWith;
+    offsetX = pixels % itemWidth;
     childCount =
-        (configuration.size.width - leftPadding - rightPadding) ~/ itemWith;
+        (configuration.size.width - leftPadding - rightPadding) ~/ itemWidth;
     firstVisiablePosition =
-        (pixels ~/ itemWith) + ((offsetX - itemWith).abs() < DETA ? 1 : 0);
+        (pixels ~/ itemWidth) + ((offsetX - itemWidth).abs() < DETA ? 1 : 0);
     lastVisiablePosition = firstVisiablePosition + childCount;
     if (lastVisiablePosition > datas.length - 1) {
       lastVisiablePosition = datas.length - 1;
     }
     //offsetX=46.857142857142854,itemWith=46.857142857142855 当offsetX十分接近itemWith时置offsetX=0
-    if ((offsetX - itemWith).abs() < DETA) {
+    if ((offsetX - itemWidth).abs() < DETA) {
       offsetX = 0;
     }
     print(
         'ChartDecorationBoxPainter:paint():firstVisiablePosition=$firstVisiablePosition,lastVisiablePosition=$lastVisiablePosition,childCount=$childCount,offsetX=$offsetX');
     print(
         'ChartDecorationBoxPainter:paint():pixels=$pixels,extentBefore=$extentBefore,extentInside=$extentInside,extentAfter=$extentAfter');
-    print('ChartDecorationBoxPainter:paint():itemWith=$itemWith,offset=$offset,'
+    print('ChartDecorationBoxPainter:paint():itemWith=$itemWidth,offset=$offset,'
         'configuration.size=${configuration.size}');
 
     drawChart(canvas, offset, configuration.size);
@@ -127,10 +127,10 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
 
     for (int position = startPosition; position <= endPosition; position++) {
       if (position == startPosition) {
-        path.moveTo(getLeft(position) + itemWith / 2,
+        path.moveTo(getLeft(position) + itemWidth / 2,
             size.height * (1 - (datas[position] as double) * animationValue));
       } else {
-        path.lineTo(getLeft(position) + itemWith / 2,
+        path.lineTo(getLeft(position) + itemWidth / 2,
             size.height * (1 - (datas[position] as double) * animationValue));
       }
     }
@@ -144,22 +144,22 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
       ..style = PaintingStyle.fill
       ..shader = linearGradient
           .createShader(Rect.fromLTRB(0, 0, size.width, size.height));
-    path.lineTo(getLeft(endPosition) + itemWith / 2, size.height);
-    path.lineTo(getLeft(startPosition) + itemWith / 2, size.height);
+    path.lineTo(getLeft(endPosition) + itemWidth / 2, size.height);
+    path.lineTo(getLeft(startPosition) + itemWidth / 2, size.height);
     path.close();
     canvas.drawPath(path, paint);
     canvas.restore();
   }
 
   double getLeft(int position) {
-    int scrollPosition = scrollController.position.pixels ~/ itemWith;
-    if ((scrollController.position.pixels % itemWith - itemWith).abs() < DETA) {
+    int scrollPosition = scrollController.position.pixels ~/ itemWidth;
+    if ((scrollController.position.pixels % itemWidth - itemWidth).abs() < DETA) {
       scrollPosition = scrollPosition + 1;
     }
     double left =
-        (position - scrollPosition) * itemWith - offsetX /*+ leftPadding*/;
+        (position - scrollPosition) * itemWidth - offsetX /*+ leftPadding*/;
     print(
-        "ChartDecorationBoxPainter:getLeft():left=$left,position=$position,position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWith},offsetX=$offsetX");
+        "ChartDecorationBoxPainter:getLeft():left=$left,position=$position,position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWidth},offsetX=$offsetX");
     return left;
   }
 
@@ -174,7 +174,7 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
         position <= lastVisiablePosition;
         position++) {
       canvas.drawCircle(
-          Offset(getLeft(position) + itemWith / 2,
+          Offset(getLeft(position) + itemWidth / 2,
               size.height * (1 - (datas[position] as double) * animationValue)),
           4,
           paint);
@@ -241,7 +241,7 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
         textPainter.paint(
             canvas,
             Offset(
-                getLeft(position) + itemWith / 2 + -textPainter.size.width / 2,
+                getLeft(position) + itemWidth / 2 + -textPainter.size.width / 2,
                 size.height - bottomPadding / 2 - textPainter.size.height / 2));
       }
     }
