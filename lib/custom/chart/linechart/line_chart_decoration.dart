@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+enum Chart {
+  LINE,
+  BEZIER,
+}
+
 class LineChartDecoration<T> extends Decoration {
   final double itemWidth;
   final ScrollController scrollController;
@@ -252,7 +257,7 @@ class ChartDecorationBoxPainter<T> extends BoxPainter {
     for (int position = firstVisiablePosition;
         position <= lastVisiablePosition;
         position++) {
-      if (position % 2 == 0) {
+      if (position % 5 == 0) {
         TextPainter textPainter = TextPainter(
             textDirection: TextDirection.ltr,
             text: TextSpan(

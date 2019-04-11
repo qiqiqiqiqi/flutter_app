@@ -67,22 +67,35 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
             animationValue: animationValue,
             bezier: true),
         height: 300,
-        child: NotificationListener(
-            onNotification: (ScrollNotification scrollNotification) {
-              setState(() {});
-            },
-            child: ListView.builder(
-              padding: EdgeInsets.only(
-                  left: widget.leftPadding,
-                  top: widget.topPadding,
-                  right: widget.rightPadding,
-                  bottom: widget.bottomPadding),
-              controller: scrollController,
-              itemBuilder: (context, index) {
-                return Container(
-                  alignment: Alignment.center,
-                  width: itemWidth,
-                  /*child: Row(
+        child: GestureDetector(
+          onScaleStart: (ScaleStartDetails details) {
+            print(
+                'LineChartState-build()-onScaleEnd:details.focalPoint=${details.focalPoint}');
+          },
+          onScaleUpdate: (ScaleUpdateDetails details) {
+            print(
+                'LineChartState-build()-onScaleUpdate:details.scale=${details.scale}');
+          },
+          onScaleEnd: (ScaleEndDetails details) {
+            print(
+                'LineChartState-build()-onScaleEnd:details.scale=${details.velocity}');
+          },
+          child: NotificationListener(
+              onNotification: (ScrollNotification scrollNotification) {
+                setState(() {});
+              },
+              child: ListView.builder(
+                padding: EdgeInsets.only(
+                    left: widget.leftPadding,
+                    top: widget.topPadding,
+                    right: widget.rightPadding,
+                    bottom: widget.bottomPadding),
+                controller: scrollController,
+                itemBuilder: (context, index) {
+                  return Container(
+                    alignment: Alignment.center,
+                    width: itemWidth,
+                    /*child: Row(
                     children: <Widget>[
                       Expanded(
                           child: Center(
@@ -94,11 +107,12 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
                       )
                     ],
                   ),*/
-                );
-              },
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.datas.length,
-            )),
+                  );
+                },
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.datas.length,
+              )),
+        ),
       );
     });
   }
