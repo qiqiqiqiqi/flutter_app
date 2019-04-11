@@ -48,11 +48,73 @@ abstract class BaseChartDecorationBoxPainter<T> extends BoxPainter {
       offsetX = 0;
     }
     print(
-        'BaseChartDecorationBoxPainter:paint():firstVisiablePosition=$firstVisiablePosition,lastVisiablePosition=$lastVisiablePosition,childCount=$childCount,offsetX=$offsetX');
+        'BaseChartDecorationBoxPainter--paint():firstVisiablePosition=$firstVisiablePosition,lastVisiablePosition=$lastVisiablePosition,childCount=$childCount,offsetX=$offsetX');
     print(
-        'BaseChartDecorationBoxPainter:paint():pixels=$pixels,extentBefore=$extentBefore,extentInside=$extentInside,extentAfter=$extentAfter');
+        'BaseChartDecorationBoxPainter--paint():pixels=$pixels,extentBefore=$extentBefore,extentInside=$extentInside,extentAfter=$extentAfter');
     print(
-        'BaseChartDecorationBoxPainter:paint():itemWith=$itemWidth,offset=$offset,configuration.size=${configuration.size}');
+        'BaseChartDecorationBoxPainter--paint():itemWith=$itemWidth,offset=$offset,configuration.size=${configuration.size}');
+  }
+
+  double getLeft(int position) {
+    int scrollPosition = scrollController.position.pixels ~/ itemWidth;
+    if ((scrollController.position.pixels % itemWidth - itemWidth).abs() <
+        BaseChartDecorationBoxPainter.DETA) {
+      scrollPosition = scrollPosition + 1;
+    }
+    double left =
+        (position - scrollPosition) * itemWidth - offsetX /*+ leftPadding*/;
+    print(
+        "BaseChartDecorationBoxPainter--getLeft():left=$left,position=$position,position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWidth},offsetX=$offsetX");
+    return left;
+  }
+
+  void drawCoordinate(Canvas canvas, Offset offset, Size size) {
+    canvas.save();
+    canvas.translate(leftPadding, offset.dy);
+    double spaceHeight = (size.height - topPadding - bottomPadding) / 5;
+    for (int i = 0; i < 5; i++) {
+      TextPainter textPainter = TextPainter(
+          textDirection: TextDirection.ltr,
+          text: TextSpan(
+              text: '$i',
+              style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold)));
+      textPainter.layout();
+      textPainter.paint(
+          canvas,
+          Offset(
+              -leftPadding / 2 - textPainter.size.width / 2,
+              size.height -
+                  bottomPadding -
+                  i * spaceHeight -
+                  textPainter.size.height / 2));
+    }
+
+    canvas.clipRect(Rect.fromLTRB(
+        0, 0, size.width - rightPadding - leftPadding, size.height));
+    for (int position = firstVisiablePosition;
+        position <= lastVisiablePosition;
+        position++) {
+      if (position % 5 == 0) {
+        TextPainter textPainter = TextPainter(
+            textDirection: TextDirection.ltr,
+            text: TextSpan(
+                text: '$position',
+                style: TextStyle(
+                    color: Colors.blueAccent,
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold)));
+        textPainter.layout();
+        textPainter.paint(
+            canvas,
+            Offset(
+                getLeft(position) + itemWidth / 2 + -textPainter.size.width / 2,
+                size.height - bottomPadding / 2 - textPainter.size.height / 2));
+      }
+    }
+    canvas.restore();
   }
 }
 
@@ -162,19 +224,6 @@ class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
     canvas.restore();
   }
 
-  double getLeft(int position) {
-    int scrollPosition = scrollController.position.pixels ~/ itemWidth;
-    if ((scrollController.position.pixels % itemWidth - itemWidth).abs() <
-        BaseChartDecorationBoxPainter.DETA) {
-      scrollPosition = scrollPosition + 1;
-    }
-    double left =
-        (position - scrollPosition) * itemWidth - offsetX /*+ leftPadding*/;
-    print(
-        "ChartDecorationBoxPainter:getLeft():left=$left,position=$position,position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWidth},offsetX=$offsetX");
-    return left;
-  }
-
   void drawPoints(Canvas canvas, Size size) {
     canvas.save();
     Paint paint = Paint()
@@ -207,55 +256,6 @@ class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
           Offset(/*leftPadding*/ 0, size.height - spaceHeight * i),
           Offset(size.width /*- rightPadding*/, size.height - spaceHeight * i),
           paint);
-    }
-    canvas.restore();
-  }
-
-  void drawCoordinate(Canvas canvas, Offset offset, Size size) {
-    canvas.save();
-    canvas.translate(leftPadding, offset.dy);
-    double spaceHeight = (size.height - topPadding - bottomPadding) / 5;
-    for (int i = 0; i < 5; i++) {
-      TextPainter textPainter = TextPainter(
-          textDirection: TextDirection.ltr,
-          text: TextSpan(
-              text: '$i',
-              style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold)));
-      textPainter.layout();
-      textPainter.paint(
-          canvas,
-          Offset(
-              -leftPadding / 2 - textPainter.size.width / 2,
-              size.height -
-                  bottomPadding -
-                  i * spaceHeight -
-                  textPainter.size.height / 2));
-    }
-
-    canvas.clipRect(Rect.fromLTRB(
-        0, 0, size.width - rightPadding - leftPadding, size.height));
-    for (int position = firstVisiablePosition;
-        position <= lastVisiablePosition;
-        position++) {
-      if (position % 5 == 0) {
-        TextPainter textPainter = TextPainter(
-            textDirection: TextDirection.ltr,
-            text: TextSpan(
-                text: '$position',
-                style: TextStyle(
-                    color: Colors.blueAccent,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold)));
-        textPainter.layout();
-        textPainter.paint(
-            canvas,
-            Offset(
-                getLeft(position) + itemWidth / 2 + -textPainter.size.width / 2,
-                size.height - bottomPadding / 2 - textPainter.size.height / 2));
-      }
     }
     canvas.restore();
   }
