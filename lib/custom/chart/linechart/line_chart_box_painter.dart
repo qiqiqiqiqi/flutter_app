@@ -118,6 +118,7 @@ abstract class BaseChartDecorationBoxPainter<T> extends BoxPainter {
   }
 }
 
+/// 折线图
 class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
   bool bezier;
   Path path = Path();
@@ -145,8 +146,8 @@ class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
     super.paint(canvas, offset, configuration);
-    drawChart(canvas, offset, configuration.size);
     drawCoordinate(canvas, offset, configuration.size);
+    drawChart(canvas, offset, configuration.size);
   }
 
   void drawChart(Canvas canvas, Offset offset, Size size) {
@@ -258,5 +259,34 @@ class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
           paint);
     }
     canvas.restore();
+  }
+}
+
+///直方图
+class BarChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
+  BarChartDecorationBoxPainter({
+    double itemWidth,
+    ScrollController scrollController,
+    List<T> datas,
+    double leftPadding,
+    double rightPadding,
+    double topPadding,
+    double bottomPadding,
+    double animationValue,
+  }) : super(
+            itemWidth: itemWidth,
+            scrollController: scrollController,
+            datas: datas,
+            leftPadding: leftPadding,
+            rightPadding: rightPadding,
+            topPadding: topPadding,
+            bottomPadding: bottomPadding,
+            animationValue: animationValue);
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    super.paint(canvas, offset, configuration);
+    drawCoordinate(canvas, offset, configuration.size);
+
   }
 }
