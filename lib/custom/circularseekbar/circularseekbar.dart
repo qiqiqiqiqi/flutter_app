@@ -53,12 +53,12 @@ class CircularSeekBar extends CustomPainter {
       endAngle: 5 * pi / 4 + offsetRadian,
       startAngle: offsetRadian,
       colors: <Color>[
-        Color(0XFF00ADEF),
-        Color(0XFF10BDDE),
+        Color(0xFF00ADEF),
+        Color(0xFF10BDDE),
        /* Color(0XFF3FCDB2)*/Colors.redAccent,
 
-        Color(0XFFB1C04F),
-        Color(0XFFF9B512)
+        Color(0xFFB1C04F),
+        Color(0xFFF9B512)
       ],
     );
     Paint paint = Paint()
@@ -85,7 +85,7 @@ class CircularSeekBar extends CustomPainter {
     Paint paint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.fill
-      ..color = Color(0XFFC7C7C7)
+      ..color = Color(0xFFc7c7c7)
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 2;
     canvas.drawLine(Offset(0.0, -size.height / 2),
@@ -102,7 +102,7 @@ class CircularSeekBar extends CustomPainter {
         text: TextSpan(
             text: text,
             style: TextStyle(
-                color: Color(0XFFC7C7C7),
+                color: Color(0xFFC7C7C7),
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
                 fontStyle: FontStyle.italic)));
@@ -187,8 +187,8 @@ class CircularSeekBar extends CustomPainter {
   }
 
   Color getColorByAngle(double angle) {
-    Color startColor = Color(0XFF00ADEF);
-    Color endColor = Color(0XFFF9B512);
+    Color startColor = Color(0xFF00ADEF);
+    Color endColor = Color(0xFFF9B512);
     int startred = startColor.red;
     int startgreen = startColor.green;
     int startblue = startColor.blue;

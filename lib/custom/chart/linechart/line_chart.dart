@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'line_chart_decoration.dart';
 
-class LineChart<T> extends StatefulWidget {
+class LineChart<ChartData> extends StatefulWidget {
   final int childCount;
-  final List<T> datas;
+  final List<ChartData> datas;
   double leftPadding;
   double rightPadding;
   double topPadding;
   double bottomPadding;
+  ChartType chartType;
 
   LineChart(
       {this.childCount,
@@ -15,7 +16,8 @@ class LineChart<T> extends StatefulWidget {
       this.leftPadding = 0,
       this.rightPadding = 0,
       this.topPadding = 0,
-      this.bottomPadding = 0});
+      this.bottomPadding = 0,
+      this.chartType = ChartType.GRAPH});
 
   @override
   State<StatefulWidget> createState() {
@@ -65,7 +67,7 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
             topPadding: widget.topPadding,
             bottomPadding: widget.bottomPadding,
             animationValue: animationValue,
-            chartType: ChartType.GRAPH),
+            chartType: widget.chartType),
         height: 300,
         child: GestureDetector(
           onScaleStart: (ScaleStartDetails details) {

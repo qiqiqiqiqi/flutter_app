@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 import 'linechart/line_chart.dart';
+import 'linechart/line_chart_decoration.dart';
+import 'linechart/line_chart_data.dart';
 
 main() {
   runApp(ChartDemo());
@@ -14,14 +16,14 @@ class ChartDemo extends StatefulWidget {
 }
 
 class ChartDemoState extends State<ChartDemo> {
-  List<double> datas;
-  final int childCount = 31;
+  List<ChartData> datas;
+  final int childCount = 7;
 
   @override
   void initState() {
     super.initState();
     datas = List.generate(1000, (int position) {
-      return Math.Random().nextDouble();
+      return ChartData()..dataValue = Math.Random().nextDouble();
     });
   }
 
@@ -35,6 +37,7 @@ class ChartDemoState extends State<ChartDemo> {
         ),
         body: LineChart(
           childCount: childCount,
+          chartType: ChartType.GRAPH,
           datas: datas,
           leftPadding: 32,
           topPadding: 16,

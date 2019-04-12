@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'line_chart_data.dart';
 
-abstract class BaseChartDecorationBoxPainter<T> extends BoxPainter {
+abstract class BaseChartDecorationBoxPainter extends BoxPainter {
   static final double DETA = 0.5;
   double itemWidth;
   ScrollController scrollController;
@@ -8,7 +9,7 @@ abstract class BaseChartDecorationBoxPainter<T> extends BoxPainter {
   int lastVisiablePosition;
   int childCount;
   double offsetX;
-  List<T> datas;
+  List<ChartData> datas;
   double leftPadding;
   double rightPadding;
   double topPadding;
@@ -53,26 +54,34 @@ abstract class BaseChartDecorationBoxPainter<T> extends BoxPainter {
         'BaseChartDecorationBoxPainter--paint():pixels=$pixels,extentBefore=$extentBefore,extentInside=$extentInside,extentAfter=$extentAfter');
     print(
         'BaseChartDecorationBoxPainter--paint():itemWith=$itemWidth,offset=$offset,configuration.size=${configuration.size}');
+
+    drawCoordinate(canvas, offset, configuration.size);
+    _drawContent(canvas, offset, configuration.size);
   }
 
+  ///item 相对内容区域左边的位置
   double getLeft(int position) {
     int scrollPosition = scrollController.position.pixels ~/ itemWidth;
     if ((scrollController.position.pixels % itemWidth - itemWidth).abs() <
         BaseChartDecorationBoxPainter.DETA) {
       scrollPosition = scrollPosition + 1;
     }
-    double left =
-        (position - scrollPosition) * itemWidth - offsetX /*+ leftPadding*/;
+    double left = (position - scrollPosition) * itemWidth - offsetX;
     print(
         "BaseChartDecorationBoxPainter--getLeft():left=$left,position=$position,position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWidth},offsetX=$offsetX");
     return left;
   }
 
+  double getHeightRatio(int position) {
+    return (datas[position].dataValue) * animationValue;
+  }
+
+  ///绘制坐标
   void drawCoordinate(Canvas canvas, Offset offset, Size size) {
     canvas.save();
     canvas.translate(leftPadding, offset.dy);
-    double spaceHeight = (size.height - topPadding - bottomPadding) / 5;
-    for (int i = 0; i < 5; i++) {
+    double spaceHeight = (size.height - topPadding - bottomPadding) / 4;
+    for (int i = 0; i <= 4; i++) {
       TextPainter textPainter = TextPainter(
           textDirection: TextDirection.ltr,
           text: TextSpan(
@@ -116,17 +125,52 @@ abstract class BaseChartDecorationBoxPainter<T> extends BoxPainter {
     }
     canvas.restore();
   }
+
+  void _drawContent(Canvas canvas, Offset offset, Size size) {
+    canvas.save();
+    Size contentSize = Size(size.width - leftPadding - rightPadding,
+        size.height - topPadding - bottomPadding);
+    canvas.translate(
+        leftPadding, offset.dy + topPadding); //这里统一处理偏移数据，画图时面向size
+    canvas.clipRect(Rect.fromLTRB(
+        0, -topPadding, contentSize.width, contentSize.height + bottomPadding));
+
+    //canvas.drawColor(Colors.orange, BlendMode.difference);
+
+    drawChart(canvas, contentSize);
+    drawLine(canvas, contentSize);
+    canvas.restore();
+  }
+
+  ///绘制纵轴的刻度线
+  void drawLine(Canvas canvas, Size size) {
+    canvas.save();
+    Paint paint = Paint()
+      ..color = Color(0xFFddc5fe)
+      ..strokeWidth = 1
+      ..isAntiAlias = true
+      ..style = PaintingStyle.fill;
+    double spaceHeight = size.height / 4;
+    for (int i = 0; i <= 4; i++) {
+      canvas.drawLine(Offset(0, size.height - spaceHeight * i),
+          Offset(size.width, size.height - spaceHeight * i), paint);
+    }
+    canvas.restore();
+  }
+
+  ///绘制图表内容
+  void drawChart(Canvas canvas, Size size);
 }
 
 /// 折线图
-class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
+class LineChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
   bool bezier;
   Path path = Path();
 
   LineChartDecorationBoxPainter(
       {double itemWidth,
       ScrollController scrollController,
-      List<T> datas,
+      List<ChartData> datas,
       double leftPadding,
       double rightPadding,
       double topPadding,
@@ -144,26 +188,13 @@ class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
             animationValue: animationValue);
 
   @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-    super.paint(canvas, offset, configuration);
-    drawCoordinate(canvas, offset, configuration.size);
-    drawChart(canvas, offset, configuration.size);
-  }
-
-  void drawChart(Canvas canvas, Offset offset, Size size) {
+  void drawChart(Canvas canvas, Size size) {
+    if (animationValue == 0) {
+      return;
+    }
     canvas.save();
-    size = Size(size.width - leftPadding - rightPadding,
-        size.height - topPadding - bottomPadding);
-    canvas.translate(
-        leftPadding, offset.dy + topPadding); //这里统一处理偏移数据，画图时面向size
-    canvas.clipRect(
-        Rect.fromLTRB(0, -topPadding, size.width, size.height + bottomPadding));
-
-    // canvas.drawColor(Colors.orange, BlendMode.difference);
-
     drawPath(canvas, size);
     drawPoints(canvas, size);
-    drawLine(canvas, size);
     canvas.restore();
   }
 
@@ -185,18 +216,17 @@ class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
     for (int position = startPosition; position <= endPosition; position++) {
       if (position == startPosition) {
         path.moveTo(getLeft(position) + itemWidth / 2,
-            size.height * (1 - (datas[position] as double) * animationValue));
+            size.height * (1 - getHeightRatio(position)));
       } else {
         if (!bezier) {
           path.lineTo(getLeft(position) + itemWidth / 2,
-              size.height * (1 - (datas[position] as double) * animationValue));
+              size.height * (1 - getHeightRatio(position)));
         } else {
           Offset perPositionOffset = Offset(
               getLeft(position - 1) + itemWidth / 2,
-              size.height *
-                  (1 - (datas[position - 1] as double) * animationValue));
+              size.height * (1 - getHeightRatio(position-1)));
           Offset currPositionOffset = Offset(getLeft(position) + itemWidth / 2,
-              size.height * (1 - (datas[position] as double) * animationValue));
+              size.height * (1 - getHeightRatio(position)));
           Offset c_1 = Offset(
               (perPositionOffset.dx + currPositionOffset.dx) / 2,
               perPositionOffset.dy);
@@ -237,25 +267,8 @@ class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
         position++) {
       canvas.drawCircle(
           Offset(getLeft(position) + itemWidth / 2,
-              size.height * (1 - (datas[position] as double) * animationValue)),
+              size.height * (1 - getHeightRatio(position))),
           4,
-          paint);
-    }
-    canvas.restore();
-  }
-
-  void drawLine(Canvas canvas, Size size) {
-    canvas.save();
-    Paint paint = Paint()
-      ..color = Color(0xFFddc5fe)
-      ..strokeWidth = 1
-      ..isAntiAlias = true
-      ..style = PaintingStyle.fill;
-    double spaceHeight = size.height / 5;
-    for (int i = 0; i < 5; i++) {
-      canvas.drawLine(
-          Offset(/*leftPadding*/ 0, size.height - spaceHeight * i),
-          Offset(size.width /*- rightPadding*/, size.height - spaceHeight * i),
           paint);
     }
     canvas.restore();
@@ -263,17 +276,20 @@ class LineChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
 }
 
 ///直方图
-class BarChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
-  BarChartDecorationBoxPainter({
-    double itemWidth,
-    ScrollController scrollController,
-    List<T> datas,
-    double leftPadding,
-    double rightPadding,
-    double topPadding,
-    double bottomPadding,
-    double animationValue,
-  }) : super(
+class BarChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
+  bool circula;
+
+  BarChartDecorationBoxPainter(
+      {double itemWidth,
+      ScrollController scrollController,
+      List<ChartData> datas,
+      double leftPadding,
+      double rightPadding,
+      double topPadding,
+      double bottomPadding,
+      double animationValue,
+      this.circula = false})
+      : super(
             itemWidth: itemWidth,
             scrollController: scrollController,
             datas: datas,
@@ -284,9 +300,38 @@ class BarChartDecorationBoxPainter<T> extends BaseChartDecorationBoxPainter {
             animationValue: animationValue);
 
   @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-    super.paint(canvas, offset, configuration);
-    drawCoordinate(canvas, offset, configuration.size);
+  void drawChart(Canvas canvas, Size size) {
+    canvas.save();
+    drawBar(canvas, size);
+    canvas.restore();
+  }
 
+  void drawBar(Canvas canvas, Size size) {
+    canvas.save();
+    LinearGradient linearGradient = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[Color(0xFFffb0bb), Color(0xFFffc1a2)]);
+    Paint paint = Paint()
+      ..isAntiAlias = true
+      ..style = PaintingStyle.fill
+      ..shader = linearGradient
+          .createShader(Rect.fromLTRB(0, 0, size.width, size.height));
+    for (int position = firstVisiablePosition;
+        position <= lastVisiablePosition;
+        position++) {
+      Rect rect = Rect.fromLTRB(
+          getLeft(position) + itemWidth / 2 - 4,
+          (1 - getHeightRatio(position)) * size.height,
+          getLeft(position) + itemWidth / 2 + 4,
+          size.height);
+      if (circula) {
+        RRect rRect = RRect.fromRectAndRadius(rect, Radius.circular(4));
+        canvas.drawRRect(rRect, paint);
+      } else {
+        canvas.drawRect(rect, paint);
+      }
+    }
+    canvas.restore();
   }
 }

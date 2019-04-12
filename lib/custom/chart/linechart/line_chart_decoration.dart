@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'line_chart_box_painter.dart';
-
+import 'line_chart_data.dart';
 enum ChartType {
   LINE, //折线图
   GRAPH, //曲线图
   BAR, //直方图
-  CIRCULAR_BAR, //圆角直方图
+  R_BAR, //圆角直方图
 }
 
-class LineChartDecoration<T> extends Decoration {
+class LineChartDecoration extends Decoration {
   final double itemWidth;
   final ScrollController scrollController;
-  final List<T> datas;
+  final List<ChartData> datas;
   final double leftPadding;
   final double rightPadding;
   final double topPadding;
@@ -35,17 +35,6 @@ class LineChartDecoration<T> extends Decoration {
     BaseChartDecorationBoxPainter baseChartDecorationBoxPainter;
     switch (chartType) {
       case ChartType.LINE:
-        baseChartDecorationBoxPainter = LineChartDecorationBoxPainter(
-            itemWidth: itemWidth,
-            scrollController: scrollController,
-            datas: datas,
-            leftPadding: leftPadding,
-            rightPadding: rightPadding,
-            topPadding: topPadding,
-            bottomPadding: bottomPadding,
-            animationValue: animationValue,
-            bezier: false);
-        break;
       case ChartType.GRAPH:
         baseChartDecorationBoxPainter = LineChartDecorationBoxPainter(
             itemWidth: itemWidth,
@@ -56,11 +45,21 @@ class LineChartDecoration<T> extends Decoration {
             topPadding: topPadding,
             bottomPadding: bottomPadding,
             animationValue: animationValue,
-            bezier: true);
+            bezier: chartType == ChartType.GRAPH);
         break;
-      case ChartType.CIRCULAR_BAR:
-        break;
+      case ChartType.R_BAR:
       case ChartType.BAR:
+        baseChartDecorationBoxPainter = BarChartDecorationBoxPainter(
+            itemWidth: itemWidth,
+            scrollController: scrollController,
+            datas: datas,
+            leftPadding: leftPadding,
+            rightPadding: rightPadding,
+            topPadding: topPadding,
+            bottomPadding: bottomPadding,
+            animationValue: animationValue,
+            circula: chartType == ChartType.R_BAR);
+        break;
         break;
       default:
         baseChartDecorationBoxPainter = LineChartDecorationBoxPainter(
