@@ -76,6 +76,10 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
     return (datas[position].dataValue) * animationValue;
   }
 
+  List<ChartData> getVisiableRangeDatas() {
+    return datas?.sublist(firstVisiablePosition, lastVisiablePosition);
+  }
+
   ///绘制坐标
   void drawCoordinate(Canvas canvas, Offset offset, Size size) {
     canvas.save();
@@ -224,7 +228,7 @@ class LineChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
         } else {
           Offset perPositionOffset = Offset(
               getLeft(position - 1) + itemWidth / 2,
-              size.height * (1 - getHeightRatio(position-1)));
+              size.height * (1 - getHeightRatio(position - 1)));
           Offset currPositionOffset = Offset(getLeft(position) + itemWidth / 2,
               size.height * (1 - getHeightRatio(position)));
           Offset c_1 = Offset(
