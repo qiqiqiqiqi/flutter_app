@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'line_chart_box_painter.dart';
 import 'line_chart_data.dart';
+
 enum ChartType {
   LINE, //折线图
   GRAPH, //曲线图
   BAR, //直方图
   R_BAR, //圆角直方图
+  POINT, //圆角直方图
 }
 
 class LineChartDecoration extends Decoration {
@@ -60,6 +62,21 @@ class LineChartDecoration extends Decoration {
             animationValue: animationValue,
             circula: chartType == ChartType.R_BAR);
         break;
+      case ChartType.POINT:
+        List<String> levelStrings = <String>['无损', '轻微', '一般', '较严重', '严重'];
+        baseChartDecorationBoxPainter = PointChartDecorationBoxPainter(
+            itemWidth: itemWidth,
+            scrollController: scrollController,
+            datas: datas,
+            leftPadding: leftPadding,
+            rightPadding: rightPadding,
+            topPadding: topPadding,
+            bottomPadding: bottomPadding,
+            animationValue: animationValue,
+            levelStrings: levelStrings,
+            levels: levelStrings.length - 1,
+            minValue: 0,
+            maxValue: levelStrings.length - 1);
         break;
       default:
         baseChartDecorationBoxPainter = LineChartDecorationBoxPainter(

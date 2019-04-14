@@ -17,14 +17,21 @@ class ChartDemo extends StatefulWidget {
 
 class ChartDemoState extends State<ChartDemo> {
   List<ChartData> datas;
-  final int childCount = 7;
+  final int childCount = 31;
+  ChartType chartType = ChartType.POINT;
 
   @override
   void initState() {
     super.initState();
-    datas = List.generate(1000, (int position) {
-      return ChartData()..dataValue = Math.Random().nextDouble();
-    });
+    if (chartType != ChartType.POINT) {
+      datas = List.generate(1000, (int position) {
+        return ChartData()..dataValue = Math.Random().nextDouble();
+      });
+    } else {
+      datas = List.generate(1000, (int position) {
+        return ChartData()..dataValue = Math.Random().nextDouble() * 4;
+      });
+    }
   }
 
   @override
@@ -37,9 +44,9 @@ class ChartDemoState extends State<ChartDemo> {
         ),
         body: LineChart(
           childCount: childCount,
-          chartType: ChartType.GRAPH,
+          chartType: chartType,
           datas: datas,
-          leftPadding: 32,
+          leftPadding: chartType == ChartType.POINT ? 56 : 32,
           topPadding: 16,
           rightPadding: 16,
           bottomPadding: 32,

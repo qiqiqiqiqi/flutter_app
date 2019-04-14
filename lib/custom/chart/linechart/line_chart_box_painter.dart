@@ -15,17 +15,19 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
   double topPadding;
   double bottomPadding;
   double animationValue;
+  List<double> minMaxChartData;
+  int levels;
 
-  BaseChartDecorationBoxPainter({
-    this.itemWidth,
-    this.scrollController,
-    this.datas,
-    this.leftPadding,
-    this.rightPadding,
-    this.topPadding,
-    this.bottomPadding,
-    this.animationValue,
-  });
+  BaseChartDecorationBoxPainter(
+      {this.itemWidth,
+      this.scrollController,
+      this.datas,
+      this.leftPadding,
+      this.rightPadding,
+      this.topPadding,
+      this.bottomPadding,
+      this.animationValue,
+      this.levels = 4});
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
@@ -54,7 +56,7 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
         'BaseChartDecorationBoxPainter--paint():pixels=$pixels,extentBefore=$extentBefore,extentInside=$extentInside,extentAfter=$extentAfter');
     print(
         'BaseChartDecorationBoxPainter--paint():itemWith=$itemWidth,offset=$offset,configuration.size=${configuration.size}');
-
+    minMaxChartData = getMinMaxChartData();
     drawCoordinate(canvas, offset, configuration.size);
     _drawContent(canvas, offset, configuration.size);
   }
@@ -73,61 +75,100 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
   }
 
   double getHeightRatio(int position) {
-    return (datas[position].dataValue) * animationValue;
+    return ((datas[position].dataValue - minMaxChartData.first) /
+            (minMaxChartData.last - minMaxChartData.first)) *
+        animationValue;
   }
 
   List<ChartData> getVisiableRangeDatas() {
-    return datas?.sublist(firstVisiablePosition, lastVisiablePosition);
+    int startPosition = firstVisiablePosition > 0
+        ? firstVisiablePosition - 1
+        : firstVisiablePosition;
+    int endPosition = lastVisiablePosition < (datas.length - 1)
+        ? lastVisiablePosition + 1
+        : lastVisiablePosition;
+    return datas?.sublist(startPosition, endPosition);
   }
 
   ///绘制坐标
   void drawCoordinate(Canvas canvas, Offset offset, Size size) {
     canvas.save();
     canvas.translate(leftPadding, offset.dy);
-    double spaceHeight = (size.height - topPadding - bottomPadding) / 4;
-    for (int i = 0; i <= 4; i++) {
-      TextPainter textPainter = TextPainter(
-          textDirection: TextDirection.ltr,
-          text: TextSpan(
-              text: '$i',
-              style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold)));
-      textPainter.layout();
-      textPainter.paint(
-          canvas,
-          Offset(
-              -leftPadding / 2 - textPainter.size.width / 2,
-              size.height -
-                  bottomPadding -
-                  i * spaceHeight -
-                  textPainter.size.height / 2));
-    }
+    _drawVertical(canvas, size, levels);
+    drawHorizontal(canvas, size);
+    canvas.restore();
+  }
 
+  void drawHorizontal(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTRB(
         0, 0, size.width - rightPadding - leftPadding, size.height));
     for (int position = firstVisiablePosition;
         position <= lastVisiablePosition;
         position++) {
-      if (position % 5 == 0) {
-        TextPainter textPainter = TextPainter(
-            textDirection: TextDirection.ltr,
-            text: TextSpan(
-                text: '$position',
-                style: TextStyle(
-                    color: Colors.blueAccent,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold)));
-        textPainter.layout();
-        textPainter.paint(
+      if ((childCount > 20 && position % 5 == 0) ||
+          (childCount <= 10 && position % 2 == 0)) {
+        drawText(
             canvas,
-            Offset(
-                getLeft(position) + itemWidth / 2 + -textPainter.size.width / 2,
-                size.height - bottomPadding / 2 - textPainter.size.height / 2));
+            '$position',
+            Offset(getLeft(position) + itemWidth / 2,
+                size.height - bottomPadding / 2));
       }
     }
-    canvas.restore();
+  }
+
+  void _drawVertical(Canvas canvas, Size size, int levels) {
+    double spaceHeight = (size.height - topPadding - bottomPadding) / levels;
+    for (int i = 0; i <= levels; i++) {
+      Offset textOffset = Offset(
+          -leftPadding / 2, size.height - bottomPadding - i * spaceHeight);
+      drawVerticalScale(canvas, i, textOffset);
+    }
+  }
+
+  void drawVerticalScale(Canvas canvas, int i, Offset offset) {
+    String text =
+        '${((i * ((minMaxChartData.last - minMaxChartData.first) / levels) + minMaxChartData.first) * 100).toInt()}';
+    drawText(canvas, text, offset);
+  }
+
+  List<double> getMinMaxChartData() {
+    List<double> minMaxChartData = List();
+    List<ChartData> visiableRangeDatas = getVisiableRangeDatas();
+    visiableRangeDatas.sort((ChartData data1, ChartData data2) {
+      return data1.dataValue.compareTo(data2.dataValue);
+    });
+    double minChartData = visiableRangeDatas.first.dataValue;
+    double maxChartData = visiableRangeDatas.last.dataValue;
+    if (minChartData == maxChartData) {
+      minChartData = minChartData - minChartData / 10;
+      maxChartData = maxChartData + maxChartData / 10;
+    } else {
+      if (minChartData > (maxChartData - minChartData) / 10) {
+        minChartData = minChartData - (maxChartData - minChartData) / 10;
+      } else {
+        minChartData = minChartData - minChartData / 10;
+      }
+      maxChartData = maxChartData + (maxChartData - minChartData) / 10;
+    }
+    minMaxChartData.add(minChartData);
+    minMaxChartData.add(maxChartData);
+    return minMaxChartData;
+  }
+
+  void drawText(Canvas canvas, String text, Offset offset) {
+    TextPainter textPainter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+            text: '$text',
+            style: TextStyle(
+                color: Colors.blueAccent,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold)));
+    textPainter.layout();
+    textPainter.paint(
+        canvas,
+        Offset(offset.dx - textPainter.size.width / 2,
+            offset.dy - textPainter.size.height / 2));
   }
 
   void _drawContent(Canvas canvas, Offset offset, Size size) {
@@ -335,6 +376,78 @@ class BarChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
       } else {
         canvas.drawRect(rect, paint);
       }
+    }
+    canvas.restore();
+  }
+}
+
+class PointChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
+  List<String> levelStrings;
+  int minValue, maxValue;
+
+  PointChartDecorationBoxPainter(
+      {double itemWidth,
+      ScrollController scrollController,
+      List<ChartData> datas,
+      double leftPadding,
+      double rightPadding,
+      double topPadding,
+      double bottomPadding,
+      double animationValue,
+      int levels,
+      this.minValue,
+      this.maxValue,
+      this.levelStrings})
+      : super(
+            itemWidth: itemWidth,
+            scrollController: scrollController,
+            datas: datas,
+            leftPadding: leftPadding,
+            rightPadding: rightPadding,
+            topPadding: topPadding,
+            bottomPadding: bottomPadding,
+            animationValue: animationValue,
+            levels: levels);
+
+  @override
+  void drawChart(Canvas canvas, Size size) {
+    drawPoint(canvas, size);
+  }
+
+  @override
+  void drawVerticalScale(Canvas canvas, int i, Offset offset) {
+    drawText(canvas, levelStrings[i], offset);
+  }
+
+  @override
+  double getHeightRatio(int position) {
+    return ((datas[position].dataValue - minValue) / (maxValue - minValue)) *
+        animationValue;
+  }
+
+  void drawPoint(Canvas canvas, Size size) {
+    canvas.save();
+    LinearGradient linearGradient = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          Colors.red,
+          Colors.redAccent,
+          Colors.green,
+          Colors.blue,
+          Colors.blueAccent
+        ]);
+    Paint paint = Paint()
+      ..isAntiAlias = true
+      ..style = PaintingStyle.fill
+      ..shader = linearGradient
+          .createShader(Rect.fromLTRB(0, 0, size.width, size.height));
+    for (int position = firstVisiablePosition;
+        position <= lastVisiablePosition;
+        position++) {
+      Offset offset = Offset(getLeft(position) + itemWidth / 2,
+          (1 - getHeightRatio(position)) * size.height);
+      canvas.drawCircle(offset, 4, paint);
     }
     canvas.restore();
   }
