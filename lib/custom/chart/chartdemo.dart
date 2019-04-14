@@ -17,12 +17,16 @@ class ChartDemo extends StatefulWidget {
 
 class ChartDemoState extends State<ChartDemo> {
   List<ChartData> datas;
-  final int childCount = 31;
+  final int childCount = 7;
   ChartType chartType = ChartType.POINT;
 
   @override
   void initState() {
     super.initState();
+    refresh();
+  }
+
+  void refresh() {
     if (chartType != ChartType.POINT) {
       datas = List.generate(1000, (int position) {
         return ChartData()..dataValue = Math.Random().nextDouble();
@@ -42,14 +46,70 @@ class ChartDemoState extends State<ChartDemo> {
         appBar: AppBar(
           title: Text("chart demo"),
         ),
-        body: LineChart(
-          childCount: childCount,
-          chartType: chartType,
-          datas: datas,
-          leftPadding: chartType == ChartType.POINT ? 56 : 32,
-          topPadding: 16,
-          rightPadding: 16,
-          bottomPadding: 32,
+        body: Column(
+          children: <Widget>[
+            LineChart(
+              childCount: childCount,
+              chartType: chartType,
+              datas: datas,
+              leftPadding: chartType == ChartType.POINT ? 56 : 32,
+              topPadding: 16,
+              rightPadding: 16,
+              bottomPadding: 32,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Wrap(
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        chartType = ChartType.LINE;
+                        refresh();
+                      });
+                    },
+                    child: Text("折线"),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        chartType = ChartType.GRAPH;
+                        refresh();
+                      });
+                    },
+                    child: Text("曲线"),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        chartType = ChartType.BAR;
+                        refresh();
+                      });
+                    },
+                    child: Text("直方图"),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        chartType = ChartType.R_BAR;
+                        refresh();
+                      });
+                    },
+                    child: Text("圆角直方图"),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        chartType = ChartType.POINT;
+                        refresh();
+                      });
+                    },
+                    child: Text("点图"),
+                  )
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
