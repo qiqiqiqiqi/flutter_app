@@ -33,7 +33,7 @@ class ChartDemoState extends State<ChartDemo> {
       });
     } else {
       datas = List.generate(1000, (int position) {
-        return ChartData()..dataValue = Math.Random().nextDouble() * 4;
+        return ChartData()..dataValue = (Math.Random().nextDouble() * 4).ceilToDouble();
       });
     }
   }

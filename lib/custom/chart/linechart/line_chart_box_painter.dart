@@ -366,12 +366,12 @@ class BarChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
         position <= lastVisiablePosition;
         position++) {
       Rect rect = Rect.fromLTRB(
-          getLeft(position) + itemWidth / 2 - 4,
+          getLeft(position) + itemWidth / 2 - 8,
           (1 - getHeightRatio(position)) * size.height,
-          getLeft(position) + itemWidth / 2 + 4,
+          getLeft(position) + itemWidth / 2 + 8,
           size.height);
       if (circula) {
-        RRect rRect = RRect.fromRectAndRadius(rect, Radius.circular(4));
+        RRect rRect = RRect.fromRectAndRadius(rect, Radius.circular(8));
         canvas.drawRRect(rRect, paint);
       } else {
         canvas.drawRect(rect, paint);
@@ -380,7 +380,7 @@ class BarChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
     canvas.restore();
   }
 }
-
+///点图
 class PointChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
   List<String> levelStrings;
   int minValue, maxValue;
