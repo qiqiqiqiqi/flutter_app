@@ -94,10 +94,12 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
                     bottom: widget.bottomPadding),
                 controller: scrollController,
                 itemBuilder: (context, index) {
-                  return Container(
-                    alignment: Alignment.center,
-                    width: itemWidth,
-                    /*child: Row(
+                  return InkWell(
+                    onTap: () {},
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: itemWidth,
+                      /*child: Row(
                     children: <Widget>[
                       Expanded(
                           child: Center(
@@ -109,6 +111,7 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
                       )
                     ],
                   ),*/
+                    ),
                   );
                 },
                 scrollDirection: Axis.horizontal,

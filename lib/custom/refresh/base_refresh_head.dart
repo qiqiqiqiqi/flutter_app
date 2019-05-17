@@ -41,5 +41,6 @@ abstract class BaseRefreshHeadState<T extends StatefulWidget> extends State<T>
 
   @override
   void onRefreshState(RefreshState refreshState, double offsetY) {
+
   }
 }

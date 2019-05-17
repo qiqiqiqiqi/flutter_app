@@ -52,7 +52,8 @@ add2(dynamic a, int b) {
 }
 
 ///return 的简写
- add3(dynamic a, num b) => a + b;
+ add3(dynamic a, num b) => add2(a, b);
+
 
 String add4(dynamic a, String b) {
   return "$a+$b";

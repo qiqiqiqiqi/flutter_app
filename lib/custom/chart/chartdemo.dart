@@ -17,7 +17,7 @@ class ChartDemo extends StatefulWidget {
 
 class ChartDemoState extends State<ChartDemo> {
   List<ChartData> datas;
-  final int childCount = 7;
+  final int childCount = 15;
   ChartType chartType = ChartType.POINT;
 
   @override
