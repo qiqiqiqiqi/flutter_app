@@ -31,7 +31,7 @@ class DateUtils {
   ///
   /// @param year  年份
   /// @param month 月份，传入系统获取的，不需要正常的,从1开始
-  /// @return 日：1		一：2		二：3		三：4		四：5		五：6		六：7
+  /// @return 一：1		二：2	三：3		四：4		五：5		六：6  日：7
   static int getFirstDayWeek(int year, int month) {
     return getDayOfWeek(year, month, 1);
   }
