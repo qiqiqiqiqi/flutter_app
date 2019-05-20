@@ -39,7 +39,10 @@ class CalendarDemoState extends State {
                           )),
                       Calendar(DateUtils.getNextMonth(DateTime.now(), index),
                           (DateTime dateTime) {
-                        setState(() {});
+                        setState(() {
+                          print(
+                              'CalendarDemoState:dateTime=${dateTime.toString()}');
+                        });
                       })
                     ],
                   ),

@@ -7,7 +7,6 @@ typedef OnSelectedDateTime = void Function(DateTime dateTime);
 class Calendar extends StatefulWidget {
   DateTime _dateTime;
   OnSelectedDateTime onSelectedDateTime;
-
   Calendar(this._dateTime, this.onSelectedDateTime);
 
   @override
@@ -21,11 +20,37 @@ class CalendarState extends State<Calendar> {
   int offsetHeight = 0;
   GlobalKey globalKey = GlobalKey();
   Offset offset;
-  DateTime selectedDateTime;
+  static DateTime selectedDateTime;
+  List<List<int>> days;
+  int monthDays;
+  int weekDay;
+  int startDay;
 
   @override
   void initState() {
     super.initState();
+    days = List(6);
+    for (int i = 0; i < 6; i++) {
+      List<int> childList = List(7);
+      days[i] = childList;
+    }
+    monthDays =
+        DateUtils.getMonthDays(widget._dateTime.year, widget._dateTime.month);
+    weekDay = DateUtils.getFirstDayWeek(
+        widget._dateTime.year, widget._dateTime.month);
+    startDay = 0;
+    if (widget._dateTime.year == DateTime.now().year &&
+        widget._dateTime.month == DateTime.now().month) {
+      weekDay = DateTime.now().weekday;
+      startDay = DateTime.now().day - 1;
+    }
+    weekDay = weekDay == 7 ? 1 : weekDay + 1;
+
+    for (int day = startDay; day < monthDays; day++) {
+      int column = (day - startDay + weekDay - 1) % 7; //(0~6列共7列)
+      int row = (day - startDay + weekDay - 1) ~/ 7; //(0~5共6行)
+      days[row][column] = day + 1;
+    }
   }
 
   @override
@@ -35,17 +60,27 @@ class CalendarState extends State<Calendar> {
       return GestureDetector(
         onTapUp: (TapUpDetails details) {
           RenderBox renderBox = globalKey.currentContext.findRenderObject();
-//          setState(() {
-//            offset = renderBox.globalToLocal(details.globalPosition);
-//          });
-          offset = renderBox.globalToLocal(details.globalPosition);
+          Offset offset = renderBox.globalToLocal(details.globalPosition);
+          double dayItemSize = constraints.maxWidth / 7;
+          int row = offset.dy ~/ dayItemSize;
+          int column = offset.dx ~/ dayItemSize;
+          selectedDateTime = DateTime(
+              widget._dateTime.year, widget._dateTime.month, days[row][column]);
+          print(
+              'paint():column=$column,row=$row,selectedDateTime=${selectedDateTime.toString()}');
           widget.onSelectedDateTime?.call(selectedDateTime);
         },
         child: CustomPaint(
           key: globalKey,
           size: Size(constraints.maxWidth,
               calculateHeight(constraints.maxWidth, widget._dateTime)),
-          painter: CalendarPainter(widget._dateTime, offset),
+          painter: CalendarPainter(
+              dateTime: widget._dateTime,
+              selectedDateTime: selectedDateTime,
+              days: days,
+              monthDays: monthDays,
+              weekDay: weekDay,
+              startDay: startDay),
         ),
       );
     });
