@@ -45,7 +45,6 @@ class CalendarState extends State<Calendar> {
       startDay = DateTime.now().day - 1;
     }
     weekDay = weekDay == 7 ? 1 : weekDay + 1;
-
     for (int day = startDay; day < monthDays; day++) {
       int column = (day - startDay + weekDay - 1) % 7; //(0~6列共7列)
       int row = (day - startDay + weekDay - 1) ~/ 7; //(0~5共6行)
