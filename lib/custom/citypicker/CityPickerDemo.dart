@@ -44,7 +44,7 @@ class CityPickerState extends State<CityPickerDemo> {
                     return InkWell(
                         child: Container(
                             alignment: Alignment.center,
-                            height: 60.0,
+                            height: 80.0,
                             child: Text('Item ${index + 1}')),
                         onTap: () {
                           print('tapped item ${index + 1}');

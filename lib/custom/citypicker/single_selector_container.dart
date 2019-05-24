@@ -18,6 +18,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
   double scale = 1.0;
   double translationX = 0.0;
   List<GlobalKey> tabGlobalKeys;
+  double offsetX = 0.0;
 
   @override
   void dispose() {
@@ -30,6 +31,18 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
     super.initState();
     tabGlobalKeys = List();
     tipsGlobalkey = GlobalKey();
+    WidgetsBinding widgetsBinding = WidgetsBinding.instance;
+    widgetsBinding.addPostFrameCallback((Duration duration) {
+      setState(() {
+        RenderBox renderBoxTips =
+            tipsGlobalkey.currentContext?.findRenderObject();
+
+        RenderBox renderBoxTarget =
+            tabGlobalKeys[currentIndex]?.currentContext?.findRenderObject();
+        offsetX = renderBoxTarget.size.width / 2;
+        scale = renderBoxTarget.size.width / renderBoxTips.size.width;
+      });
+    });
     animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     animationController.addListener(() {
@@ -53,10 +66,10 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
           if (preIndex == 0) {
             translationX = (endX - startX) * progress;
           } else {
-            translationX = startX + (endX - startX) * progress - 30;
+            translationX = startX + (endX - startX) * progress - offsetX;
           }
         } else {
-          translationX = startX + (endX - startX) * progress - 30;
+          translationX = startX + (endX - startX) * progress - offsetX;
         }
 
         scale = renderBoxTarget.size.width / renderBoxPre.size.width;
@@ -86,6 +99,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
           Container(
             height: 4,
             child: Transform(
+              alignment: AlignmentDirectional.center,
               transform: Matrix4.translationValues(translationX, 0, 0),
               child: Transform(
                 alignment: AlignmentDirectional.center,
@@ -114,9 +128,8 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
     return <Widget>[
       StatefulRoundButton(
         key: insertKey(0),
-        width: 60,
         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        child: Text("text0"),
+        child: Text("text0text0"),
         onPress: () {
           changeIndex(0);
         },
