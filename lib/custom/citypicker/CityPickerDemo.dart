@@ -35,7 +35,7 @@ class CityPickerState extends State<CityPickerDemo> {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-        height: 200,
+        height: 600,
             child: Column(
               children: <Widget>[
                 SingleSelectorContainer(),
@@ -51,7 +51,7 @@ class CityPickerState extends State<CityPickerDemo> {
                        //   Navigator.pop(context);
                         });
                   },
-                  itemCount: 10,
+                  itemCount: 13,
                 ))
               ],
             ),

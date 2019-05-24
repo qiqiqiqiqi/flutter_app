@@ -47,21 +47,26 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
             tabGlobalKeys[currentIndex]?.currentContext?.findRenderObject();
         Offset toOffset = renderBoxTarget.localToGlobal(Offset.zero);
 
-
         double startX = (renderBoxPre.size.width / 2 + fromOffset.dx);
         double endX = (renderBoxTarget.size.width / 2 + toOffset.dx);
         if (endX - startX >= 0) {
           if (preIndex == 0) {
             translationX = (endX - startX) * progress;
           } else {
-            translationX = startX + (endX - startX) * progress-30;
+            translationX = startX + (endX - startX) * progress - 30;
           }
         } else {
-          translationX = startX + (endX - startX) * progress-30;
+          translationX = startX + (endX - startX) * progress - 30;
         }
 
-       // scale = renderBoxTarget.size.width / renderBoxPre.size.width;
-
+        scale = renderBoxTarget.size.width / renderBoxPre.size.width;
+        if (scale > 1) {
+          scale = 1 + (scale - 1) * progress;
+        } else if (scale < 1) {
+          scale = 1 +
+              ((renderBoxPre.size.width / renderBoxTarget.size.width) - 1) *
+                  (1 - progress);
+        }
         print('initState():preIndex=$preIndex,currentIndex=$currentIndex,'
             'translationX=$translationX');
       });
@@ -78,15 +83,18 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
           Row(
             children: buildSinglesWidgets(),
           ),
-          Transform(
-            transform: Matrix4.translationValues(translationX, 0, 0),
-            child:  Transform.scale(
-              scale: scale,
-              child: Container(
-                key: tipsGlobalkey,
-                color: Colors.green,
-                width: 60,
-                height: 4,
+          Container(
+            height: 4,
+            child: Transform(
+              transform: Matrix4.translationValues(translationX, 0, 0),
+              child: Transform(
+                alignment: AlignmentDirectional.center,
+                transform: Matrix4.diagonal3Values(scale, 1, 1),
+                child: Container(
+                  key: tipsGlobalkey,
+                  color: Colors.green,
+                  width: 60.0,
+                ),
               ),
             ),
           )
@@ -147,7 +155,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
   }
 
   void changeIndex(int index) {
-    if(animationController?.status==AnimationStatus.forward){
+    if (animationController?.status == AnimationStatus.forward) {
       return;
     }
     preIndex = currentIndex;
