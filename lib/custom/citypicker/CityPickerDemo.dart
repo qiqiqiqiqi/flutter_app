@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'single_selector_container.dart';
 
 main() {
   runApp(MaterialApp(title: "citypicker demo", home: CityPickerDemo()));
@@ -34,19 +35,25 @@ class CityPickerState extends State<CityPickerDemo> {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return InkWell(
-                    child: Container(
-                        alignment: Alignment.center,
-                        height: 60.0,
-                        child: Text('Item ${index + 1}')),
-                    onTap: () {
-                      print('tapped item ${index + 1}');
-                      Navigator.pop(context);
-                    });
-              },
-              itemCount: 6,
+        height: 200,
+            child: Column(
+              children: <Widget>[
+                SingleSelectorContainer(),
+                Expanded(child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                        child: Container(
+                            alignment: Alignment.center,
+                            height: 60.0,
+                            child: Text('Item ${index + 1}')),
+                        onTap: () {
+                          print('tapped item ${index + 1}');
+                       //   Navigator.pop(context);
+                        });
+                  },
+                  itemCount: 10,
+                ))
+              ],
             ),
           ),
     );
@@ -67,7 +74,7 @@ class CityPickerState extends State<CityPickerDemo> {
                       child: Text('Item ${index + 1}')),
                   onTap: () {
                     print('tapped item ${index + 1}');
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
                   }),
             )),
             height: 500,

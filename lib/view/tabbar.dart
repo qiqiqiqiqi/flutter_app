@@ -40,6 +40,7 @@ class FlutterHomePageState extends State<FlutterHomePage>
         print("tabchange:index=${tabController.index}");
       }
     });
+
   }
 
   TabController buildTabController() =>
@@ -54,17 +55,17 @@ class FlutterHomePageState extends State<FlutterHomePage>
         new PageBody("main1"),
         new PageBody("main2"),
         new PageBody("main3"),
-      ], controller: tabController),
+      ], physics: NeverScrollableScrollPhysics(), controller: tabController),
       bottomNavigationBar: Container(
         color: Colors.blueGrey,
         child: new TabBar(
           indicatorColor: Colors.red,
-          indicator: new ShapeDecoration(shape: Border()),
+          //indicator: new ShapeDecoration(shape: Border()),
           labelColor: Colors.red,
           unselectedLabelColor: Colors.black,
           tabs: <Tab>[
             new Tab(text: "组件"),
-            new Tab(text: "main1"),
+            new Tab(text: "main1main1main1main1"),
             new Tab(text: "main2"),
             new Tab(text: "main3")
           ],
@@ -91,7 +92,7 @@ class PageBody extends StatefulWidget {
   }
 }
 
-class PageBodyState extends State<PageBody> with AutomaticKeepAliveClientMixin{
+class PageBodyState extends State<PageBody> with AutomaticKeepAliveClientMixin {
   int count = 0;
 
   @override
@@ -113,5 +114,5 @@ class PageBodyState extends State<PageBody> with AutomaticKeepAliveClientMixin{
   }
 
   @override
-  bool get wantKeepAlive => true;//wantKeepAlive=true时state不会重置
+  bool get wantKeepAlive => true; //wantKeepAlive=true时state不会重置
 }
