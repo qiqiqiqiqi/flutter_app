@@ -16,9 +16,11 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
   GlobalKey tipsGlobalkey;
   double progress = 0.0;
   double scale = 1.0;
+  double scale2 = 1.0;
   double translationX = 0.0;
   List<GlobalKey> tabGlobalKeys;
   double offsetX = 0.0;
+  double offsetX2 = 0.0;
 
   @override
   void dispose() {
@@ -39,8 +41,10 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
 
         RenderBox renderBoxTarget =
             tabGlobalKeys[currentIndex]?.currentContext?.findRenderObject();
-        offsetX = renderBoxTarget.size.width / 2;
-        scale = renderBoxTarget.size.width / renderBoxTips.size.width;
+        offsetX = renderBoxTarget.size.width / 2 ;
+        scale=scale2 = renderBoxTarget.size.width / renderBoxTips.size.width;
+        translationX = offsetX2 =
+            renderBoxTarget.size.width / 2 - renderBoxTips.size.width / 2;
       });
     });
     animationController =
@@ -64,15 +68,17 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
         double endX = (renderBoxTarget.size.width / 2 + toOffset.dx);
         if (endX - startX >= 0) {
           if (preIndex == 0) {
-            translationX = (endX - startX) * progress;
+            translationX = (endX - startX) * progress + offsetX2;
           } else {
-            translationX = startX + (endX - startX) * progress - offsetX;
+            translationX =
+                startX + (endX - startX) * progress - offsetX+offsetX2 ;
           }
         } else {
-          translationX = startX + (endX - startX) * progress - offsetX;
+          translationX =
+              startX + (endX - startX) * progress - offsetX + offsetX2;
         }
 
-        scale = renderBoxTarget.size.width / renderBoxPre.size.width;
+        scale = renderBoxTarget.size.width / renderBoxTips.size.width;
         if (scale > 1) {
           scale = 1 + (scale - 1) * progress;
         } else if (scale < 1) {
@@ -81,7 +87,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
                   (1 - progress);
         }
         print('initState():preIndex=$preIndex,currentIndex=$currentIndex,'
-            'translationX=$translationX');
+            'translationX=$translationX,scale=$scale');
       });
     });
   }
@@ -136,7 +142,6 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
       ),
       StatefulRoundButton(
         key: insertKey(1),
-        width: 60,
         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         child: Text("text1"),
         onPress: () {
@@ -157,9 +162,8 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
       ),
       StatefulRoundButton(
         key: insertKey(3),
-        width: 60,
         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        child: Text("text3"),
+        child: Text("text3text3"),
         onPress: () {
           changeIndex(3);
         },
