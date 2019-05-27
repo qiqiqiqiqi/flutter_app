@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'single_selector_container.dart';
+import 'package:flutter_app/custom/citypicker/view/single_tap_selector_container.dart';
+import 'package:flutter_app/custom/citypicker/view/city_content_container.dart';
+import 'package:flutter_app/custom/citypicker/data/citydata.dart';
+import 'package:flutter_app/custom/citypicker/data/areadata.dart';
+import 'package:flutter_app/custom/citypicker/data/provincedata.dart';
 
 main() {
   runApp(MaterialApp(title: "citypicker demo", home: CityPickerDemo()));
@@ -13,6 +17,8 @@ class CityPickerDemo extends StatefulWidget {
 }
 
 class CityPickerState extends State<CityPickerDemo> {
+  int selectedPosition = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,64 +27,47 @@ class CityPickerState extends State<CityPickerDemo> {
         ),
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-          return RaisedButton(
-            onPressed: () {
-              _showModalBottomSheet(context);
-              // _showBottomSheet(context);
-            },
-            child: Text('点击选择城市'),
+          return Padding(
+            padding: EdgeInsets.only(left: 20, right: 20, top: 30),
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "请选择",
+                          style: TextStyle(
+                            color: Color(0xFF374147),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {},
+                        iconSize: 18,
+                        padding: EdgeInsets.all(0),
+                      )
+                    ],
+                  ),
+                  SingleSelectorContainer(onTypeSelected: (int position) {
+                    setState(() {
+                      selectedPosition = position;
+                    });
+                  }),
+                  Expanded(
+                      child: CityContentContainer(
+                          selectedPosition: selectedPosition,
+                          onSelectedData: (ProvinceData provinceData,
+                              CityData cityData, AreaData areaData) {}))
+                ],
+              ),
+            ),
           );
         }));
-  }
-
-  _showModalBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        height: 600,
-            child: Column(
-              children: <Widget>[
-                SingleSelectorContainer(),
-                Expanded(child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                        child: Container(
-                            alignment: Alignment.center,
-                            height: 80.0,
-                            child: Text('Item ${index + 1}')),
-                        onTap: () {
-                          print('tapped item ${index + 1}');
-                       //   Navigator.pop(context);
-                        });
-                  },
-                  itemCount: 13,
-                ))
-              ],
-            ),
-          ),
-    );
-  }
-
-  _showBottomSheet(BuildContext context) {
-    showBottomSheet(
-      context: context,
-      builder: (context) => Container(
-            child: ListView(
-                // 生成一个列表选择器
-                children: List.generate(
-              10,
-              (index) => InkWell(
-                  child: Container(
-                      alignment: Alignment.center,
-                      height: 60.0,
-                      child: Text('Item ${index + 1}')),
-                  onTap: () {
-                    print('tapped item ${index + 1}');
-                    //Navigator.pop(context);
-                  }),
-            )),
-            height: 500,
-          ),
-    );
   }
 }

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'round_button.dart';
 
+typedef OnTypeSelected = void Function(int position);
+
 class SingleSelectorContainer extends StatefulWidget {
+  OnTypeSelected onTypeSelected;
+
+  SingleSelectorContainer({this.onTypeSelected});
+
   @override
   State<StatefulWidget> createState() {
     return SingleSelectorContainerState();
@@ -54,6 +60,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
         progress = animationController.value;
         RenderBox renderBoxTips =
             tipsGlobalkey.currentContext?.findRenderObject();
+
         Offset tipsOffset = renderBoxTips.localToGlobal(Offset.zero);
 
         RenderBox renderBoxPre =
@@ -67,7 +74,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
         double startX = (renderBoxPre.size.width / 2 + fromOffset.dx);
         double endX = (renderBoxTarget.size.width / 2 + toOffset.dx);
         //计算指示器相对于原点的偏移
-        if (endX - startX >= 0) {
+        if (endX - startX > 0) {
           if (preIndex == 0) {
             translationX = (endX - startX) * progress + offsetX2;
           } else {
@@ -90,14 +97,6 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
                       renderBoxTarget.size.width / renderBoxTips.size.width) *
                   (1 - progress);
         }
-//        scale = renderBoxTarget.size.width / renderBoxTips.size.width;
-//        if (scale > 1) {
-//          scale = 1 + (scale - 1) * progress;
-//        } else if (scale < 1) {
-//          scale = 1 +
-//              ((renderBoxPre.size.width / renderBoxTarget.size.width) - 1) *
-//                  (1 - progress);
-//        }
         print('initState():preIndex=$preIndex,currentIndex=$currentIndex,'
             'translationX=$translationX,scale=$scale');
       });
@@ -106,33 +105,36 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: buildSinglesWidgets(),
-          ),
-          Container(
-            height: 4,
-            child: Transform(
-              alignment: AlignmentDirectional.center,
-              transform: Matrix4.translationValues(translationX, 0, 0),
+    return LayoutBuilder(builder: (context, constraints) {
+      return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: buildSinglesWidgets(),
+            ),
+            Container(
+              height: 4,
               child: Transform(
                 alignment: AlignmentDirectional.center,
-                transform: Matrix4.diagonal3Values(scale, 1, 1),
-                child: Container(
-                  key: tipsGlobalkey,
-                  color: Colors.green,
-                  width: 60.0,
+                transform: Matrix4.translationValues(translationX, 0, 0),
+                child: Transform(
+                  alignment: AlignmentDirectional.center,
+                  transform: Matrix4.diagonal3Values(scale, 1, 1),
+                  child: Container(
+                    key: tipsGlobalkey,
+                    color: Colors.green,
+                    width: 60.0,
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+      );
+    });
   }
 
   List<Widget> buildSinglesWidgets() {
@@ -192,6 +194,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
     if (preIndex == currentIndex) {
       return;
     }
+    widget.onTypeSelected?.call(currentIndex);
     animationController.forward(from: 0);
   }
 }
