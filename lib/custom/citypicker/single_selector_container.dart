@@ -41,8 +41,8 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
 
         RenderBox renderBoxTarget =
             tabGlobalKeys[currentIndex]?.currentContext?.findRenderObject();
-        offsetX = renderBoxTarget.size.width / 2 ;
-        scale=scale2 = renderBoxTarget.size.width / renderBoxTips.size.width;
+        offsetX = renderBoxTarget.size.width / 2;
+        scale = scale2 = renderBoxTarget.size.width / renderBoxTips.size.width;
         translationX = offsetX2 =
             renderBoxTarget.size.width / 2 - renderBoxTips.size.width / 2;
       });
@@ -66,26 +66,38 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
 
         double startX = (renderBoxPre.size.width / 2 + fromOffset.dx);
         double endX = (renderBoxTarget.size.width / 2 + toOffset.dx);
+        //计算指示器相对于原点的偏移
         if (endX - startX >= 0) {
           if (preIndex == 0) {
             translationX = (endX - startX) * progress + offsetX2;
           } else {
             translationX =
-                startX + (endX - startX) * progress - offsetX+offsetX2 ;
+                startX + (endX - startX) * progress - offsetX + offsetX2;
           }
         } else {
           translationX =
               startX + (endX - startX) * progress - offsetX + offsetX2;
         }
-
-        scale = renderBoxTarget.size.width / renderBoxTips.size.width;
-        if (scale > 1) {
-          scale = 1 + (scale - 1) * progress;
-        } else if (scale < 1) {
-          scale = 1 +
-              ((renderBoxPre.size.width / renderBoxTarget.size.width) - 1) *
+        //计算指示器的缩放
+        if (renderBoxTarget.size.width > renderBoxPre.size.width) {
+          scale = renderBoxPre.size.width / renderBoxTips.size.width +
+              (renderBoxTarget.size.width / renderBoxTips.size.width -
+                      renderBoxPre.size.width / renderBoxTips.size.width) *
+                  progress;
+        } else if (renderBoxTarget.size.width < renderBoxPre.size.width) {
+          scale = renderBoxTarget.size.width / renderBoxTips.size.width +
+              ((renderBoxPre.size.width / renderBoxTips.size.width) -
+                      renderBoxTarget.size.width / renderBoxTips.size.width) *
                   (1 - progress);
         }
+//        scale = renderBoxTarget.size.width / renderBoxTips.size.width;
+//        if (scale > 1) {
+//          scale = 1 + (scale - 1) * progress;
+//        } else if (scale < 1) {
+//          scale = 1 +
+//              ((renderBoxPre.size.width / renderBoxTarget.size.width) - 1) *
+//                  (1 - progress);
+//        }
         print('initState():preIndex=$preIndex,currentIndex=$currentIndex,'
             'translationX=$translationX,scale=$scale');
       });
