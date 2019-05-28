@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/custom/citypicker/view/single_tap_selector_container.dart';
 import 'package:flutter_app/custom/citypicker/view/city_content_container.dart';
-import 'package:flutter_app/custom/citypicker/data/citydata.dart';
-import 'package:flutter_app/custom/citypicker/data/areadata.dart';
-import 'package:flutter_app/custom/citypicker/data/provincedata.dart';
+import 'package:flutter_app/custom/citypicker/data/address.dart';
 
 main() {
   runApp(MaterialApp(title: "citypicker demo", home: CityPickerDemo()));
@@ -17,7 +15,8 @@ class CityPickerDemo extends StatefulWidget {
 }
 
 class CityPickerState extends State<CityPickerDemo> {
-  int selectedPosition = 0;
+  AddressTab selectedAddressTab = AddressTab.TAB_PROVINCE;
+  Address selectedAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -54,16 +53,22 @@ class CityPickerState extends State<CityPickerDemo> {
                       )
                     ],
                   ),
-                  SingleSelectorContainer(onTypeSelected: (int position) {
-                    setState(() {
-                      selectedPosition = position;
-                    });
-                  }),
+                  SingleSelectorContainer(
+                      address: selectedAddress,
+                      onTabSelected: (AddressTab position) {
+                        setState(() {
+                          selectedAddressTab = position;
+                        });
+                      }),
                   Expanded(
                       child: CityContentContainer(
-                          selectedPosition: selectedPosition,
-                          onSelectedData: (ProvinceData provinceData,
-                              CityData cityData, AreaData areaData) {}))
+                          selectedAddressTab: selectedAddressTab,
+                          onAddressSelected: (Address address,AddressTab addressTab) {
+                            setState(() {
+                              selectedAddress = address;
+                              selectedAddressTab=addressTab;
+                            });
+                          }))
                 ],
               ),
             ),
