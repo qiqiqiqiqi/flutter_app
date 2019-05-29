@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class StatefulRoundButton extends StatefulWidget {
-  static const Color defaultNormalBackgroundColor = Colors.redAccent;
-  static const Color defaultPressBackgroundColor = const Color(0x33FF0000);
+  static const Color defaultNormalBackgroundColor = Colors.transparent;
+  static const Color defaultPressBackgroundColor = Colors.transparent;
   static const Color defaultDisableBackgroundColor = Colors.grey;
   Color background,
       normalBackgroundColor,
@@ -92,7 +92,6 @@ class StatefulRoundButtonState extends State<StatefulRoundButton> {
         height: widget.height,
         margin: widget.margin,
         padding: widget.padding,
-        alignment: Alignment.center,
         decoration: BoxDecoration(
             color: widget.background,
             border: new Border.all(
