@@ -107,7 +107,6 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return Container(
-        color: Colors.blueAccent,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,15 +208,18 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
           child: StatefulRoundButton(
             padding: EdgeInsets.symmetric(vertical: 16),
             key: insertKey(AddressTab.TAB_CITY),
-            child: Text("${address.cityData.cityName}",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: currentTab == AddressTab.TAB_CITY
-                      ? Color(0xFF1AD9CA)
-                      : Color(0xFF374147),
-                  fontSize: 14,
-                )),
+            child: LimitedBox(
+              maxWidth: 100,
+              child: Text("${address.cityData.cityName}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: currentTab == AddressTab.TAB_CITY
+                        ? Color(0xFF1AD9CA)
+                        : Color(0xFF374147),
+                    fontSize: 14,
+                  )),
+            ),
             onPress: () {
               changeIndex(AddressTab.TAB_CITY);
             },
@@ -251,15 +253,18 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
           child: StatefulRoundButton(
             padding: EdgeInsets.symmetric(vertical: 16),
             key: insertKey(AddressTab.TAB_AREA),
-            child: Text("${address.areaData.areaName}",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: currentTab == AddressTab.TAB_AREA
-                      ? Color(0xFF1AD9CA)
-                      : Color(0xFF374147),
-                  fontSize: 14,
-                )),
+            child: LimitedBox(
+              maxWidth: 100,
+              child: Text("${address.areaData.areaName}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: currentTab == AddressTab.TAB_AREA
+                        ? Color(0xFF1AD9CA)
+                        : Color(0xFF374147),
+                    fontSize: 14,
+                  )),
+            ),
             onPress: () {
               changeIndex(AddressTab.TAB_AREA);
             },
