@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'round_button.dart';
 import 'package:flutter_app/custom/citypicker/data/address.dart';
-import 'package:flutter_app/custom/citypicker/address_container_InheritedWidget.dart';
+import 'package:flutter_app/custom/citypicker/view/address_container_InheritedWidget.dart';
 import 'package:flutter_app/custom/citypicker/observer/address_observer.dart';
 
 typedef OnTabSelected = void Function(AddressTab tab);

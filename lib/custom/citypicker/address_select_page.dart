@@ -2,21 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/custom/citypicker/view/single_tap_selector_container.dart';
 import 'package:flutter_app/custom/citypicker/view/address_content_container.dart';
 import 'package:flutter_app/custom/citypicker/data/address.dart';
-import 'address_container_InheritedWidget.dart';
+import 'package:flutter_app/custom/citypicker/view/address_container_InheritedWidget.dart';
 import 'package:flutter_app/custom/citypicker/mode/province.dart';
 
-main() {
-  runApp(MaterialApp(title: "citypicker demo", home: CityPickerDemo()));
-}
 
-class CityPickerDemo extends StatefulWidget {
+class AddressSelectPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return CityPickerState();
+    return AddressSelectPageState();
   }
 }
 
-class CityPickerState extends State<CityPickerDemo> {
+class AddressSelectPageState extends State<AddressSelectPage> {
   AddressTab selectedAddressTab = AddressTab.TAB_PROVINCE;
   Address selectedAddress;
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_app/custom/citypicker/data/address.dart';
 import 'single_tap_selector_container.dart';
-import 'package:flutter_app/custom/citypicker/address_container_InheritedWidget.dart';
+import 'package:flutter_app/custom/citypicker/view/address_container_InheritedWidget.dart';
 import 'package:flutter_app/custom/citypicker/observer/tab_observer.dart';
 import 'package:flutter_app/custom/citypicker/view/address_province_list.dart';
 import 'package:flutter_app/custom/citypicker/view/address_city_list.dart';

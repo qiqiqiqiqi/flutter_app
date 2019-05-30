@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/custom/citypicker/data/address.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'single_tap_selector_container.dart';
-import 'package:flutter_app/custom/citypicker/address_container_InheritedWidget.dart';
+import 'package:flutter_app/custom/citypicker/view/address_container_InheritedWidget.dart';
 
 class AddressAreaList extends StatefulWidget {
   final Address selectedAddress;

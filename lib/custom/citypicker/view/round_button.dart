@@ -92,6 +92,7 @@ class StatefulRoundButtonState extends State<StatefulRoundButton> {
         height: widget.height,
         margin: widget.margin,
         padding: widget.padding,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
             color: widget.background,
             border: new Border.all(
