@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/custom/citypicker/view/single_tap_selector_container.dart';
-import 'package:flutter_app/custom/citypicker/view/city_content_container.dart';
+import 'package:flutter_app/custom/citypicker/view/address_content_container.dart';
 import 'package:flutter_app/custom/citypicker/data/address.dart';
-import 'address_container.dart';
+import 'address_container_InheritedWidget.dart';
 import 'package:flutter_app/custom/citypicker/mode/province.dart';
 
 main() {
@@ -54,6 +54,7 @@ class CityPickerState extends State<CityPickerDemo> {
                               ),
                             ),
                           ),
+
                           IconButton(
                             icon: Icon(Icons.clear),
                             onPressed: () {},
@@ -66,7 +67,7 @@ class CityPickerState extends State<CityPickerDemo> {
                     Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: SingleSelectorContainer()),
-                    Expanded(child: CityContentContainer())
+                    Expanded(child: CityContentContainer()),
                   ],
                 ),
               ),

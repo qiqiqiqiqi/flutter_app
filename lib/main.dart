@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'custom/chart/chartdemo.dart';
+import 'package:flutter_app/custom/citypicker/CityPickerDemo.dart';
 //main() => runApp(new MainApp());
   main(){
- return runApp(new MainApp());
+ return runApp(MaterialApp(home: CityPickerDemo(),));
 }
 
 class MainApp extends StatelessWidget {

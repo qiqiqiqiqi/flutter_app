@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'round_button.dart';
 import 'package:flutter_app/custom/citypicker/data/address.dart';
-import 'package:flutter_app/custom/citypicker/address_container.dart';
+import 'package:flutter_app/custom/citypicker/address_container_InheritedWidget.dart';
 import 'package:flutter_app/custom/citypicker/observer/address_observer.dart';
 
 typedef OnTabSelected = void Function(AddressTab tab);
@@ -107,12 +107,13 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return Container(
+        alignment: Alignment.topLeft,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: buildSinglesWidgets(),
             ),
@@ -137,48 +138,46 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
     List<Widget> widgets = List();
     if (address != null) {
       if (address.provinceData != null) {
-        widgets.add(Container(
-          alignment: AlignmentDirectional.topStart,
-          margin: EdgeInsets.only(left: 0),
-          child: Align(
-            alignment: AlignmentDirectional.topStart,
-            child: Column(
-              children: <Widget>[
-                StatefulRoundButton(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  key: insertKey(AddressTab.TAB_PROVINCE),
-                  child: Text("${address.provinceData.provinceName}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: currentTab == AddressTab.TAB_PROVINCE
-                            ? Color(0xFF1AD9CA)
-                            : Color(0xFF374147),
-                        fontSize: 14,
-                      )),
-                  onPress: () {
-                    changeIndex(AddressTab.TAB_PROVINCE);
-                  },
-                ),
-                Container(
-                  height: 2,
-                  child: Transform(
-                    alignment: AlignmentDirectional.center,
-                    transform: Matrix4.translationValues(translationX, 0, 0),
-                    child: Transform(
-                      alignment: AlignmentDirectional.center,
-                      transform: Matrix4.diagonal3Values(scale, 1, 1),
-                      child: Container(
-                        key: tipsGlobalkey,
-                        color: Color(0xFF1AD9CA),
-                        width: 60.0,
-                      ),
-                    ),
-                  ),
-                )
-              ],
+        widgets.add(Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            StatefulRoundButton(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+              key: insertKey(AddressTab.TAB_PROVINCE),
+              child: LimitedBox(
+                maxWidth: 100,
+                child: Text("${address.provinceData.provinceName}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: currentTab == AddressTab.TAB_PROVINCE
+                          ? Color(0xFF1AD9CA)
+                          : Color(0xFF374147),
+                      fontSize: 14,
+                    )),
+              ),
+              onPress: () {
+                changeIndex(AddressTab.TAB_PROVINCE);
+              },
             ),
-          ),
+            Container(
+              height: 2,
+              child: Transform(
+                alignment: AlignmentDirectional.center,
+                transform: Matrix4.translationValues(translationX, 0, 0),
+                child: Transform(
+                  alignment: AlignmentDirectional.center,
+                  transform: Matrix4.diagonal3Values(scale, 1, 1),
+                  child: Container(
+                    key: tipsGlobalkey,
+                    color: Color(0xFF1AD9CA),
+                    width:
+                        1.0, //这里就设置为1吧，如果选择了省数据，上面的weiget的width肯定比1大；如果设置的比较大，有的省的weiget的width会比他小导致不对齐
+                  ),
+                ),
+              ),
+            )
+          ],
         ));
 
         if (address.cityData == null) {
