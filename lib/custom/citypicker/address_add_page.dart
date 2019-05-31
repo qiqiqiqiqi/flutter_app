@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/custom/citypicker/view/round_button.dart';
+import 'address_dialog.dart';
+import 'package:flutter_app/custom/citypicker/data/address.dart';
 
 class AddresAddPage extends StatefulWidget {
   @override
@@ -9,6 +11,8 @@ class AddresAddPage extends StatefulWidget {
 }
 
 class AddressAddPageState extends State<AddresAddPage> {
+  Address selectedAddress;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,25 +115,32 @@ class AddressAddPageState extends State<AddresAddPage> {
                         ),
                       ),
                       Expanded(
-                          child: TextField(
-                        style:
-                            TextStyle(color: Color(0xFF374147), fontSize: 14),
-                        controller: TextEditingController.fromValue(
-                            TextEditingValue(
-                                // 设置内容
-                                text: '广东省深圳市',
-                                // 保持光标在最后
-                                selection: TextSelection.fromPosition(
-                                    TextPosition(
-                                        affinity: TextAffinity.downstream,
-                                        offset: '广东省深圳市'.length)))),
-                        maxLines: 1,
-                        decoration: new InputDecoration(
-                            hintStyle: TextStyle(
-                                color: Color(0xFFAAB2B7), fontSize: 14),
-                            hintText: "请选择省/市/县区",
-                            border: InputBorder.none),
-                      ))
+                          child: Container(
+                            child: InkWell(
+                            onTap: () {
+                              selectAddress(context);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 20),
+                              child: TextField(
+                                enabled: false,
+                                style: TextStyle(
+                                    color: Color(0xFF374147), fontSize: 14),
+                                controller: TextEditingController.fromValue(
+                                    TextEditingValue(
+                                      // 设置内容
+                                      text: selectedAddress == null
+                                          ? ''
+                                          : '${selectedAddress.provinceData.provinceName}${selectedAddress.cityData.cityName}${selectedAddress.areaData.areaName}',
+                                    )),
+                                decoration: new InputDecoration(
+                                    hintStyle: TextStyle(
+                                        color: Color(0xFFAAB2B7), fontSize: 14),
+                                    hintText: "请选择省/市/县区",
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),))
                     ],
                   ),
                   Divider(
@@ -141,6 +152,7 @@ class AddressAddPageState extends State<AddresAddPage> {
                     child: Padding(
                       padding: EdgeInsets.only(
                         top: 20,
+                        right: 20
                       ),
                       child: TextField(
                           style:
@@ -169,5 +181,20 @@ class AddressAddPageState extends State<AddresAddPage> {
             )
           ],
         ));
+  }
+
+  selectAddress(BuildContext context) async {
+    Address address = await showDialog<Address>(
+        context: context, //BuildContext对象
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return new AddressDialog();
+        });
+    print('selectAddress():address=$address');
+    if (address != null) {
+      setState(() {
+        selectedAddress = address;
+      });
+    }
   }
 }

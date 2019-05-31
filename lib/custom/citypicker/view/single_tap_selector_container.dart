@@ -28,24 +28,22 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
   Map<AddressTab, GlobalKey> tabGlobalKeys;
   double offsetX = 0.0;
   Address address;
-
+  AddressContainerInheritedWidget headContainerInheritedWidget;
   @override
   void dispose() {
-    super.dispose();
     animationController?.dispose();
-    AddressContainerInheritedWidget headContainerInheritedWidget =
-        AddressContainerInheritedWidget.of(context);
     if (headContainerInheritedWidget != null &&
         headContainerInheritedWidget.addressObserver != null) {
       headContainerInheritedWidget.addressObserver.unsubscribe(this);
     }
+    super.dispose();
+
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    AddressContainerInheritedWidget headContainerInheritedWidget =
-        AddressContainerInheritedWidget.of(context);
+     headContainerInheritedWidget = AddressContainerInheritedWidget.of(context);
     if (headContainerInheritedWidget != null &&
         headContainerInheritedWidget.addressObserver != null) {
       headContainerInheritedWidget.addressObserver.subscribe(this);
@@ -274,37 +272,6 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
       widgets.add(Container());
     }
     return widgets;
-
-    /*return <Widget>[
-      StatefulRoundButton(
-        key: insertKey(AddressTab.TAB_PROVINCE),
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        child: Text("text0text0"),
-        onPress: () {
-          changeIndex(AddressTab.TAB_PROVINCE);
-        },
-      ),
-      StatefulRoundButton(
-        key: insertKey(AddressTab.TAB_CITY),
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        child: Text("text1"),
-        onPress: () {
-          changeIndex(AddressTab.TAB_CITY);
-        },
-      ),
-      StatefulRoundButton(
-        key: insertKey(AddressTab.TAB_AREA),
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        child: Text(
-          "text2text2text2",
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        onPress: () {
-          changeIndex(AddressTab.TAB_AREA);
-        },
-      ),
-    ];*/
   }
 
   void changeIndex(AddressTab tab) {

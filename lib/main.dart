@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'custom/chart/chartdemo.dart';
 import 'package:flutter_app/custom/citypicker/address_select_page.dart';
+import 'package:flutter_app/custom/citypicker/address_dialog.dart';
+import 'package:flutter_app/custom/citypicker/address_add_page.dart';
 //main() => runApp(new MainApp());
   main(){
- return runApp(MaterialApp(home: AddressSelectPage(),));
+ return runApp(MaterialApp(home: AddresAddPage(),));
 }
 
 class MainApp extends StatelessWidget {

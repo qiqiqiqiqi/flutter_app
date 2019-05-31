@@ -131,5 +131,9 @@ class AddressAreaListState extends State<AddressAreaList> {
     AddressContainerInheritedWidget.of(context)
         .addressObserver
         .notifyStateChange(widget.selectedAddress);
+
+    AddressContainerInheritedWidget.of(context)
+        ?.onSelectedAddress
+        ?.call(widget.selectedAddress);
   }
 }

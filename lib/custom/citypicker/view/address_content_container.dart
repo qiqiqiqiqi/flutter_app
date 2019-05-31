@@ -20,7 +20,7 @@ class CityContentContainer extends StatefulWidget {
 class CityContentState extends State<CityContentContainer> with TabObserve {
   Address selectedAddress;
   AddressTab currentTab = AddressTab.TAB_PROVINCE;
-
+  AddressContainerInheritedWidget headContainerInheritedWidget;
   @override
   void initState() {
     super.initState();
@@ -29,7 +29,7 @@ class CityContentState extends State<CityContentContainer> with TabObserve {
 
   @override
   void didChangeDependencies() {
-    AddressContainerInheritedWidget headContainerInheritedWidget =
+     headContainerInheritedWidget =
         AddressContainerInheritedWidget.of(context);
     if (headContainerInheritedWidget != null &&
         headContainerInheritedWidget.tabObserver != null) {
@@ -41,8 +41,6 @@ class CityContentState extends State<CityContentContainer> with TabObserve {
   @override
   void dispose() {
     super.dispose();
-    AddressContainerInheritedWidget headContainerInheritedWidget =
-        AddressContainerInheritedWidget.of(context);
     if (headContainerInheritedWidget != null &&
         headContainerInheritedWidget.tabObserver != null) {
       headContainerInheritedWidget.tabObserver.unsubscribe(this);
