@@ -245,7 +245,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
       }
 
       if (address.areaData != null) {
-        widgets.add(Container(
+        widgets.add(Expanded(child: Container(
           margin: EdgeInsets.only(left: 20),
           child: StatefulRoundButton(
             padding: EdgeInsets.symmetric(vertical: 16),
@@ -266,7 +266,7 @@ class SingleSelectorContainerState extends State<SingleSelectorContainer>
               changeIndex(AddressTab.TAB_AREA);
             },
           ),
-        ));
+        )));
       }
     } else {
       widgets.add(Container());
