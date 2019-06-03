@@ -4,9 +4,15 @@ import 'ruler.dart';
 main() {
   runApp(MaterialApp(
     title: 'ruler demo',
-    home: Scaffold(
-      appBar: AppBar(title: Text('ruler demo')),
-      body: Ruler(),
-    ),
+    home: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      return Scaffold(
+        appBar: AppBar(title: Text('ruler demo')),
+        body: Ruler(
+          width: constraints.maxWidth,
+          height: 80,
+        ),
+      );
+    }),
   ));
 }

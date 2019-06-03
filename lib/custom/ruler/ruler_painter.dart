@@ -14,35 +14,12 @@ class RulerPainter extends CustomPainter {
   int showScaleNum = 9;
   double offsetX = 0.0;
 
-  RulerPainter(
-      {@required this.minValue,
-      @required this.maxValue,
-      this.middleValue,
-      this.translationX}) {
+  RulerPainter({this.unitScaleLength, this.offsetX,this.scaleNum}) {
     _paint = Paint()..isAntiAlias = true;
-    scaleNum = (maxValue - minValue) ~/ unitScale;
-    if (middleValue == null) {
-      middleValue = (minValue + maxValue) ~/ 2;
-    }
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    unitScaleLength = (size.width / (showScaleNum - 1));
-    emptyLenth = size.width / 2;
-    sumLength = unitScaleLength * ((maxValue - minValue) / unitScale) +
-        (showScaleNum - 1) * unitScaleLength; //另外加上一屏的空白宽度使两端能滑到中点
-    offsetX = translationX +
-        emptyLenth -
-        (middleValue - minValue) * unitScaleLength * 2;
-    if (offsetX > emptyLenth) {
-      offsetX = emptyLenth;
-    }
-    if (offsetX <=
-        -(unitScaleLength * ((maxValue - minValue) / unitScale) - emptyLenth)) {
-      offsetX =
-          -(unitScaleLength * ((maxValue - minValue) / unitScale) - emptyLenth);
-    }
     drawScale(canvas, size);
   }
 
