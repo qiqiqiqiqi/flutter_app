@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
 class RulerPainter extends CustomPainter {
-  int minValue = 0;
-  int middleValue = 0;
-  int maxValue = 0;
-  double translationX = 0.0;
   double unitScale = 0.5;
   double unitScaleLength;
   int scaleNum;
-  double sumLength;
-  double emptyLenth;
   Paint _paint;
-  int showScaleNum = 9;
   double offsetX = 0.0;
+  int minValue = 0;
+  int maxValue = 0;
+  double translationX = 0.0;
+  int currentSacle;
 
-  RulerPainter({this.unitScaleLength, this.offsetX,this.scaleNum}) {
+  RulerPainter(
+      {this.unitScaleLength,
+      this.offsetX,
+      this.scaleNum,
+      this.minValue,
+      this.maxValue,
+      this.unitScale,
+      this.currentSacle}) {
     _paint = Paint()..isAntiAlias = true;
   }
 
@@ -30,6 +34,7 @@ class RulerPainter extends CustomPainter {
     double offsetY = size.height * 9 / 16;
     drawScaleX(canvas, offsetY);
     drawCursor(canvas, offsetY, size);
+    drawCurrentValue(canvas, offsetY, size);
     canvas.restore();
   }
 
@@ -49,7 +54,7 @@ class RulerPainter extends CustomPainter {
         TextPainter textPainter = TextPainter(
             textDirection: TextDirection.ltr,
             text: TextSpan(
-                text: '${(i * unitScale).toInt()}',
+                text: '${(i * unitScale + minValue).toInt()}',
                 style: TextStyle(
                   color: Color(0xFFE8E9EB),
                   fontSize: 12.0,
@@ -79,6 +84,26 @@ class RulerPainter extends CustomPainter {
       ..strokeWidth = 3;
     canvas.translate(size.width / 2, offsetY);
     canvas.drawLine(Offset(0, -12.5), Offset(0, 12.5), _paint);
+    canvas.restore();
+  }
+
+  void drawCurrentValue(Canvas canvas, double offsetY, Size size) {
+    canvas.save();
+    _paint
+      ..color = Color(0xFF1AD9CA)
+      ..strokeWidth = 3;
+    canvas.translate(size.width / 2, offsetY);
+    TextPainter textPainter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+            text:
+                '${((currentSacle * unitScale + minValue) - (currentSacle * unitScale + minValue).toInt()) == 0 ? (currentSacle * unitScale + minValue).toInt() : (currentSacle * unitScale + minValue)} kg',
+            style: TextStyle(
+              color: Color(0xFF374147),
+              fontSize: 23.0,
+            )));
+    textPainter.layout();
+    textPainter.paint(canvas, Offset(-textPainter.width / 2, -45));
     canvas.restore();
   }
 }
