@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ruler_painter.dart';
+import 'dart:math' as Math;
 
 class Ruler extends StatefulWidget {
   double width;
@@ -82,33 +83,56 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
               'RulerState--build()--onPanUpdate():offsetX=$offsetX,translationX=$translationX,details.delta=${details.delta}');
         },
         onPanEnd: (DragEndDetails details) {
-          /* velocity = details.velocity.pixelsPerSecond;
+          velocity = details.velocity.pixelsPerSecond;
           if (velocity.dx.abs() > 0 &&
               offsetX >
                   -(unitScaleLength * ((maxValue - minValue) / unitScale) -
                       emptyLenth) &&
               offsetX < emptyLenth) {
             //fling
-
-            Tween<double> tween = Tween(
-                begin: offsetX,
-                end: velocity.dx > 0.0 ? emptyLenth : maxOffsetX);
+            double velocityX = velocity.dx / 2;
+            double preFrameTime = 0.0;
+            Tween<double> tween = Tween(begin: 0, end: 1);
             _animationController.duration = Duration(seconds: 1);
             Animation animate = tween.animate(_animationController);
             animate.addListener(() {
               setState(() {
-                offsetX = animate.value;
+                // velocity.dx > 0.0 ? emptyLenth : maxOffsetX
+                translationX += velocityX * (animate.value - preFrameTime) -
+                    0.5 * 9.8 * Math.pow((animate.value - preFrameTime), 2);
+                offsetX = translationX +
+                    emptyLenth -
+                    (middleValue - minValue) * unitScaleLength * 2;
+                if (offsetX > emptyLenth) {
+//                  _animationController.stop(canceled: true);
+//                  offsetX = emptyLenth;
+                  translationX -= velocityX * (animate.value - preFrameTime) -
+                      0.5 * 9.8 * Math.pow((animate.value - preFrameTime), 2);
+                } else if (offsetX < maxOffsetX) {
+//                  _animationController.stop(canceled: true);
+//                  offsetX = maxOffsetX;
+                  translationX -= velocityX * (animate.value - preFrameTime) -
+                      0.5 * 9.8 * Math.pow((animate.value - preFrameTime), 2);
+                }
+                offsetX = translationX +
+                    emptyLenth -
+                    (middleValue - minValue) * unitScaleLength * 2;
+                if (velocity.dx > 0) {
+                  velocityX = velocity.dx - 9.8 * animate.value;
+                } else {
+                  velocityX = velocity.dx + 9.8 * animate.value;
+                }
+                preFrameTime = animate.value;
               });
             });
             _animationController.forward(from: 0.0);
 
-            print(
-                'RulerState--build()--onPanEnd():details.velocity.pixelsPerSecond=${details.velocity.pixelsPerSecond}');
+            print('RulerState--build()--onPanEnd():offsetX=$offsetX');
           } else if (velocity.dx == 0) {
             //自动居中
             smoothToCenter();
-          }*/
-          smoothToCenter();
+          }
+          // smoothToCenter();
         },
         child: CustomPaint(
           size: Size(widget.width, 80),
