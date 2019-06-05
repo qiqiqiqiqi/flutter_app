@@ -86,7 +86,12 @@ class TargetSettingsPageState extends State<TargetSettingsPage> {
                 '控制体重',
                 style: TextStyle(color: Color(0xFF374147), fontSize: 16),
               ),
-            )
+            ),
+            ListView.builder(itemBuilder: (context, index) {
+              return Container(
+                decoration: BoxDecoration(),
+              );
+            })
           ],
         );
       }),
