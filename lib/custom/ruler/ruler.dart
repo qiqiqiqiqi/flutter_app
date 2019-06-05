@@ -96,6 +96,8 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
             double a = 1.0;
             double v0 = velocity.dx;
             int period = (v0 / a).abs().toInt();
+            //todo find position of The closest scale
+
             Tween<double> tween = Tween(begin: 0, end: period.toDouble());
             _animationController.duration = Duration(milliseconds: period);
             Animation animate = tween.animate(_animationController);
