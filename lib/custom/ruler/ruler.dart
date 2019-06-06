@@ -16,11 +16,12 @@ class Ruler extends StatefulWidget {
 
 class RulerState extends State<Ruler> with TickerProviderStateMixin {
   Offset velocity;
-  AnimationController _animationController;
+  AnimationController _animationControllerSmooth;
+  AnimationController _animationControllerFling;
   double translationX = 0.0;
-  int minValue = 0;
+  int minValue = 30;
   int middleValue;
-  int maxValue = 20;
+  int maxValue = 100;
   double unitScale = 0.5;
   double unitScaleLength;
   int scaleNum;
@@ -31,6 +32,11 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
 
   int currentScale;
   double maxOffsetX;
+  Tween<double> tweenSmooth;
+  Tween<double> tweenFling;
+  double v0 = 0.0;
+  double translationX0 = 0.0;
+  double a = 1.0;
 
   @override
   void initState() {
@@ -47,23 +53,80 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
     offsetX = translationX +
         emptyLenth -
         (middleValue - minValue) * unitScaleLength * 2;
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+
     maxOffsetX =
         -(unitScaleLength * ((maxValue - minValue) / unitScale) - emptyLenth);
     currentScale = (middleValue - minValue) ~/ unitScale;
+
+    //平滑
+    _animationControllerSmooth =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    tweenSmooth = Tween();
+    Animation animateSmooth = tweenSmooth.animate(_animationControllerSmooth);
+    _animationControllerSmooth.duration = Duration(milliseconds: 200);
+    animateSmooth.addListener(() {
+      setState(() {
+        offsetX = animateSmooth.value;
+        translationX = offsetX -
+            (emptyLenth - (middleValue - minValue) * unitScaleLength * 2);
+      });
+    });
+    animateSmooth.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          translationX = offsetX -
+              (emptyLenth - (middleValue - minValue) * unitScaleLength * 2);
+        });
+      }
+    });
+    //fling滑
+    _animationControllerFling =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    tweenFling = Tween();
+    Animation animateFling = tweenFling.animate(_animationControllerFling);
+    animateFling.addListener(() {
+      print('onHorizontalDragEnd():v0=$v0');
+//              print(
+//                  'RulerState--build()--onPanEnd():offsetX=$offsetX,velocity=$velocity,period=$period,animate.value=${animate.value},v0=$v0');
+      double currentTranslationX = translationX0;
+      double t = animateFling.value / 1000;
+      if (velocity.dx < 0) {
+        //向右滑动
+        currentTranslationX += v0 * t + 0.5 * a * Math.pow(t, 2);
+      } else {
+        currentTranslationX += v0 * t - 0.5 * a * Math.pow(t, 2);
+      }
+
+      double currentOffsetX = currentTranslationX +
+          emptyLenth -
+          (middleValue - minValue) * unitScaleLength * 2;
+      if (currentOffsetX > emptyLenth) {
+        currentOffsetX = emptyLenth;
+        currentTranslationX = (middleValue - minValue) * unitScaleLength * 2;
+      } else if (currentOffsetX < maxOffsetX) {
+        currentOffsetX = maxOffsetX;
+        currentTranslationX = maxOffsetX -
+            emptyLenth +
+            (middleValue - minValue) * unitScaleLength * 2;
+      }
+      setState(() {
+        offsetX = currentOffsetX;
+        translationX = currentTranslationX;
+      });
+    });
+    animateFling.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
+        smoothToTargetScale();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: Colors.redAccent,
+      color: Colors.redAccent,
       child: GestureDetector(
         onHorizontalDragUpdate: (DragUpdateDetails details) {
-//          double maxOffsetX =
-//              -(unitScaleLength * ((maxValue - minValue) / unitScale) -
-//                  emptyLenth);
-
           setState(() {
             translationX += details.delta.dx;
             double currentOffsetX = translationX +
@@ -92,52 +155,24 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
                       emptyLenth) &&
               offsetX < emptyLenth) {
             //fling
-            double translationX0 = translationX;
-            double a = 1.0;
-            double v0 = velocity.dx;
-            int period = (v0 / a).abs().toInt();
-            //todo find position of The closest scale
+            translationX0 = translationX;
+            v0 = velocity.dx;
+            double period = (v0 / a).abs(); //以毫秒为单位
 
-            Tween<double> tween = Tween(begin: 0, end: period.toDouble());
-            _animationController.duration = Duration(milliseconds: period);
-            Animation animate = tween.animate(_animationController);
-            animate.addListener(() {
-              print(
-                  'RulerState--build()--onPanEnd():offsetX=$offsetX,velocity=$velocity,period=$period,animate.value=${animate.value}');
-              double currentTranslationX = translationX0;
-              double t=animate.value/1000;
-              if (velocity.dx < 0) {
-                //向右滑动
-                currentTranslationX +=
-                    v0 * t + 0.5 * a * Math.pow(t, 2);
-              } else {
-                currentTranslationX +=
-                    v0 * t - 0.5 * a * Math.pow(t, 2);
-              }
+            v0 = ((find2TargetScaleDistanceByVelocity(v0, period / 1000, a) -
+                        offsetX) -
+                    0.5 * a * Math.pow(period / 1000, 2)) /
+                (period / 1000);
 
-              double currentOffsetX = currentTranslationX +
-                  emptyLenth -
-                  (middleValue - minValue) * unitScaleLength * 2;
-              if (currentOffsetX > emptyLenth) {
-                currentOffsetX = emptyLenth;
-                currentTranslationX =
-                    (middleValue - minValue) * unitScaleLength * 2;
-              } else if (currentOffsetX < maxOffsetX) {
-                currentOffsetX = maxOffsetX;
-                currentTranslationX = maxOffsetX -
-                    emptyLenth +
-                    (middleValue - minValue) * unitScaleLength * 2;
-              }
-              setState(() {
-                offsetX = currentOffsetX;
-                translationX = currentTranslationX;
-              });
-            });
-            _animationController.forward(from: 0);
+            tweenFling.begin = 0;
+            tweenFling.end = period;
+            _animationControllerFling.duration =
+                Duration(milliseconds: period.toInt());
 
+            _animationControllerFling.forward(from: 0);
           } else if (velocity.dx == 0) {
             //自动居中
-            smoothToCenter();
+            smoothToTargetScale();
           }
           // smoothToCenter();
         },
@@ -156,63 +191,78 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
     );
   }
 
-  void smoothToCenter() {
+  double find2TargetScaleDistanceByVelocity(double v0, double t, double a) {
+    double sourceTranslationX = translationX;
+    if (velocity.dx < 0) {
+      //向右滑动
+      sourceTranslationX += v0 * t + 0.5 * a * Math.pow(t, 2);
+    } else {
+      sourceTranslationX += v0 * t - 0.5 * a * Math.pow(t, 2);
+    }
+    double sourceOffsetX = sourceTranslationX +
+        emptyLenth -
+        (middleValue - minValue) * unitScaleLength * 2;
+    if (sourceOffsetX > emptyLenth) {
+      sourceOffsetX = emptyLenth;
+      sourceTranslationX = (middleValue - minValue) * unitScaleLength * 2;
+    } else if (sourceOffsetX < maxOffsetX) {
+      sourceOffsetX = maxOffsetX;
+      sourceTranslationX = maxOffsetX -
+          emptyLenth +
+          (middleValue - minValue) * unitScaleLength * 2;
+    }
+
+    return findTargetOffsetX(sourceTranslationX, sourceOffsetX,
+        refreshCurrentScale: false);
+    //return sourceTranslationX;
+  }
+
+  void smoothToTargetScale() {
+    startAnima(offsetX,
+        findTargetOffsetX(translationX, offsetX, refreshCurrentScale: true));
+  }
+
+  double findTargetOffsetX(double translationX, double offsetX,
+      {bool refreshCurrentScale = false}) {
     int leftScale =
         ((middleValue - minValue) * 2 - translationX ~/ unitScaleLength) > 0
             ? ((middleValue - minValue) * 2 - translationX ~/ unitScaleLength)
             : 0;
-    if (translationX > 0) {
-      leftScale = leftScale - 1;
+    if (translationX >= 0 && leftScale > 0) {
+      if ((translationX % unitScaleLength).abs() > 0 &&
+          ((translationX % unitScaleLength).abs() - unitScaleLength).abs() > 1) {
+        leftScale = leftScale - 1;
+      }
     }
     double leftScalePositionLeft = emptyLenth +
         (translationX < 0
             ? -(translationX.abs() % unitScaleLength)
-            : translationX.abs() % unitScaleLength - unitScaleLength);
-    double rightScalePositionLeft = leftScalePositionLeft + unitScaleLength;
-    if ((leftScalePositionLeft - emptyLenth).abs() >
-        (rightScalePositionLeft - emptyLenth).abs()) {
-      currentScale = leftScale + 1;
-      Tween<double> tween = Tween(
-          begin: offsetX, end: offsetX - (rightScalePositionLeft - emptyLenth));
-      Animation animate = tween.animate(_animationController);
-      _animationController.duration = Duration(milliseconds: 200);
-      animate.addListener(() {
-        setState(() {
-          offsetX = animate.value;
-          translationX = offsetX -
-              (emptyLenth - (middleValue - minValue) * unitScaleLength * 2);
-        });
-      });
-      animate.addStatusListener((AnimationStatus status) {
-        if (status == AnimationStatus.completed) {
-          translationX = offsetX -
-              (emptyLenth - (middleValue - minValue) * unitScaleLength * 2);
-        }
-      });
-      _animationController.forward(from: 0.0);
+            : translationX.abs() % unitScaleLength == 0
+                ? 0
+                : (translationX.abs() % unitScaleLength - unitScaleLength));
+    double end = offsetX;
+    if (((leftScalePositionLeft - emptyLenth).abs() >
+        ((leftScalePositionLeft + unitScaleLength) - emptyLenth).abs())) {
+      if (refreshCurrentScale) {
+        currentScale = leftScale + 1;
+      }
+      end = offsetX - ((leftScalePositionLeft + unitScaleLength) - emptyLenth);
     } else {
-      currentScale = leftScale;
-      Tween<double> tween = Tween(
-          begin: offsetX, end: offsetX + (emptyLenth - leftScalePositionLeft));
-      Animation animate = tween.animate(_animationController);
-      _animationController.duration = Duration(milliseconds: 200);
-      animate.addListener(() {
-        setState(() {
-          offsetX = animate.value;
-          translationX = offsetX -
-              (emptyLenth - (middleValue - minValue) * unitScaleLength * 2);
-        });
-      });
-      animate.addStatusListener((AnimationStatus status) {
-        if (status == AnimationStatus.completed) {
-          translationX = offsetX -
-              (emptyLenth - (middleValue - minValue) * unitScaleLength * 2);
-        }
-      });
-      _animationController.forward(from: 0.0);
+      if (refreshCurrentScale) {
+        currentScale = leftScale;
+      }
+      end = offsetX + (emptyLenth - leftScalePositionLeft);
     }
-    _animationController.forward(from: 0);
-//    print(
+    //    print(
 //        'leftScale=$leftScale,currentScale=$currentScale,leftScalePositionLeft=$leftScalePositionLeft,translationX=$translationX');
+    return end;
+  }
+
+  void startAnima(double start, double end) {
+    // Tween<double> tween = Tween(begin: start, end: end);
+    tweenSmooth.begin = start;
+    tweenSmooth.end = end;
+
+    _animationControllerSmooth.forward(from: 0);
   }
 }
