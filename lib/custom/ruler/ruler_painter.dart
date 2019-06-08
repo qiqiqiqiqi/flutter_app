@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class RulerPainter extends CustomPainter {
   double unitScale = 0.5;
-  double unitScaleLength;
+  int unitScaleLength;
   int scaleNum;
   Paint _paint;
   double offsetX = 0.0;
@@ -46,11 +46,11 @@ class RulerPainter extends CustomPainter {
     List<Offset> scales = List();
     for (int i = 0; i <= scaleNum; i++) {
       scales.add(
-        Offset(i * unitScaleLength, 0),
+        Offset((i * unitScaleLength).toDouble(), 0),
       );
       if (i % 2 == 0) {
-        canvas.drawLine(Offset(i * unitScaleLength, 0),
-            Offset(i * unitScaleLength, 12), _paint);
+        canvas.drawLine(Offset((i * unitScaleLength).toDouble(), 0),
+            Offset((i * unitScaleLength).toDouble(), 12), _paint);
         TextPainter textPainter = TextPainter(
             textDirection: TextDirection.ltr,
             text: TextSpan(
@@ -64,8 +64,8 @@ class RulerPainter extends CustomPainter {
         textPainter.paint(
             canvas, Offset(i * unitScaleLength - textPainter.width / 2, 21));
       } else {
-        canvas.drawLine(Offset(i * unitScaleLength, 0),
-            Offset(i * unitScaleLength, 4), _paint);
+        canvas.drawLine(Offset((i * unitScaleLength).toDouble(), 0),
+            Offset((i * unitScaleLength).toDouble(), 4), _paint);
       }
     }
     canvas.drawLine(scales[0], scales[scales.length - 1], _paint);
