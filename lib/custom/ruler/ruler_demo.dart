@@ -11,6 +11,10 @@ main() {
         body: Center(
           child: Ruler(
             height: 80,
+            onSelectedValue: (BuildContext context,double value) {
+              Scaffold.of(context)
+                  .showSnackBar(SnackBar(content: Text('$value')));
+            },
           ),
         ),
       );

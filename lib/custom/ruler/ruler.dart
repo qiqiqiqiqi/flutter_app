@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'ruler_painter.dart';
 import 'dart:math' as Math;
 
+typedef OnSelectedValue = void Function(BuildContext context,double value);
+
 class Ruler extends StatefulWidget {
   double width;
   double height;
+  OnSelectedValue onSelectedValue;
 
-  Ruler({this.width, this.height});
+  Ruler({this.width, this.height, this.onSelectedValue});
 
   @override
   State<StatefulWidget> createState() {
@@ -83,6 +86,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
           translationX = offsetX -
               (emptyLenth - (middleValue - minValue) * unitScaleLength * 2);
         });
+        widget.onSelectedValue?.call(context,currentScale * unitScale + minValue);
       }
     });
     //fling滑
@@ -124,7 +128,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
         builder: (BuildContext context, BoxConstraints constraints) {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 48),
-        color: Colors.redAccent,
+          color: Colors.blueAccent,
         child: GestureDetector(
           onHorizontalDragStart: (DragStartDetails details) {
             if (_animationControllerFling.isAnimating) {
@@ -166,7 +170,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
               tweenFling.end = targetScaleDistance;
               print("distance=${targetScaleDistance - offsetX}");
               _animationControllerFling.duration = Duration(
-                  milliseconds: (targetScaleDistance - offsetX).abs().toInt());
+                  milliseconds: (targetScaleDistance - offsetX).abs().toInt()~/2);
 
               _animationControllerFling.forward(from: 0);
             } else if (velocity.dx == 0) {
