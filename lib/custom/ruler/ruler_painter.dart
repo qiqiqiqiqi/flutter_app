@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class RulerPainter extends CustomPainter {
   double unitScale = 0.5;
-  int unitScaleLength;
-  int scaleNum;
+  int unitScaleLength = 0;
+  int scaleNum = 0;
   Paint _paint;
   double offsetX = 0.0;
   int minValue = 0;
   int maxValue = 0;
   double translationX = 0.0;
-  int currentSacle;
+  int currentSacle = 0;
 
   RulerPainter(
       {this.unitScaleLength,
@@ -24,23 +24,20 @@ class RulerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    drawScale(canvas, size);
+    draw(canvas, size);
   }
 
-  void drawScale(Canvas canvas, Size size) {
+  void draw(Canvas canvas, Size size) {
     canvas.save();
-    canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
-
     double offsetY = size.height * 9 / 16;
-    drawScaleX(canvas, offsetY);
+    drawScaleX(canvas, offsetY, size);
     drawCursor(canvas, offsetY, size);
     drawCurrentValue(canvas, offsetY, size);
     canvas.restore();
   }
 
-  void drawScaleX(Canvas canvas, double offsetY) {
+  void drawScaleX(Canvas canvas, double offsetY, Size size) {
     canvas.save();
-    canvas.translate(offsetX, offsetY);
     _paint.strokeWidth = 2;
     _paint.color = Color(0xFFE8E9EB);
     List<Offset> scales = List();
@@ -49,27 +46,51 @@ class RulerPainter extends CustomPainter {
         Offset((i * unitScaleLength).toDouble(), 0),
       );
       if (i % 2 == 0) {
-        canvas.drawLine(Offset((i * unitScaleLength).toDouble(), 0),
-            Offset((i * unitScaleLength).toDouble(), 12), _paint);
-        TextPainter textPainter = TextPainter(
-            textDirection: TextDirection.ltr,
-            text: TextSpan(
-                text: '${(i * unitScale + minValue).toInt()}',
-                style: TextStyle(
-                  color: Color(0xFFE8E9EB),
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
-                )));
-        textPainter.layout();
-        textPainter.paint(
-            canvas, Offset(i * unitScaleLength - textPainter.width / 2, 21));
+        drawScaleLine(canvas, size, offsetY, i, 12);
+        drawScaleText(canvas,size, offsetY, i);
       } else {
-        canvas.drawLine(Offset((i * unitScaleLength).toDouble(), 0),
-            Offset((i * unitScaleLength).toDouble(), 4), _paint);
+        drawScaleLine(canvas, size, offsetY, i, 4);
       }
     }
-    //canvas.drawLine(scales[0], scales[scales.length - 1], _paint);
+    drawHLine(canvas, size, offsetY, scales);
+    canvas.restore();
+  }
+
+  void drawHLine(
+      Canvas canvas, Size size, double offsetY, List<Offset> scales) {
+    canvas.save();
+    canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
+    canvas.translate(offsetX, offsetY);
     canvas.drawLine(scales[0], scales[scales.length - 1], _paint);
+    canvas.restore();
+  }
+
+  void drawScaleLine(
+      Canvas canvas, Size size, double offsetY, int i, double end) {
+    canvas.save();
+    canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
+    canvas.translate(offsetX, offsetY);
+    canvas.drawLine(Offset((i * unitScaleLength).toDouble(), 0),
+        Offset((i * unitScaleLength).toDouble(), end), _paint);
+    canvas.restore();
+  }
+
+  void drawScaleText(Canvas canvas,Size size, double offsetY, int i) {
+    canvas.save();
+    canvas.clipRect(Rect.fromLTRB(-unitScaleLength/2, 0, size.width+unitScaleLength/2, size.height));
+    canvas.translate(offsetX, offsetY);
+    TextPainter textPainter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+            text: '${(i * unitScale + minValue).toInt()}',
+            style: TextStyle(
+              color: Color(0xFFE8E9EB),
+              fontSize: 12.0,
+              fontWeight: FontWeight.bold,
+            )));
+    textPainter.layout();
+    textPainter.paint(
+        canvas, Offset(i * unitScaleLength - textPainter.width / 2, 21));
     canvas.restore();
   }
 

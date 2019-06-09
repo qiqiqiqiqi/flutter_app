@@ -10,7 +10,6 @@ main() {
         appBar: AppBar(title: Text('ruler demo')),
         body: Center(
           child: Ruler(
-            width: constraints.maxWidth,
             height: 80,
           ),
         ),

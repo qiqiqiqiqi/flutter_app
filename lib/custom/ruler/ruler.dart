@@ -23,40 +23,46 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
   int middleValue;
   int maxValue = 1000;
   double unitScale = 0.5;
-  int unitScaleLength;
-  int scaleNum;
+  int unitScaleLength = 0;
+  int scaleNum = 0;
   double sumLength;
   double emptyLenth;
   int showScaleNum = 9;
   double offsetX = 0.0;
 
-  int currentScale;
+  int currentScale = 0;
   double maxOffsetX;
   Tween<double> tweenSmooth;
   Tween<double> tweenFling;
   double v0 = 0.0;
   double translationX0 = 0.0;
   double a = 1.0;
+  GlobalKey globalKey;
 
   @override
   void initState() {
     super.initState();
+    globalKey = GlobalKey();
+    WidgetsBinding.instance.addPostFrameCallback((Duration duration) {
+      setState(() {
+        widget.width = globalKey.currentContext.size.width;
+        unitScaleLength = (widget.width ~/ (showScaleNum - 1));
+        emptyLenth = widget.width / 2;
+        sumLength = unitScaleLength * ((maxValue - minValue) / unitScale) +
+            (showScaleNum - 1) * unitScaleLength; //另外加上一屏的空白宽度使两端能滑到中点
+        offsetX = translationX +
+            emptyLenth -
+            (middleValue - minValue) * unitScaleLength * 2;
 
+        maxOffsetX = -(unitScaleLength * ((maxValue - minValue) / unitScale) -
+            emptyLenth);
+        currentScale = (middleValue - minValue) ~/ unitScale;
+      });
+    });
     scaleNum = (maxValue - minValue) ~/ unitScale;
     if (middleValue == null) {
       middleValue = (minValue + maxValue) ~/ 2;
     }
-    unitScaleLength = (widget.width ~/ (showScaleNum - 1));
-    emptyLenth = widget.width / 2;
-    sumLength = unitScaleLength * ((maxValue - minValue) / unitScale) +
-        (showScaleNum - 1) * unitScaleLength; //另外加上一屏的空白宽度使两端能滑到中点
-    offsetX = translationX +
-        emptyLenth -
-        (middleValue - minValue) * unitScaleLength * 2;
-
-    maxOffsetX =
-        -(unitScaleLength * ((maxValue - minValue) / unitScale) - emptyLenth);
-    currentScale = (middleValue - minValue) ~/ unitScale;
 
     //平滑
     _animationControllerSmooth =
@@ -83,8 +89,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
     _animationControllerFling =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     Animation curve = CurvedAnimation(
-        parent: _animationControllerFling,
-        curve: Curves.easeOutExpo);
+        parent: _animationControllerFling, curve: Curves.easeOutExpo);
     tweenFling = Tween();
     Animation animateFling = tweenFling.animate(curve);
     animateFling.addListener(() {
@@ -115,71 +120,76 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-     color: Colors.redAccent,
-      child: GestureDetector(
-        onHorizontalDragStart: (DragStartDetails details) {
-          if (_animationControllerFling.isAnimating) {
-            _animationControllerFling.stop();
-          }
-        },
-        onHorizontalDragUpdate: (DragUpdateDetails details) {
-          setState(() {
-            translationX += details.delta.dx;
-            double currentOffsetX = translationX +
-                emptyLenth -
-                (middleValue - minValue) * unitScaleLength * 2;
-            if (currentOffsetX > emptyLenth) {
-              currentOffsetX = emptyLenth;
-              translationX = (middleValue - minValue) * unitScaleLength * 2;
-            } else if (currentOffsetX < maxOffsetX) {
-              currentOffsetX = maxOffsetX;
-              translationX = maxOffsetX -
-                  emptyLenth +
-                  (middleValue - minValue) * unitScaleLength * 2;
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 48),
+        color: Colors.redAccent,
+        child: GestureDetector(
+          onHorizontalDragStart: (DragStartDetails details) {
+            if (_animationControllerFling.isAnimating) {
+              _animationControllerFling.stop();
             }
-            offsetX = currentOffsetX;
-          });
-        },
-        onHorizontalDragEnd: (DragEndDetails details) {
-          velocity = details.velocity.pixelsPerSecond;
-          if (velocity.dx.abs() > 0 &&
-              offsetX >
-                  -(unitScaleLength * ((maxValue - minValue) / unitScale) -
-                      emptyLenth) &&
-              offsetX < emptyLenth) {
-            //fling
-            translationX0 = translationX;
-            v0 = velocity.dx;
-            double period = (v0 / a).abs(); //以毫秒为单位
-            double targetScaleDistance =
-                find2TargetScaleDistanceByVelocity(v0, period / 1000, a);
-            tweenFling.begin = offsetX;
-            tweenFling.end = targetScaleDistance;
-            print("distance=${targetScaleDistance - offsetX}");
-            _animationControllerFling.duration = Duration(
-                milliseconds: (targetScaleDistance - offsetX).abs().toInt());
+          },
+          onHorizontalDragUpdate: (DragUpdateDetails details) {
+            setState(() {
+              translationX += details.delta.dx;
+              double currentOffsetX = translationX +
+                  emptyLenth -
+                  (middleValue - minValue) * unitScaleLength * 2;
+              if (currentOffsetX > emptyLenth) {
+                currentOffsetX = emptyLenth;
+                translationX = (middleValue - minValue) * unitScaleLength * 2;
+              } else if (currentOffsetX < maxOffsetX) {
+                currentOffsetX = maxOffsetX;
+                translationX = maxOffsetX -
+                    emptyLenth +
+                    (middleValue - minValue) * unitScaleLength * 2;
+              }
+              offsetX = currentOffsetX;
+            });
+          },
+          onHorizontalDragEnd: (DragEndDetails details) {
+            velocity = details.velocity.pixelsPerSecond;
+            if (velocity.dx.abs() > 0 &&
+                offsetX >
+                    -(unitScaleLength * ((maxValue - minValue) / unitScale) -
+                        emptyLenth) &&
+                offsetX < emptyLenth) {
+              //fling
+              translationX0 = translationX;
+              v0 = velocity.dx;
+              double period = (v0 / a).abs(); //以毫秒为单位
+              double targetScaleDistance =
+                  find2TargetScaleDistanceByVelocity(v0, period / 1000, a);
+              tweenFling.begin = offsetX;
+              tweenFling.end = targetScaleDistance;
+              print("distance=${targetScaleDistance - offsetX}");
+              _animationControllerFling.duration = Duration(
+                  milliseconds: (targetScaleDistance - offsetX).abs().toInt());
 
-            _animationControllerFling.forward(from: 0);
-          } else if (velocity.dx == 0) {
-            //自动居中
-            smoothToTargetScale();
-          }
-          // smoothToCenter();
-        },
-        child: CustomPaint(
-          size: Size(widget.width, 80),
-          painter: RulerPainter(
-              currentSacle: currentScale,
-              unitScale: 0.5,
-              minValue: minValue,
-              maxValue: maxValue,
-              unitScaleLength: unitScaleLength,
-              offsetX: offsetX,
-              scaleNum: scaleNum),
+              _animationControllerFling.forward(from: 0);
+            } else if (velocity.dx == 0) {
+              //自动居中
+              smoothToTargetScale();
+            }
+            // smoothToCenter();
+          },
+          child: CustomPaint(
+            key: globalKey,
+            size: Size(constraints.maxWidth - 96, 80),
+            painter: RulerPainter(
+                currentSacle: currentScale,
+                unitScale: 0.5,
+                minValue: minValue,
+                maxValue: maxValue,
+                unitScaleLength: unitScaleLength,
+                offsetX: offsetX,
+                scaleNum: scaleNum),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   double find2TargetScaleDistanceByVelocity(double v0, double t, double a) {
