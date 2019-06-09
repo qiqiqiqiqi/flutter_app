@@ -68,6 +68,7 @@ class RulerPainter extends CustomPainter {
             Offset((i * unitScaleLength).toDouble(), 4), _paint);
       }
     }
+    //canvas.drawLine(scales[0], scales[scales.length - 1], _paint);
     canvas.drawLine(scales[0], scales[scales.length - 1], _paint);
     canvas.restore();
   }
