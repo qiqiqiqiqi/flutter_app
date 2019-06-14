@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class CircularSeekBar extends CustomPainter {
-  double angle = 135.0;
-  double maxAngle = 270.0;
+  double angle = 180.0;
+  double maxAngle = 360.0;
   double padding = 32.0;
 
   CircularSeekBar(this.angle);
@@ -71,7 +71,7 @@ class CircularSeekBar extends CustomPainter {
         (Rect.fromLTRB(-size.width / 2 + padding, -size.height / 2 + padding,
             size.width / 2 - padding, size.height / 2 - padding)),
         offsetRadian,
-        3 / 2 * pi,
+        2 * pi,
         false,
         paint);
     canvas.restore();
@@ -108,8 +108,10 @@ class CircularSeekBar extends CustomPainter {
     textPainter.layout();
     canvas.translate(size.width / 2, size.height / 2);
     canvas.rotate(rotateAngle * pi / 180);
+    canvas.translate(0, -size.height / 2);
+    canvas.rotate(-rotateAngle * pi / 180);
     textPainter.paint(
-        canvas, Offset(-textPainter.size.width / 2, -size.height / 2));
+        canvas, Offset(-textPainter.size.width / 2,0/* -size.height / 2*/));
     canvas.restore();
   }
 
@@ -119,30 +121,25 @@ class CircularSeekBar extends CustomPainter {
       print("drawPoint():angle=$angle");
       Point point;
       double raduis = size.width / 2 - padding;
-      if (angle > 270) {
-        angle = 270;
-      }
-      if (angle < 0) {
-        angle = 0;
-      }
-      if (angle >= 0 && angle < 45) {
-        double sinValue = sin((45 - angle) / 180 * pi);
-        double cosValue = cos((45 - angle) / 180 * pi);
+
+      if (angle >= 0 && angle < 90) {
+        double sinValue = sin((90 - angle) / 180 * pi);
+        double cosValue = cos((90 - angle) / 180 * pi);
         point = Point(size.width / 2 - raduis * cosValue,
             size.height / 2 + raduis * sinValue);
-      } else if (angle > 45 && angle < 135) {
-        double sinValue = sin((angle - 45) / 180 * pi);
-        double cosValue = cos((angle - 45) / 180 * pi);
+      } else if (angle > 90 && angle < 180) {
+        double sinValue = sin((angle - 90) / 180 * pi);
+        double cosValue = cos((angle - 90) / 180 * pi);
         point = Point(size.width / 2 - raduis * cosValue,
             size.height / 2 - raduis * sinValue);
-      } else if (angle >= 135 && angle < 225) {
-        double sinValue = sin((angle - 135) / 180 * pi);
-        double cosValue = cos((angle - 135) / 180 * pi);
+      } else if (angle >= 180 && angle < 270) {
+        double sinValue = sin((angle - 180) / 180 * pi);
+        double cosValue = cos((angle - 180) / 180 * pi);
         point = Point(size.width / 2 + raduis * sinValue,
             size.height / 2 - raduis * cosValue);
-      } else if (angle >= 225 && angle <= 270) {
-        double sinValue = sin((angle - 225) / 180 * pi);
-        double cosValue = cos((angle - 225) / 180 * pi);
+      } else if (angle >= 270 && angle <= 360) {
+        double sinValue = sin((angle - 270) / 180 * pi);
+        double cosValue = cos((angle - 270) / 180 * pi);
         point = Point(size.width / 2 + raduis * cosValue,
             size.height / 2 + raduis * sinValue);
       }
