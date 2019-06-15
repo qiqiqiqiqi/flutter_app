@@ -4,18 +4,17 @@ import 'dart:math';
 class CircularSeekBar extends CustomPainter {
   double angle = 180.0;
   double maxAngle = 360.0;
-  double padding = 32.0;
+  double padding = 0;
 
   CircularSeekBar(this.angle);
 
   @override
   void paint(Canvas canvas, Size size) {
-    //  canvas.drawColor(Colors.blue, BlendMode.difference);
+    canvas.drawColor(Colors.blue, BlendMode.difference);
     if (angle != null) {
       drawScale(canvas, size);
       drawRing(canvas, size);
-      drawPoint(canvas, size);
-      drawCenter(canvas, size);
+      // drawPoint(canvas, size);
     }
   }
 
@@ -26,51 +25,35 @@ class CircularSeekBar extends CustomPainter {
 
   void drawScale(Canvas canvas, Size size) {
     canvas.save();
-    double unitAngle = maxAngle / 20;
-    for (int i = 0; i <= 10; i++) {
-      int rightScaleValue = 20 + i;
-      if (rightScaleValue % 5 == 0) {
-        drawScaleText(canvas, size, "${rightScaleValue}", unitAngle * i);
-      } else {
-        drawScaleLine(canvas, size, unitAngle * i);
+    double unitAngle = maxAngle / 12;
+    for (int i = 0; i <= 6; i++) {
+      int rightScaleValue = i;
+      if (rightScaleValue == 0) {
+        rightScaleValue = 12;
       }
-      int leftScaleValue = 20 - i;
-      if (leftScaleValue % 5 == 0) {
-        drawScaleText(canvas, size, "$leftScaleValue", -unitAngle * i);
-      } else {
-        drawScaleLine(canvas, size, -unitAngle * i);
-      }
+      drawScaleText(canvas, size, "$rightScaleValue", unitAngle * i);
+      drawScaleLine(canvas, size, unitAngle * i);
+
+      int leftScaleValue = 12 - i;
+      drawScaleText(canvas, size, "$leftScaleValue", -unitAngle * i);
+      drawScaleLine(canvas, size, -unitAngle * i);
     }
     canvas.restore();
   }
 
   void drawRing(Canvas canvas, Size size) {
-    double offsetRadian = 10 * pi / 180;
     canvas.save();
     canvas.translate(size.width / 2, size.height / 2);
-    canvas.rotate(-5 * pi / 4 - offsetRadian);
-    SweepGradient sweepGradient = SweepGradient(
-      endAngle: 5 * pi / 4 + offsetRadian,
-      startAngle: offsetRadian,
-      colors: <Color>[
-        Color(0xFF00ADEF),
-        Color(0xFF10BDDE),
-        /* Color(0XFF3FCDB2)*/ Colors.redAccent,
-        Color(0xFFB1C04F),
-        Color(0xFFF9B512)
-      ],
-    );
     Paint paint = Paint()
       ..isAntiAlias = true
+      ..color = Colors.white
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 10
-      ..shader = sweepGradient.createShader(Rect.fromLTRB(
-          -size.width / 2, -size.height / 2, size.width / 2, size.height / 2));
+      ..strokeWidth = 14;
     canvas.drawArc(
         (Rect.fromLTRB(-size.width / 2 + padding, -size.height / 2 + padding,
             size.width / 2 - padding, size.height / 2 - padding)),
-        offsetRadian,
+        -pi / 4,
         2 * pi,
         false,
         paint);
@@ -87,8 +70,8 @@ class CircularSeekBar extends CustomPainter {
       ..color = Color(0xFFc7c7c7)
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 2;
-    canvas.drawLine(Offset(0.0, -size.height / 2),
-        Offset(0.0, -size.height / 2 + 12), paint);
+    canvas.drawLine(Offset(0.0, -size.height / 4),
+        Offset(0.0, -size.height / 4 - 12), paint);
     canvas.restore();
   }
 
@@ -108,10 +91,10 @@ class CircularSeekBar extends CustomPainter {
     textPainter.layout();
     canvas.translate(size.width / 2, size.height / 2);
     canvas.rotate(rotateAngle * pi / 180);
-    canvas.translate(0, -size.height / 2);
+    canvas.translate(0, -size.height / 4 - textPainter.size.height / 2);
     canvas.rotate(-rotateAngle * pi / 180);
-    textPainter.paint(
-        canvas, Offset(-textPainter.size.width / 2,0/* -size.height / 2*/));
+    textPainter.paint(canvas,
+        Offset(-textPainter.size.width / 2, -textPainter.size.height / 2));
     canvas.restore();
   }
 
@@ -152,50 +135,5 @@ class CircularSeekBar extends CustomPainter {
       canvas.drawCircle(Offset(point.x, point.y), 8, paint);
       canvas.restore();
     }
-  }
-
-  void drawCenter(Canvas canvas, Size size) {
-    canvas.save();
-    double raduis = (size.width / 2 - padding) * 3 / 5;
-    Paint paint = Paint()
-      ..isAntiAlias = true
-      ..style = PaintingStyle.fill
-      ..color = getColorByAngle(angle)
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 2;
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), raduis, paint);
-
-    TextPainter textPainter = TextPainter(
-        textDirection: TextDirection.ltr,
-        text: TextSpan(
-            text: "${(angle / maxAngle * 20 + 10).round()}℃",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 48.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: "digital")));
-    textPainter.layout();
-    textPainter.paint(
-        canvas,
-        Offset(size.width / 2 - textPainter.size.width / 2,
-            size.height / 2 - textPainter.size.height / 2));
-    canvas.restore();
-  }
-
-  Color getColorByAngle(double angle) {
-    Color startColor = Color(0xFF00ADEF);
-    Color endColor = Color(0xFFF9B512);
-    int startred = startColor.red;
-    int startgreen = startColor.green;
-    int startblue = startColor.blue;
-    int endred = endColor.red;
-    int endgreen = endColor.green;
-    int endblue = endColor.blue;
-
-    int red = (startred + (endred - startred) * (angle / 270)).toInt();
-    int green = (startgreen + (endgreen - startgreen) * (angle / 270)).toInt();
-    int blue = (startblue + (endblue - startblue) * (angle / 270)).toInt();
-
-    return Color.fromARGB(255, red, green, blue);
   }
 }

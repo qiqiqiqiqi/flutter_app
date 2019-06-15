@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'circularseekbar.dart';
+import 'sleepseekbar.dart';
 import 'dart:math' as Math;
 
 main() {
@@ -21,7 +21,7 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
   @override
   void initState() {
     super.initState();
-    cirularSize = Size(300.0, 300.0);
+    cirularSize = Size(240.0, 240.0);
     globalKey = GlobalKey();
   }
 
