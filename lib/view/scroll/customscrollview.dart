@@ -94,6 +94,7 @@ class CustomScrollViewState extends State<CustomScrollViewDemo> {
                     title: Text("FlexibleSpaceBarTitle"),
                     centerTitle: true,
                     collapseMode: CollapseMode.pin,
+
                     background: Center(
                       child: Stack(
                         alignment: AlignmentDirectional(0, 0),

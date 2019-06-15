@@ -21,10 +21,11 @@ class GridViewApp extends StatelessWidget {
         home: Scaffold(
             appBar: new AppBar(title: new Text("gridview demo")),
             body: GridView.builder(
+              scrollDirection: Axis.horizontal,
               itemCount: items.length,
               gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: 2.0,
-                  crossAxisCount: 3,
+                  crossAxisCount: 2,
                   crossAxisSpacing: 2.0,
                   childAspectRatio: 0.7),
               itemBuilder: (BuildContext context, int index) {

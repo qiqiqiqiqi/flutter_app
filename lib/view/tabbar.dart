@@ -40,23 +40,60 @@ class FlutterHomePageState extends State<FlutterHomePage>
         print("tabchange:index=${tabController.index}");
       }
     });
-
   }
 
   TabController buildTabController() =>
-      new TabController(length: 4, initialIndex: 0, vsync: this);
+      new TabController(length: 10, initialIndex: 0, vsync: this);
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(title: Text("flutter app")),
-      body: new TabBarView(children: <Widget>[
-        new PageBody("组件"),
-        new PageBody("main1"),
-        new PageBody("main2"),
-        new PageBody("main3"),
-      ], physics: NeverScrollableScrollPhysics(), controller: tabController),
-      bottomNavigationBar: Container(
+      body: Column(
+        children: <Widget>[
+         Expanded(child:  new TabBarView(
+             children: <Widget>[
+               new PageBody("组件"),
+               new PageBody("main1"),
+               new PageBody("main2"),
+               new PageBody("main3"),
+               new PageBody("main3"),
+               new PageBody("main3"),
+               new PageBody("main3"),
+               new PageBody("main3"),
+               new PageBody("main3"),
+               new PageBody("main3"),
+             ],
+             physics: NeverScrollableScrollPhysics(),
+             controller: tabController)),
+          Container(
+            width: 1000,
+            color: Colors.blueGrey,
+            child: new TabBar(
+              isScrollable: true,
+              indicatorColor: Colors.red,
+              //indicator: new ShapeDecoration(shape: Border()),
+              labelColor: Colors.red,
+              unselectedLabelColor: Colors.black,
+              tabs: <Tab>[
+                new Tab(text: "组件"),
+                new Tab(text: "main1main1main1main1"),
+                new Tab(text: "main2"),
+                new Tab(text: "main3"),
+                new Tab(text: "main3"),
+                new Tab(text: "main3"),
+                new Tab(text: "main3"),
+                new Tab(text: "main3"),
+                new Tab(text: "main3"),
+                new Tab(text: "main3"),
+
+              ],
+              controller: tabController,
+            ),
+          )
+        ],
+      ),
+      /*bottomNavigationBar: Container(
         color: Colors.blueGrey,
         child: new TabBar(
           indicatorColor: Colors.red,
@@ -67,11 +104,13 @@ class FlutterHomePageState extends State<FlutterHomePage>
             new Tab(text: "组件"),
             new Tab(text: "main1main1main1main1"),
             new Tab(text: "main2"),
-            new Tab(text: "main3")
+            new Tab(text: "main3"),
+            new Tab(text: "main3"),
+            new Tab(text: "main3"),
           ],
           controller: tabController,
         ),
-      ),
+      ),*/
     );
   }
 

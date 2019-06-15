@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'ruler_painter.dart';
 import 'dart:math' as Math;
 
-typedef OnSelectedValue = void Function(BuildContext context,double value);
+typedef OnSelectedValue = void Function(BuildContext context, double value);
 
 class Ruler extends StatefulWidget {
   double width;
@@ -86,12 +86,12 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
           translationX = offsetX -
               (emptyLenth - (middleValue - minValue) * unitScaleLength * 2);
         });
-        widget.onSelectedValue?.call(context,currentScale * unitScale + minValue);
+        widget.onSelectedValue
+            ?.call(context, currentScale * unitScale + minValue);
       }
     });
     //fling滑
-    _animationControllerFling =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    _animationControllerFling = AnimationController(vsync: this);
     Animation curve = CurvedAnimation(
         parent: _animationControllerFling, curve: Curves.easeOutExpo);
     tweenFling = Tween();
@@ -128,7 +128,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
         builder: (BuildContext context, BoxConstraints constraints) {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 48),
-          color: Colors.blueAccent,
+        color: Colors.blueAccent,
         child: GestureDetector(
           onHorizontalDragStart: (DragStartDetails details) {
             if (_animationControllerFling.isAnimating) {
@@ -170,7 +170,8 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
               tweenFling.end = targetScaleDistance;
               print("distance=${targetScaleDistance - offsetX}");
               _animationControllerFling.duration = Duration(
-                  milliseconds: (targetScaleDistance - offsetX).abs().toInt()~/2);
+                  milliseconds:
+                      3000 /*(targetScaleDistance - offsetX).abs().toInt()*/);
 
               _animationControllerFling.forward(from: 0);
             } else if (velocity.dx == 0) {

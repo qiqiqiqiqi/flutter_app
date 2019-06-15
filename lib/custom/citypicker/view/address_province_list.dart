@@ -59,6 +59,7 @@ class AddressProvinceListState extends State<AddressProvinceList> {
         ..provinceName = value);
     });
     return CustomScrollView(
+      scrollDirection: Axis.vertical,
       controller: scrollController,
       physics: BouncingScrollPhysics(),
       slivers: <Widget>[
