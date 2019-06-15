@@ -16,7 +16,7 @@ class CircularSeekBarApp extends StatefulWidget {
 class CircularSeekBarState extends State<CircularSeekBarApp> {
   Size cirularSize;
   GlobalKey globalKey;
-  double angle = 135.0;
+  double angle = 180.0;
 
   @override
   void initState() {
@@ -79,19 +79,19 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
     if ((globalToLocal.dy - cirularSize.height / 2) < 0 &&
         (globalToLocal.dx - cirularSize.width / 2) > 0) {
       //第一象限
-      angle = 225 - angle;
+      angle = 270 - angle;
     } else if ((globalToLocal.dy - cirularSize.height / 2) < 0 &&
         (globalToLocal.dx - cirularSize.width / 2) < 0) {
       //第二象限
-      angle = 45 + angle;
+      angle = 90+ angle;
     } else if ((globalToLocal.dy - cirularSize.height / 2) > 0 &&
         (globalToLocal.dx - cirularSize.width / 2) < 0) {
       //第三象限
-      angle = 45 - angle;
+      angle = 90 - angle;
     } else if ((globalToLocal.dy - cirularSize.height / 2) > 0 &&
         (globalToLocal.dx - cirularSize.width / 2) > 0) {
       //第四象限
-      angle = 225 + angle;
+      angle = 270+ angle;
     }
     print('angle=$angle');
     return angle;
