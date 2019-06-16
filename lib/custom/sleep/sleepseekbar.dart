@@ -2,20 +2,61 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class CircularSeekBar extends CustomPainter {
-  double angle = 180.0;
+  double angleS = 0.0;
+  double angleE = 0.0;
   double maxAngle = 360.0;
   double padding = 0;
+  Point<double> pointS;
+  Point<double> pointE;
+  double timeValue;
 
-  CircularSeekBar(this.angle);
+  CircularSeekBar(
+      {@required this.angleS, @required this.angleE, this.pointS, this.pointE});
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawColor(Colors.blue, BlendMode.difference);
-    if (angle != null) {
+    canvas.drawColor(Colors.blue, BlendMode.clear);
+    if (angleS != null) {
       drawScale(canvas, size);
       drawRing(canvas, size);
-      // drawPoint(canvas, size);
+      drawArc(canvas, size);
+      drawCenter(canvas, size);
     }
+  }
+
+  void drawArc(Canvas canvas, Size size) {
+    angleS = angleS % 360;
+    angleE = angleE % 360;
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    double startAngle = angleS * pi / 180;
+    double endAngle = angleE * pi / 180;
+    double dt_Angle = endAngle - startAngle >= 0
+        ? endAngle - startAngle
+        : 2 * pi - (startAngle - endAngle);
+    timeValue = dt_Angle / (2 * pi) * 12 * 60;
+    canvas.rotate(startAngle - 90 * pi / 180);
+    SweepGradient sweepGradient = SweepGradient(
+        colors: <Color>[Colors.redAccent, Colors.green],
+        startAngle: 0,
+        endAngle: dt_Angle);
+    Paint paint = Paint()
+      ..isAntiAlias = true
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 14
+      ..shader = sweepGradient.createShader(Rect.fromLTRB(
+          -size.width / 2, -size.height / 2, size.width / 2, size.height / 2));
+    canvas.drawArc(
+        Rect.fromLTRB(
+            -size.width / 2, -size.height / 2, size.width / 2, size.height / 2),
+        0,
+        dt_Angle,
+        false,
+        paint);
+    canvas.restore();
+
+    drawPoint(canvas, size, angleS, pointS, Colors.redAccent);
+    drawPoint(canvas, size, angleE, pointE, Colors.green);
   }
 
   @override
@@ -70,70 +111,119 @@ class CircularSeekBar extends CustomPainter {
       ..color = Color(0xFFc7c7c7)
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 2;
-    canvas.drawLine(Offset(0.0, -size.height / 4),
-        Offset(0.0, -size.height / 4 - 12), paint);
+    canvas.drawLine(Offset(0.0, -size.height / 4 - 8),
+        Offset(0.0, -size.height / 4 - 16), paint);
     canvas.restore();
   }
 
   void drawScaleText(
       Canvas canvas, Size size, String text, double rotateAngle) {
     canvas.save();
-
     TextPainter textPainter = TextPainter(
         textDirection: TextDirection.ltr,
         text: TextSpan(
             text: text,
             style: TextStyle(
                 color: Color(0xFFC7C7C7),
-                fontSize: 16.0,
+                fontSize: 12.0,
                 fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic)));
+                fontStyle: FontStyle.normal)));
     textPainter.layout();
     canvas.translate(size.width / 2, size.height / 2);
     canvas.rotate(rotateAngle * pi / 180);
-    canvas.translate(0, -size.height / 4 - textPainter.size.height / 2);
+    canvas.translate(0, -size.height * 3 / 8);
     canvas.rotate(-rotateAngle * pi / 180);
     textPainter.paint(canvas,
         Offset(-textPainter.size.width / 2, -textPainter.size.height / 2));
     canvas.restore();
   }
 
-  void drawPoint(Canvas canvas, Size size) {
+  void drawPoint(
+      Canvas canvas, Size size, double angle, Point point, Color color) {
     if (angle != null) {
       canvas.save();
-      print("drawPoint():angle=$angle");
-      Point point;
-      double raduis = size.width / 2 - padding;
-
-      if (angle >= 0 && angle < 90) {
-        double sinValue = sin((90 - angle) / 180 * pi);
-        double cosValue = cos((90 - angle) / 180 * pi);
-        point = Point(size.width / 2 - raduis * cosValue,
-            size.height / 2 + raduis * sinValue);
-      } else if (angle > 90 && angle < 180) {
-        double sinValue = sin((angle - 90) / 180 * pi);
-        double cosValue = cos((angle - 90) / 180 * pi);
-        point = Point(size.width / 2 - raduis * cosValue,
-            size.height / 2 - raduis * sinValue);
-      } else if (angle >= 180 && angle < 270) {
-        double sinValue = sin((angle - 180) / 180 * pi);
-        double cosValue = cos((angle - 180) / 180 * pi);
-        point = Point(size.width / 2 + raduis * sinValue,
-            size.height / 2 - raduis * cosValue);
-      } else if (angle >= 270 && angle <= 360) {
-        double sinValue = sin((angle - 270) / 180 * pi);
-        double cosValue = cos((angle - 270) / 180 * pi);
-        point = Point(size.width / 2 + raduis * cosValue,
-            size.height / 2 + raduis * sinValue);
-      }
+      canvas.translate(size.width / 2, size.height / 2);
       Paint paint = Paint()
         ..isAntiAlias = true
         ..style = PaintingStyle.fill
-        ..color = Colors.redAccent
+        ..color = color
         ..strokeCap = StrokeCap.round
         ..strokeWidth = 2;
-      canvas.drawCircle(Offset(point.x, point.y), 8, paint);
+      canvas.drawCircle(Offset(point.x, point.y), 12, paint);
       canvas.restore();
     }
+  }
+
+  Point<num> calulatePointPosition(double angle, Size size, double raduis) {
+    Point<num> point = Point(0, 0);
+    if (angle >= 0 && angle < 90) {
+      double sinValue = sin((90 - angle) / 180 * pi);
+      double cosValue = cos((90 - angle) / 180 * pi);
+      point = Point(size.width / 2 + raduis * cosValue,
+          size.height / 2 - raduis * sinValue);
+    } else if (angle >= 90 && angle < 180) {
+      double sinValue = sin((angle - 90) / 180 * pi);
+      double cosValue = cos((angle - 90) / 180 * pi);
+      point = Point(size.width / 2 + raduis * cosValue,
+          size.height / 2 + raduis * sinValue);
+    } else if (angle >= 180 && angle < 270) {
+      double sinValue = sin((270 - angle) / 180 * pi);
+      double cosValue = cos((270 - angle) / 180 * pi);
+      point = Point(size.width / 2 - raduis * cosValue,
+          size.height / 2 + raduis * sinValue);
+    } else if (angle >= 270 && angle <= 360) {
+      double sinValue = sin((360 - angle) / 180 * pi);
+      double cosValue = cos((360 - angle) / 180 * pi);
+      point = Point(size.width / 2 - raduis * sinValue,
+          size.height / 2 - raduis * cosValue);
+    }
+    return point;
+  }
+
+  void drawCenter(Canvas canvas, Size size) {
+    canvas.save();
+
+    Paint paint = Paint()
+      ..isAntiAlias = true
+      ..style = PaintingStyle.fill
+      ..color = Colors.white;
+    canvas.translate(size.width / 2, size.height / 2);
+    canvas.drawCircle(Offset(0.0, 0.0), size.width / 4, paint);
+    TextPainter textPainter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+            text: timeValue ~/ 60 == 0 ? '' : '${timeValue ~/ 60}',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.normal),
+            children: <TextSpan>[
+              TextSpan(
+                  text: timeValue ~/ 60 == 0 ? '' : '小时',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10.0,
+                      fontStyle: FontStyle.normal)),
+              TextSpan(
+                  text: (timeValue % 60).toInt() == 0
+                      ? ''
+                      : '${(timeValue % 60).toInt()}',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.normal)),
+              TextSpan(
+                  text: (timeValue % 60).toInt() == 0 ? '' : '分',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10.0,
+                      fontStyle: FontStyle.normal))
+            ]));
+    textPainter.layout();
+    textPainter.paint(canvas,
+        Offset(-textPainter.size.width / 2, -textPainter.size.height / 2));
+    canvas.restore();
   }
 }

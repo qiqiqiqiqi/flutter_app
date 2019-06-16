@@ -49,12 +49,7 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
                   caculateRadianByTouchPoint(dragUpdateDetails.globalPosition);
             });
           },
-          onVerticalDragUpdate: (DragUpdateDetails dragUpdateDetails){
-            print(
-                "build():onVerticalDragUpdate.delta.dy=${dragUpdateDetails.delta.dy},"
-                    "dragUpdateDetails.delta.dx=${dragUpdateDetails.delta.dx},"
-                    "dragUpdateDetails.primaryDelta=${dragUpdateDetails.primaryDelta}");
-          },
+
           onPanCancel: () {},
           onPanEnd: (DragEndDetails dragEndDetails) {},
           child: CustomPaint(
