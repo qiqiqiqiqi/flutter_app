@@ -21,7 +21,7 @@ class CircularSeekBar extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawColor(Colors.blue, BlendMode.clear);
+    canvas.drawColor(Colors.blue, BlendMode.srcATop);
     if (angleS != null) {
       drawScale(canvas, size);
       drawRing(canvas, size);

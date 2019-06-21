@@ -3,6 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'sport_record_decoration.dart';
 
+main() {
+  runApp(MaterialApp(
+    color: Colors.white,
+    home: Scaffold(
+      body: SportRecordPage(),
+      backgroundColor: Colors.blueAccent,
+    ),
+  ));
+}
+
 class SportRecordPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -28,91 +38,121 @@ class SportRecordPageState extends State<SportRecordPage> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      return Stack(
-        children: <Widget>[
-          Positioned(
-              top: 0,
-              right: 0,
-              left: 0,
-              bottom: 0,
-              child: Container(
-                padding: EdgeInsets.only(top: 10),
-                child: NotificationListener(
-                    onNotification: (ScrollNotification scrollNotification) {
-                      print('scrollNotification');
-                      if (popuOffset != null && popuSize != null) {
-                        setState(() {
-                          popuOffset = null;
-                          popuSize = null;
-                        });
-                      }
-                    },
-                    child: CustomScrollView(
-                      physics: BouncingScrollPhysics(),
-                      slivers: <Widget>[
-                        buildKalContainer(constraints),
-                        buildSliverList()
-                      ],
-                    )),
-              )),
-          popuOffset != null
-              ? Positioned(
-                  top: popuOffset.dy.abs(),
-                  left: popuOffset.dx.abs(),
-                  width: popuSize.width,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                              offset: Offset(-1, -1),
-                              blurRadius: 4,
-                              color: Colors.grey[200]),
-                          BoxShadow(
-                              offset: Offset(1, 1),
-                              blurRadius: 4,
-                              color: Colors.grey[200])
-                        ]),
-                    child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.all(16),
-                        shrinkWrap: true,
-                        itemCount: 5,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            height: 42,
-                            child: Row(
-                              children: <Widget>[
-                                Image.asset(
-                                  'images/datarecord/ic_bate_paobu.png',
-                                  package: 'hb_solution',
-                                  width: 24,
-                                  height: 24,
-                                  fit: BoxFit.cover,
+      return GestureDetector(
+        onTapUp: (TapUpDetails details) {
+          if (popuOffset != null && popuSize != null) {
+            setState(() {
+              popuOffset = null;
+              popuSize = null;
+            });
+          }
+        },
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+                top: 0,
+                right: 0,
+                left: 0,
+                bottom: 0,
+                child: Container(
+                  padding: EdgeInsets.only(top: 10),
+                  child: NotificationListener(
+                      onNotification: (ScrollNotification scrollNotification) {
+                        print('scrollNotification');
+                        if (popuOffset != null && popuSize != null) {
+                          setState(() {
+                            popuOffset = null;
+                            popuSize = null;
+                          });
+                        }
+                      },
+                      child: CustomScrollView(
+                        physics: BouncingScrollPhysics(),
+                        slivers: <Widget>[
+                          buildKalContainer(constraints),
+                          buildSliverList()
+                        ],
+                      )),
+                )),
+            popuOffset != null
+                ? Positioned(
+                    top: (popuOffset.dy.abs() + popuSize.height / 2) >
+                            MediaQuery.of(context).size.height / 2
+                        ? popuOffset.dy.abs() - 5 * 42 - popuSize.height
+                        : popuOffset.dy.abs() + popuSize.height,
+                    left: popuOffset.dx.abs(),
+                    width: popuSize.width,
+                    child: Container(
+                      margin: (popuOffset.dy.abs() + popuSize.height / 2) >
+                              MediaQuery.of(context).size.height / 2
+                          ? EdgeInsets.only(bottom: 20)
+                          : EdgeInsets.only(top: 20),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                offset: Offset(-1, -1),
+                                blurRadius: 4,
+                                color: Colors.grey[200]),
+                            BoxShadow(
+                                offset: Offset(1, 1),
+                                blurRadius: 4,
+                                color: Colors.grey[200])
+                          ]),
+                      child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.all(16),
+                          shrinkWrap: true,
+                          itemCount: 5,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GestureDetector(
+                              onTapDown: (TapDownDetails details) {},
+                              onTapUp: (TapUpDetails details) {
+                                print(
+                                    'NeverScrollableScrollPhysics index=$index');
+                              //  showMenu(context: null, position: null, items: null)
+                              },
+                              child: Container(
+
+                                decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(color: Colors.blueAccent))),
+                                height: 42,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      'images/datarecord/ic_bate_paobu.png',
+                                      package: 'hb_solution',
+                                      width: 24,
+                                      height: 24,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Expanded(
+                                        child: Padding(
+                                            padding: EdgeInsets.only(left: 8),
+                                            child: Text(
+                                              '跑步',
+                                              style: TextStyle(
+                                                  color: Color(0xFF374147),
+                                                  fontSize: 14,
+                                                  decoration:
+                                                      TextDecoration.none),
+                                            )))
+                                  ],
                                 ),
-                                Padding(
-                                    padding: EdgeInsets.only(left: 8),
-                                    child: Text(
-                                      '跑步',
-                                      style: TextStyle(
-                                          color: Color(0xFF374147),
-                                          fontSize: 14,
-                                          decoration: TextDecoration.none),
-                                    ))
-                              ],
-                            ),
-                          );
-                        }),
-                  ))
-              : Container()
-        ],
+                              ),
+                            );
+                          }),
+                    ))
+                : Container()
+          ],
+        ),
       );
     });
   }
 
   SliverPadding buildSliverList() {
-    int itemCount = 2;
+    int itemCount = 15;
     return SliverPadding(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 44),
       sliver: SliverList(
@@ -149,9 +189,11 @@ class SportRecordPageState extends State<SportRecordPage> {
               Expanded(
                   child: GestureDetector(
                 key: index == itemCount - 1 ? globalKey : null,
-                onTap: ()  {
+                onTap: () {
                   if (index == itemCount - 1) {
                     showPopu(index);
+
+                    sh
                   }
                 },
                 child: Container(
@@ -186,7 +228,8 @@ class SportRecordPageState extends State<SportRecordPage> {
           globalKey.currentContext.findRenderObject();
       popuSize = itemContentRenderBox.size;
       popuOffset = itemContentRenderBox.globalToLocal(Offset.zero);
-      print('popuOffset=$popuOffset,popuSize=$popuSize');
+      print(
+          'popuOffset=$popuOffset,popuSize=$popuSize,${MediaQuery.of(context).size.height}');
     });
   }
 
