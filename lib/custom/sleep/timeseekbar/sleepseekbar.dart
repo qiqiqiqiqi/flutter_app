@@ -1,27 +1,35 @@
-
 import 'dart:ui';
-
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
-class CircularSeekBar extends CustomPainter {
+
+typedef OnProgressChange = Function(int startTime, int endTime,int range);
+
+class SleepSeekBar extends CustomPainter {
   double angleS = 0.0;
   double angleE = 0.0;
-  double maxAngle = 360.0;
+  double maxAngle = 720.0;
   double padding = 0;
   Point<double> pointS;
   Point<double> pointE;
   double timeValue;
   ui.Image sleepImage, nongzhongImage;
-  CircularSeekBar(
-      {@required this.angleS, @required this.angleE, this.pointS, this.pointE,this.sleepImage,this.nongzhongImage});
+
+  SleepSeekBar({
+    @required this.angleS,
+    @required this.angleE,
+    this.pointS,
+    this.pointE,
+    this.sleepImage,
+    this.nongzhongImage,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawColor(Colors.blue, BlendMode.clear);
+    //canvas.drawColor(Colors.redAccent, BlendMode.srcATop);
     if (angleS != null) {
       drawScale(canvas, size);
       drawRing(canvas, size);
@@ -47,11 +55,13 @@ class CircularSeekBar extends CustomPainter {
         startAngle: 0,
         endAngle: dt_Angle);
     Paint paint = Paint()
-      ..isAntiAlias = true
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 14
-      ..shader = sweepGradient.createShader(Rect.fromLTRB(
-          -size.width / 2, -size.height / 2, size.width / 2, size.height / 2));
+          ..isAntiAlias = true
+          ..style = PaintingStyle.stroke
+          ..color = Color(0xFF1AD9CA)
+          ..strokeWidth = 6
+        /*..shader = sweepGradient.createShader(Rect.fromLTRB(
+          -size.width / 2, -size.height / 2, size.width / 2, size.height / 2))*/
+        ;
     canvas.drawArc(
         Rect.fromLTRB(
             -size.width / 2, -size.height / 2, size.width / 2, size.height / 2),
@@ -61,8 +71,8 @@ class CircularSeekBar extends CustomPainter {
         paint);
     canvas.restore();
 
-    drawPoint(canvas, size, angleS, pointS, Colors.redAccent,sleepImage);
-    drawPoint(canvas, size, angleE, pointE, Colors.green,nongzhongImage);
+    drawPoint(canvas, size, angleS, pointS, Colors.redAccent, sleepImage);
+    drawPoint(canvas, size, angleE, pointE, Colors.green, nongzhongImage);
   }
 
   @override
@@ -93,10 +103,10 @@ class CircularSeekBar extends CustomPainter {
     canvas.translate(size.width / 2, size.height / 2);
     Paint paint = Paint()
       ..isAntiAlias = true
-      ..color = Colors.white
+      ..color = Colors.grey[200]
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 14;
+      ..strokeWidth = 4;
     canvas.drawArc(
         (Rect.fromLTRB(-size.width / 2 + padding, -size.height / 2 + padding,
             size.width / 2 - padding, size.height / 2 - padding)),
@@ -118,7 +128,7 @@ class CircularSeekBar extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 2;
     canvas.drawLine(Offset(0.0, -size.height / 4 - 8),
-        Offset(0.0, -size.height / 4 - 16), paint);
+        Offset(0.0, -size.height / 4 - 14), paint);
     canvas.restore();
   }
 
@@ -144,9 +154,9 @@ class CircularSeekBar extends CustomPainter {
     canvas.restore();
   }
 
-  void drawPoint(
-      Canvas canvas, Size size, double angle, Point point, Color color,ui.Image image) {
-    if (angle != null) {
+  void drawPoint(Canvas canvas, Size size, double angle, Point point,
+      Color color, ui.Image image) {
+    if (angle != null && image != null) {
       canvas.save();
       canvas.translate(size.width / 2, size.height / 2);
       Paint paint = Paint()
@@ -156,10 +166,11 @@ class CircularSeekBar extends CustomPainter {
         ..strokeCap = StrokeCap.round
         ..strokeWidth = 2;
       //canvas.drawCircle(Offset(point.x, point.y), 12, paint);
+
       canvas.drawImageRect(
           image,
           Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
-          Rect.fromLTRB(point.x - 9, point.y - 9, point.x + 9, point.y + 9),
+          Rect.fromLTRB(point.x - 18, point.y - 18, point.x + 18, point.y + 18),
           paint);
       canvas.restore();
     }
@@ -197,7 +208,7 @@ class CircularSeekBar extends CustomPainter {
     Paint paint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.fill
-      ..color = Colors.white;
+      ..color = Colors.grey[200];
     canvas.translate(size.width / 2, size.height / 2);
     canvas.drawCircle(Offset(0.0, 0.0), size.width / 4, paint);
     TextPainter textPainter = TextPainter(
@@ -206,7 +217,7 @@ class CircularSeekBar extends CustomPainter {
             text: timeValue ~/ 60 == 0 ? '' : '${timeValue ~/ 60}',
             style: TextStyle(
                 color: Colors.black,
-                fontSize: 16.0,
+                fontSize: 24.0,
                 fontWeight: FontWeight.bold,
                 fontStyle: FontStyle.normal),
             children: <TextSpan>[
@@ -214,7 +225,8 @@ class CircularSeekBar extends CustomPainter {
                   text: timeValue ~/ 60 == 0 ? '' : '小时',
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 10.0,
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.normal)),
               TextSpan(
                   text: (timeValue % 60).toInt() == 0
@@ -222,14 +234,15 @@ class CircularSeekBar extends CustomPainter {
                       : '${(timeValue % 60).toInt()}',
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 16.0,
+                      fontSize: 24.0,
                       fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.normal)),
               TextSpan(
                   text: (timeValue % 60).toInt() == 0 ? '' : '分',
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 10.0,
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.normal))
             ]));
     textPainter.layout();
@@ -238,9 +251,10 @@ class CircularSeekBar extends CustomPainter {
     canvas.restore();
   }
 
-  static Future<ui.Image> getImage(String asset) async {
+  static Future<ui.Image> getImage({String asset, BuildContext context}) async {
+    //ByteData data = await DefaultAssetBundle.of(context).load(asset);
     ByteData data = await rootBundle.load(asset);
-    Codec codec = await  ui.instantiateImageCodec(data.buffer.asUint8List());
+    Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
     FrameInfo fi = await codec.getNextFrame();
     return fi.image;
   }

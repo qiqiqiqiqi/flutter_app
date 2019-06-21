@@ -1,27 +1,30 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'sleepseekbar.dart';
+
 import 'dart:math';
-import 'dart:ui';
 import 'dart:ui' as ui;
 
-main() {
-  runApp(MaterialApp(title: "seekbar demo", home: CircularSeekBarApp()));
-}
+import 'package:flutter_app/custom/sleep/timeseekbar/sleepseekbar.dart';
 
-class CircularSeekBarApp extends StatefulWidget {
+
+class SleepSeekBarPage extends StatefulWidget {
+  final OnProgressChange onProgressChange;
+
+  const SleepSeekBarPage({this.onProgressChange});
+
   @override
   State<StatefulWidget> createState() {
     return new CircularSeekBarState();
   }
 }
 
-class CircularSeekBarState extends State<CircularSeekBarApp> {
+class CircularSeekBarState extends State<SleepSeekBarPage> {
   Size cirularSize;
   GlobalKey globalKey;
-  double startAngle = 0.0;
-  double endAngle = 90.0;
-  Point<double> offsetS;
-  Point<double> offsetE;
+  double startAngle = 345.0;
+  double endAngle = 225.0;
+  Point<double> pointS;
+  Point<double> pointE;
   ui.Image sleepImage, nongzhongImage;
 
   @override
@@ -29,28 +32,52 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
     super.initState();
     cirularSize = Size(240.0, 240.0);
     globalKey = GlobalKey();
-    offsetS = Point(0.0, -cirularSize.height / 2);
-    offsetE = Point(cirularSize.width / 2, 0.0);
-    CircularSeekBar.getImage('images/data_record_sleep.png').then((image) {
-      setState(() {
-        sleepImage = image;
+    pointS =
+        calulatePointPosition(startAngle, cirularSize, cirularSize.width / 2);
+    pointE =
+        calulatePointPosition(endAngle, cirularSize, cirularSize.width / 2);
+    WidgetsBinding.instance.addPostFrameCallback((Duration duration) {
+      rangeChange();
+      SleepSeekBar.getImage(
+              asset:
+                  'packages/hb_solution/images/datarecord/data_record_sleep.png')
+          .then((image) {
+        setState(() {
+          sleepImage = image;
+        });
       });
-    });
-    CircularSeekBar.getImage('images/data_record_naozhong.png').then((image) {
-      setState(() {
-        nongzhongImage = image;
+      SleepSeekBar.getImage(
+              asset:
+                  'packages/hb_solution/images/datarecord/data_record_naozhong.png')
+          .then((image) {
+        setState(() {
+          nongzhongImage = image;
+        });
       });
     });
   }
 
+  void rangeChange() {
+    double startAngleRadian = startAngle * pi / 180;
+    double endAngleRadian = endAngle * pi / 180;
+    double dtRadian = endAngleRadian - startAngleRadian >= 0
+        ? endAngleRadian - startAngleRadian
+        : 2 * pi - (startAngleRadian - endAngleRadian);
+    widget.onProgressChange?.call(
+        (startAngleRadian / (2 * pi) * 12 * 60).toInt(),
+        (endAngleRadian / (2 * pi) * 12 * 60).toInt(),
+        (dtRadian / (2 * pi) * 12 * 60).toInt());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("seekbar demo"),
-      ),
-      body: Center(
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      return Container(
+        alignment: Alignment.center,
         child: GestureDetector(
+          behavior: HitTestBehavior.deferToChild,
+          dragStartBehavior: DragStartBehavior.down,
           onPanStart: (DragStartDetails dragStartDetails) {},
           onPanDown: (DragDownDetails dragDownDetails) {
             setState(() {
@@ -70,17 +97,18 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
           child: CustomPaint(
             key: globalKey,
             size: cirularSize,
-            painter: CircularSeekBar(
-                angleS: startAngle,
-                angleE: endAngle,
-                pointS: offsetS,
-                pointE: offsetE,
-                sleepImage: sleepImage,
-                nongzhongImage: nongzhongImage),
+            painter: SleepSeekBar(
+              angleS: startAngle,
+              angleE: endAngle,
+              pointS: pointS,
+              pointE: pointE,
+              sleepImage: sleepImage,
+              nongzhongImage: nongzhongImage,
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void caculateRadianByTouchPoint(Offset globalPosition) {
@@ -110,22 +138,31 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
       //第四象限
       angle = 90 + angle;
     }
-    if ((pow(((globalToLocal.dx - cirularSize.width / 2) - offsetS.x).abs(),
-                2) +
-            pow(((globalToLocal.dy - cirularSize.height / 2) - offsetS.y).abs(),
+    if ((pow(((globalToLocal.dx - cirularSize.width / 2) - pointS.x).abs(), 2) +
+            pow(((globalToLocal.dy - cirularSize.height / 2) - pointS.y).abs(),
                 2)) >
-        (pow(((globalToLocal.dx - cirularSize.width / 2) - offsetE.x).abs(),
-                2) +
-            pow(((globalToLocal.dy - cirularSize.height / 2) - offsetE.y).abs(),
+        (pow(((globalToLocal.dx - cirularSize.width / 2) - pointE.x).abs(), 2) +
+            pow(((globalToLocal.dy - cirularSize.height / 2) - pointE.y).abs(),
                 2))) {
       endAngle = angle;
-      offsetE =
+      pointE =
           calulatePointPosition(endAngle, cirularSize, cirularSize.width / 2);
     } else {
       startAngle = angle;
-      offsetS =
+      pointS =
           calulatePointPosition(startAngle, cirularSize, cirularSize.width / 2);
     }
+//    if ((angle - startAngle).abs() < (angle - endAngle).abs()) {
+//      endAngle = angle;
+//      pointE =
+//          calulatePointPosition(endAngle, cirularSize, cirularSize.width / 2);
+//    } else {
+//      startAngle = angle;
+//      pointS =
+//          calulatePointPosition(startAngle, cirularSize, cirularSize.width / 2);
+//    }
+
+    rangeChange();
     print(
         'caculateRadianByTouchPoint():startAngle=$startAngle,endAngle=$endAngle');
   }

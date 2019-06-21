@@ -54,6 +54,8 @@ flutter:
     - images/refresh_arrow_down.png
     - images/refresh_arrow_loading.png
     - images/launcher_image.png
+    - images/data_record_naozhong.png
+    - images/data_record_sleep.png
 
   fonts:
     - family: digital
