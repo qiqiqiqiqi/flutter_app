@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'sport_record_decoration.dart';
 
@@ -9,16 +11,17 @@ class SportRecordPage extends StatefulWidget {
 }
 
 class SportRecordPageState extends State<SportRecordPage> {
-  Map<int,GlobalKey> globalKeys;
+  GlobalKey globalKey;
   Offset popuOffset;
   Size popuSize;
+  Offset itemOffset;
+  ScrollController scrollController;
+  int selectedIndex;
 
   @override
   void initState() {
     super.initState();
-    globalKeys = Map();
-    popuOffset ;
-    popuSize;
+    globalKey = GlobalKey();
   }
 
   @override
@@ -109,17 +112,13 @@ class SportRecordPageState extends State<SportRecordPage> {
   }
 
   SliverPadding buildSliverList() {
-    globalKeys.clear();
-    int itemCount = 200;
+    int itemCount = 2;
     return SliverPadding(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 44),
       sliver: SliverList(
           delegate:
               SliverChildBuilderDelegate((BuildContext context, int index) {
-                print("SliverChildBuilderDelegate():$index");
-       if(globalKeys[index]!=null){
-         globalKeys[index]=GlobalKey();
-       }
+        print("SliverChildBuilderDelegate():$index");
         return Container(
           decoration: SportRecordDecoration(
               position: index,
@@ -148,9 +147,9 @@ class SportRecordPageState extends State<SportRecordPage> {
                 ),
               ),
               Expanded(
-                key: globalKeys[index],
                   child: GestureDetector(
-                onTap: () {
+                key: index == itemCount - 1 ? globalKey : null,
+                onTap: ()  {
                   if (index == itemCount - 1) {
                     showPopu(index);
                   }
@@ -184,7 +183,7 @@ class SportRecordPageState extends State<SportRecordPage> {
     print('index=$index');
     setState(() {
       RenderBox itemContentRenderBox =
-          globalKeys[index].currentContext.findRenderObject();
+          globalKey.currentContext.findRenderObject();
       popuSize = itemContentRenderBox.size;
       popuOffset = itemContentRenderBox.globalToLocal(Offset.zero);
       print('popuOffset=$popuOffset,popuSize=$popuSize');
