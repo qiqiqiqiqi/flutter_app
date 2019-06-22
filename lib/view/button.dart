@@ -40,7 +40,7 @@ class ButtonApp extends StatelessWidget {
                 itemBuilder: (BuildContext context) =>
                 <PopupMenuEntry<int>>[
                   new PopupMenuItem<int>(
-                      child: new Text("menu0"), value: 0),
+                      child: new Text("menu0menu0menu0menu0menu0menu0menu0menu0menu0menu0"), value: 0),
                   new PopupMenuItem<int>(
                       child: new Text("menu1"), value: 1),
                   new PopupMenuItem<int>(
