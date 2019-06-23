@@ -38,10 +38,10 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
   AnimationController _animationControllerFling;
   num translationX = 0.0;
 
-  double unitScale = 0.5;
+  double unitScale = 1;
   int unitScaleLength = 0;
   int scaleNum = 0;
-  double sumLength;
+  int sumLength;
   double emptyLenth = 0;
   int showScaleNum = 9;
   double offsetX = 0.0;
@@ -65,16 +65,16 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
         unitScaleLength = (widget.width ~/ (showScaleNum - 1));
         emptyLenth = widget.width / 2;
         sumLength = unitScaleLength *
-                ((widget.maxValue - widget.minValue) / unitScale) +
+                ((widget.maxValue - widget.minValue) ~/ unitScale) +
             (showScaleNum - 1) * unitScaleLength; //另外加上一屏的空白宽度使两端能滑到中点
+        currentScale = (widget.middleValue - widget.minValue) ~/ unitScale;
         offsetX = translationX +
             emptyLenth -
-            (widget.middleValue - widget.minValue) * unitScaleLength * 2;
+            (widget.middleValue - widget.minValue) * unitScaleLength / unitScale;
 
         maxOffsetX = -(unitScaleLength *
-                ((widget.maxValue - widget.minValue) / unitScale) -
+                ((widget.maxValue - widget.minValue) ~/ unitScale) -
             emptyLenth);
-        currentScale = (widget.middleValue - widget.minValue) ~/ unitScale;
       });
     });
 
@@ -94,7 +94,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
         offsetX = animateSmooth.value;
         translationX = offsetX -
             (emptyLenth -
-                (widget.middleValue - widget.minValue) * unitScaleLength * 2);
+              (widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale);
       });
     });
     animateSmooth.addStatusListener((AnimationStatus status) {
@@ -102,7 +102,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
         setState(() {
           translationX = offsetX -
               (emptyLenth -
-                  (widget.middleValue - widget.minValue) * unitScaleLength * 2);
+                (widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale);
         });
         widget.onSelectedValue?.call(context,
             currentScale.toDouble() * unitScale + widget.minValue.toDouble());
@@ -118,27 +118,27 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       double currentOffsetX = animateFling.value;
       double currentTranslationX = currentOffsetX -
           (emptyLenth -
-              (widget.middleValue - widget.minValue) * unitScaleLength * 2);
+            (widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale);
       if (currentOffsetX > emptyLenth) {
         currentOffsetX = emptyLenth;
         currentTranslationX =
-            ((widget.middleValue - widget.minValue) * unitScaleLength * 2)
+            ((widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale)
                 .toDouble();
       } else if (currentOffsetX < maxOffsetX) {
         currentOffsetX = maxOffsetX;
         currentTranslationX = maxOffsetX -
             emptyLenth +
-            (widget.middleValue - widget.minValue) * unitScaleLength * 2;
+          (widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale;
       }
       setState(() {
         offsetX = currentOffsetX;
         translationX = currentTranslationX;
 
         //todo 未复用
-        int leftScale = ((widget.middleValue - widget.minValue) * 2 -
+        int leftScale = ((widget.middleValue - widget.minValue) ~/unitScale -
                     translationX ~/ unitScaleLength) >
                 0
-            ? ((widget.middleValue - widget.minValue) * 2 -
+            ? ((widget.middleValue - widget.minValue) ~/unitScale -
                 translationX ~/ unitScaleLength)
             : 0;
         if (translationX >= 0 && leftScale > 0) {
@@ -185,19 +185,17 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
               translationX += details.delta.dx;
               double currentOffsetX = translationX +
                   emptyLenth -
-                  (widget.middleValue - widget.minValue) * unitScaleLength * 2;
+                (widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale;
               if (currentOffsetX > emptyLenth) {
                 currentOffsetX = emptyLenth;
                 translationX = (widget.middleValue - widget.minValue) *
-                    unitScaleLength *
-                    2;
+                    unitScaleLength ~/unitScale;
               } else if (currentOffsetX < maxOffsetX) {
                 currentOffsetX = maxOffsetX;
                 translationX = maxOffsetX -
                     emptyLenth +
                     (widget.middleValue - widget.minValue) *
-                        unitScaleLength *
-                        2;
+                        unitScaleLength ~/unitScale;
               }
               offsetX = currentOffsetX;
               findTargetOffsetX(translationX, offsetX,
@@ -233,14 +231,13 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
                 smoothToTargetScale();
               }
             });
-            // smoothToCenter();
           },
           child: CustomPaint(
             key: globalKey,
             size: Size(constraints.maxWidth, 80),
             painter: RulerPainter(
                 currentSacle: currentScale,
-                unitScale: 0.5,
+                unitScale: unitScale,
                 minValue: widget.minValue,
                 maxValue: widget.maxValue,
                 middleValue: widget.middleValue,
@@ -265,17 +262,17 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
     }
     double sourceOffsetX = sourceTranslationX +
         emptyLenth -
-        (widget.middleValue - widget.minValue) * unitScaleLength * 2;
+      (widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale;
     if (sourceOffsetX > emptyLenth) {
       sourceOffsetX = emptyLenth;
       sourceTranslationX =
-          ((widget.middleValue - widget.minValue) * unitScaleLength * 2)
+          ((widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale)
               .toDouble();
     } else if (sourceOffsetX < maxOffsetX) {
       sourceOffsetX = maxOffsetX;
       sourceTranslationX = maxOffsetX -
           emptyLenth +
-          (widget.middleValue - widget.minValue) * unitScaleLength * 2;
+        (widget.middleValue - widget.minValue) * unitScaleLength ~/unitScale;
     }
 
     return findTargetOffsetX(sourceTranslationX, sourceOffsetX,
@@ -292,10 +289,10 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       {bool refreshCurrentScale = false}) {
     //translationX 除以 unitScaleLength 如果结果(68.999999999999)很接近一个整数，
     // 那么 ~/和/操作符的结果都是整数(69)
-    int leftScale = ((widget.middleValue - widget.minValue) * 2 -
+    int leftScale = ((widget.middleValue - widget.minValue) ~/unitScale -
                 translationX ~/ unitScaleLength) >
             0
-        ? ((widget.middleValue - widget.minValue) * 2 -
+        ? ((widget.middleValue - widget.minValue) ~/unitScale -
             translationX ~/ unitScaleLength)
         : 0;
     if (translationX >= 0 && leftScale > 0) {

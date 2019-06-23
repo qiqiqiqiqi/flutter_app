@@ -8,11 +8,16 @@ main() {
         builder: (BuildContext context, BoxConstraints constraints) {
       return Scaffold(
         appBar: AppBar(title: Text('ruler demo')),
-        body: Ruler(
-          width: constraints.maxWidth,
-          minValue: 3,
-          maxValue: 300,
-          height: 80,
+        body: Center(
+          child: Container(
+            color: Colors.blueAccent,
+            child: Ruler(
+              width: constraints.maxWidth,
+              minValue: 3,
+              maxValue: 300,
+              height: 80,
+            ),
+          ),
         ),
       );
     }),

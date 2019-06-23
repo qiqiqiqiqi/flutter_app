@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as Math;
 
 class RulerPainter extends CustomPainter {
-  double unitScale = 0.5;
+  double unitScale = 0.1;
   int unitScaleLength = 0;
   int scaleNum = 0;
   Paint _paint;
@@ -51,11 +52,28 @@ class RulerPainter extends CustomPainter {
       scales.add(
         Offset((i * unitScaleLength).toDouble(), 0),
       );
-      if (i % 2 == 0) {
-        drawScaleLine(canvas, size, offsetY, i, 12);
-        drawScaleText(canvas, size, offsetY, i);
+
+      if (1 / unitScale < 10) {
+        if (unitScale == 1) {
+          drawScaleLine(canvas, size, offsetY, i, 12);
+          drawScaleText(canvas, size, offsetY, i);
+        } else {
+          if (i % 2 == 0) {
+            drawScaleLine(canvas, size, offsetY, i, 12);
+            drawScaleText(canvas, size, offsetY, i);
+          } else {
+            drawScaleLine(canvas, size, offsetY, i, 4);
+          }
+        }
       } else {
-        drawScaleLine(canvas, size, offsetY, i, 4);
+        if (i % 10 == 0) {
+          drawScaleLine(canvas, size, offsetY, i, 12);
+          drawScaleText(canvas, size, offsetY, i);
+        } else if (i % 5 == 0) {
+          drawScaleLine(canvas, size, offsetY, i, 8);
+        } else {
+          drawScaleLine(canvas, size, offsetY, i, 4);
+        }
       }
     }
     drawHLine(canvas, size, offsetY, scales);
@@ -132,7 +150,7 @@ class RulerPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
         text: TextSpan(
             text:
-                '${((currentSacle * unitScale + minValue) - (currentSacle * unitScale + minValue).toInt()) == 0 ? (currentSacle * unitScale + minValue).toInt() : (currentSacle * unitScale + minValue)} $unit',
+                '${((currentSacle * unitScale + minValue) - (currentSacle * unitScale + minValue).toInt()) == 0 ? ((currentSacle * unitScale) + minValue).toInt() : (((currentSacle * unitScale) * 10).toInt() / 10 + minValue)} $unit',
             style: TextStyle(
               color: Color(0xFF374147),
               fontSize: 23.0,
