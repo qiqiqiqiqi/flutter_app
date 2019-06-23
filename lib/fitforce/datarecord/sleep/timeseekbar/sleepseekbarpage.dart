@@ -29,12 +29,11 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
   Point<double> pointS;
   Point<double> pointE;
   ui.Image sleepImage, nongzhongImage;
-  double zeroTimeTanS;
-  double zeroTimeTanE;
+  double zeroTimeTanS, zeroTimeTanE;
   DateTime selectedDateTime; //不能修改
   DateTime startDateTime;
   DateTime endDateTime;
-
+  bool isCurrentDay=false;
   @override
   void initState() {
     super.initState();
@@ -54,17 +53,13 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
         'startDateTime=${startDateTime.toIso8601String()},endDateTime=${endDateTime.toIso8601String()},selectedDateTime=${selectedDateTime.toIso8601String()}');
     WidgetsBinding.instance.addPostFrameCallback((Duration duration) {
       rangeChange();
-      SleepSeekBar.getImage(
-              asset:
-                  'packages/hb_solution/images/datarecord/data_record_sleep.png')
+      SleepSeekBar.getImage(asset: 'images/data_record_sleep.png')
           .then((image) {
         setState(() {
           sleepImage = image;
         });
       });
-      SleepSeekBar.getImage(
-              asset:
-                  'packages/hb_solution/images/datarecord/data_record_naozhong.png')
+      SleepSeekBar.getImage(asset: 'images/data_record_naozhong.png')
           .then((image) {
         setState(() {
           nongzhongImage = image;
@@ -136,39 +131,25 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
     double tan = touchPointTan.abs();
     double radian = atan(tan);
     double angle = radian / pi * 180;
-
     bool touchS = judgeTouchS(globalToLocal);
 
     if ((globalToLocal.dy - cirularSize.height / 2) < 0 &&
         (globalToLocal.dx - cirularSize.width / 2) > 0) {
       //第一象限
-
       if (touchS) {
         if (zeroTimeTanS != null) {
           if (zeroTimeTanS > 0) {
-            print(
-                'caculateRadianByTouchPoint():开始从二进入一&&开始时间要跳到当前这一天,结束时间还是当前这一天');
-          } else {
-            startDateTime = selectedDateTime.add(Duration(
-                minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
-            print(
-                'caculateRadianByTouchPoint():开始从二进入一&&startDateTime=${startDateTime.toIso8601String()},endDateTime=${endDateTime.toIso8601String()}');
+            isCurrentDay=true;
+            print('caculateRadianByTouchPoint():开始从二进入一&&开始时间要跳到当前这一天,结束时间还是当前这一天');
           }
         }
         zeroTimeTanS = touchPointTan;
       } else {
         if (zeroTimeTanE != null) {
           if (zeroTimeTanE > 0) {
+            isCurrentDay=false;
             print(
                 'caculateRadianByTouchPoint():结束从二进入一&&原来开始和结束时间都在当前这一天变成开始时间要跳到前一天，结束时间还是当前这一天(零时)');
-          } else {
-            startDateTime = selectedDateTime.add(Duration(
-                days: -1,
-                minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
-            endDateTime = selectedDateTime.add(Duration(
-                minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
-            print(
-                'caculateRadianByTouchPoint():结束从二进入一&&startDateTime=${startDateTime.toIso8601String()},endDateTime=${endDateTime.toIso8601String()}');
           }
         }
         zeroTimeTanE = touchPointTan;
@@ -182,25 +163,14 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
           if (zeroTimeTanS < 0) {
             print(
                 'caculateRadianByTouchPoint():开始从一进入二&&开始时间要跳到前一天,结束时间还是当前这一天');
-          } else {
-            startDateTime = selectedDateTime.add(Duration(
-                days: -1,
-                minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
-            print(
-                'caculateRadianByTouchPoint():开始从一进入二&&startDateTime=${startDateTime.toIso8601String()},endDateTime=${endDateTime.toIso8601String()}');
           }
         }
         zeroTimeTanS = touchPointTan;
       } else {
         if (zeroTimeTanE != null) {
           if (zeroTimeTanE < 0) {
-            print('caculateRadianByTouchPoint():结束从一进入二&&结束时间要跳到前一天');
-          } else {
-            endDateTime = selectedDateTime.add(Duration(
-                days: -1,
-                minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
-            print(
-                'caculateRadianByTouchPoint():结束从一进入二&&startDateTime=${startDateTime.toIso8601String()},endDateTime=${endDateTime.toIso8601String()}');
+            isCurrentDay=false;
+            print('caculateRadianByTouchPoint():结束从一进入二&&结束时间要跳到前一天,开始为前一天');
           }
         }
         zeroTimeTanE = touchPointTan;
@@ -208,7 +178,6 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
       angle = 270 + angle;
     } else if ((globalToLocal.dy - cirularSize.height / 2) > 0 &&
         (globalToLocal.dx - cirularSize.width / 2) < 0) {
-      //第三象限
       angle = 270 - angle;
     } else if ((globalToLocal.dy - cirularSize.height / 2) > 0 &&
         (globalToLocal.dx - cirularSize.width / 2) > 0) {
@@ -217,7 +186,6 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
     } else if ((globalToLocal.dy - cirularSize.height / 2) < 0 &&
         (globalToLocal.dx - cirularSize.width / 2) == 0) {
       angle = 0;
-      print('caculateRadianByTouchPoint():日期间隔变化');
     } else if ((globalToLocal.dy - cirularSize.height / 2) == 0 &&
         (globalToLocal.dx - cirularSize.width / 2) > 0) {
       angle = 90;
@@ -228,7 +196,6 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
         (globalToLocal.dx - cirularSize.width / 2) < 0) {
       angle = 270;
     }
-    //print("caculateRadianByTouchPoint():angle=$angle");
 
     if (!touchS) {
       endAngle = angle;
@@ -239,9 +206,30 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
       pointS =
           calulatePointPosition(startAngle, cirularSize, cirularSize.width / 2);
     }
+    if(startAngle>endAngle){//有时间跨度
+      startDateTime = selectedDateTime.add(Duration(
+          days: -1,
+          minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
+      endDateTime = selectedDateTime.add(Duration(
+          minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
+    }else if(startAngle<endAngle){
+     // 判断是前一天还是当天
+      if(isCurrentDay){
+        startDateTime = selectedDateTime.add(Duration(
+            minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
+        endDateTime = selectedDateTime.add(Duration(
+            minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
+      }else{
+        startDateTime = selectedDateTime.add(Duration(
+            days: -1,
+            minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
+        endDateTime = selectedDateTime.add(Duration(
+            days: -1,
+            minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
+      }
+
+    }
     rangeChange();
-//    print(
-//        'caculateRadianByTouchPoint():startAngle=$startAngle,endAngle=$endAngle');
   }
 
   bool judgeTouchS(Offset globalToLocal) {
