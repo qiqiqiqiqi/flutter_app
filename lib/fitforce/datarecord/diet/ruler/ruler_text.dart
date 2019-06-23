@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'ruler_painter.dart';
+import 'ruler_text_painter.dart';
 import 'dart:math' as Math;
 
 typedef OnSelectedValue = void Function(BuildContext context, double value);
 
-class Ruler extends StatefulWidget {
+class RulerText extends StatefulWidget {
   double width;
   double height;
   int minValue;
@@ -12,17 +12,15 @@ class Ruler extends StatefulWidget {
   int maxValue;
   String unit;
   OnSelectedValue onSelectedValue;
-  bool showHL;
 
-  Ruler(
+  RulerText(
       {this.width,
       this.height,
       @required this.minValue,
       @required this.maxValue,
       this.middleValue,
       this.onSelectedValue,
-      this.unit = 'kg',
-      this.showHL}) {
+      this.unit = 'kg'}) {
     if (middleValue == null) {
       middleValue = (minValue + maxValue) ~/ 2;
     }
@@ -30,11 +28,11 @@ class Ruler extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return RulerState();
+    return RulerTextState();
   }
 }
 
-class RulerState extends State<Ruler> with TickerProviderStateMixin {
+class RulerTextState extends State<RulerText> with TickerProviderStateMixin {
   Offset velocity;
   AnimationController _animationControllerSmooth;
   AnimationController _animationControllerFling;
@@ -45,7 +43,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
   int scaleNum = 0;
   int sumLength;
   double emptyLenth = 0;
-  int showScaleNum = 9;
+  int showScaleNum = 7;
   double offsetX = 0.0;
 
   int currentScale = 0;
@@ -56,11 +54,13 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
   double translationX0 = 0.0;
   double a = 1.0;
   GlobalKey globalKey;
+  List<String> contents;
 
   @override
   void initState() {
     super.initState();
     globalKey = GlobalKey();
+    contents=['克','颗','只','枚','碗','只','枚',];
     WidgetsBinding.instance.addPostFrameCallback((Duration duration) {
       setState(() {
         widget.width = globalKey.currentContext.size.width;
@@ -251,7 +251,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
           child: CustomPaint(
             key: globalKey,
             size: Size(constraints.maxWidth, 80),
-            painter: RulerPainter(
+            painter: RulerTextPainter(
                 currentSacle: currentScale,
                 unitScale: unitScale,
                 minValue: widget.minValue,
@@ -261,8 +261,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
                 emptyLenth: emptyLenth,
                 offsetX: offsetX,
                 scaleNum: scaleNum,
-                unit: widget.unit,
-                showHL: widget.showHL),
+                unit: widget.unit,contents: contents),
           ),
         ),
       );

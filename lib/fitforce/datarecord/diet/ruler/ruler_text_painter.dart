@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 
-class RulerPainter extends CustomPainter {
+class RulerTextPainter extends CustomPainter {
   double unitScale = 0.1;
   int unitScaleLength = 0;
   int scaleNum = 0;
@@ -14,9 +14,9 @@ class RulerPainter extends CustomPainter {
   int currentSacle = 0;
   double emptyLenth;
   String unit;
-  bool showHL;
+  List<String> contents;
 
-  RulerPainter(
+  RulerTextPainter(
       {this.unitScaleLength,
       this.offsetX,
       this.scaleNum,
@@ -27,7 +27,7 @@ class RulerPainter extends CustomPainter {
       this.currentSacle,
       this.emptyLenth,
       this.unit,
-      this.showHL}) {
+      this.contents}) {
     _paint = Paint()..isAntiAlias = true;
   }
 
@@ -38,10 +38,10 @@ class RulerPainter extends CustomPainter {
 
   void draw(Canvas canvas, Size size) {
     canvas.save();
-    double offsetY = size.height * 9 / 16;
+    double offsetY = size.height / 2;
     drawScaleX(canvas, offsetY, size);
-    drawCursor(canvas, offsetY, size);
-    drawCurrentValue(canvas, offsetY, size);
+    //drawCursor(canvas, offsetY, size);
+    // drawCurrentValue(canvas, offsetY, size);
     canvas.restore();
   }
 
@@ -55,32 +55,9 @@ class RulerPainter extends CustomPainter {
         Offset((i * unitScaleLength).toDouble(), 0),
       );
 
-      if (1 / unitScale < 10) {
-        if (unitScale == 1) {
-          drawScaleLine(canvas, size, offsetY, i, 12);
-          drawScaleText(canvas, size, offsetY, i);
-        } else {
-          if (i % 2 == 0) {
-            drawScaleLine(canvas, size, offsetY, i, 12);
-            drawScaleText(canvas, size, offsetY, i);
-          } else {
-            drawScaleLine(canvas, size, offsetY, i, 4);
-          }
-        }
-      } else {
-        if (i % 10 == 0) {
-          drawScaleLine(canvas, size, offsetY, i, 12);
-          drawScaleText(canvas, size, offsetY, i);
-        } else if (i % 5 == 0) {
-          drawScaleLine(canvas, size, offsetY, i, 8);
-        } else {
-          drawScaleLine(canvas, size, offsetY, i, 4);
-        }
-      }
+      drawScaleText(canvas, size, offsetY, i);
     }
-    if (showHL != null && showHL) {
-      drawHLine(canvas, size, offsetY, scales);
-    }
+    //  drawHLine(canvas, size, offsetY, scales);
     canvas.restore();
   }
 
@@ -117,15 +94,17 @@ class RulerPainter extends CustomPainter {
     TextPainter textPainter = TextPainter(
         textDirection: TextDirection.ltr,
         text: TextSpan(
-            text: '${(i * unitScale + minValue).toInt()}',
+            text: '${contents[i]}',
             style: TextStyle(
-              color: currentSacle == i ? Color(0xFF808184) : Color(0xFFE8E9EB),
-              fontSize: currentSacle == i ? 13.0 : 12.0,
+              color: i == currentSacle ? Color(0xFF374147) : Color(0xFFBEC6CA),
+              fontSize: i == currentSacle ? 16.0 : 12.0,
               fontWeight: FontWeight.bold,
             )));
     textPainter.layout();
     textPainter.paint(
-        canvas, Offset(i * unitScaleLength - textPainter.width / 2, 21));
+        canvas,
+        Offset(i * unitScaleLength - textPainter.width / 2,
+            -textPainter.height / 2));
     canvas.restore();
   }
 

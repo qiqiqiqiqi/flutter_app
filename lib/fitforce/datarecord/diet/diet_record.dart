@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/fitforce/datarecord/common_round_button.dart';
 import 'diet_record_seek_bar.dart';
 import 'diet_record_decoration.dart';
+import 'diet_add_dialog.dart';
+main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      body: DietRecordPage(),
+    ),
+  ));
+}
 
 class DietRecordPage extends StatefulWidget {
   @override
@@ -275,10 +283,15 @@ class DietRecordPageState extends State<DietRecordPage> {
                                 fontSize: 14,
                                 decoration: TextDecoration.none),
                           )),
-                          Icon(
-                            Icons.add,
-                            color: Color(0xFF1AD9CA),
-                            size: 16,
+                          GestureDetector(
+                            onTapUp: (TapUpDetails details){
+                              showDietAddDialog(context);
+                            },
+                            child: Icon(
+                              Icons.add,
+                              color: Color(0xFF1AD9CA),
+                              size: 16,
+                            ),
                           )
                         ],
                       ),
@@ -291,5 +304,15 @@ class DietRecordPageState extends State<DietRecordPage> {
         ),
       );
     }, childCount: 20));
+  }
+
+  showDietAddDialog(BuildContext context) async {
+     showDialog(
+        context: context, //BuildContext对象
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return new DietAddDialog();
+        });
+
   }
 }

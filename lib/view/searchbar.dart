@@ -27,6 +27,7 @@ class SearchBarState extends State<SearchBar> {
             onPressed: () {
               showSearch(
                 context: context,
+                query: "99999",
                 delegate: SearchBarDelegate(),
               );
             },
