@@ -3,25 +3,28 @@ import 'custom/chart/chartdemo.dart';
 import 'package:flutter_app/custom/citypicker/address_select_page.dart';
 import 'package:flutter_app/custom/citypicker/address_dialog.dart';
 import 'package:flutter_app/custom/citypicker/address_add_page.dart';
-import 'package:flutter_app/custom/ruler/ruler.dart'
-;
+
+import 'custom/ruler/ruler/ruler.dart';
+
 //main() => runApp(new MainApp());
-  main(){
- return runApp(MaterialApp(
-   title: 'ruler demo',
-   home: LayoutBuilder(
-       builder: (BuildContext context, BoxConstraints constraints) {
-         return Scaffold(
-           appBar: AppBar(title: Text('ruler demo')),
-           body: Center(
-             child: Ruler(
-               width: constraints.maxWidth,
-               height: 80,
-             ),
-           ),
-         );
-       }),
- ));
+main() {
+  return runApp(MaterialApp(
+    title: 'ruler demo',
+    home: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      return Scaffold(
+        appBar: AppBar(title: Text('ruler demo')),
+        body: Center(
+          child: Ruler(
+            minValue: 20,
+            maxValue: 20,
+            width: constraints.maxWidth,
+            height: 80,
+          ),
+        ),
+      );
+    }),
+  ));
 }
 
 class MainApp extends StatelessWidget {

@@ -52,8 +52,6 @@ class AddressCityListState extends State<AddressCityList> {
   }
 
   Widget buildView() {
-
-
     return CustomScrollView(
       physics: BouncingScrollPhysics(),
       controller: scrollController,
