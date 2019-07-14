@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
+import 'center_selector_painter.dart';
 import 'ruler_painter.dart';
 import 'dart:math' as Math;
 
 typedef OnSelectedValue = void Function(BuildContext context, double value);
 
-class Ruler extends StatefulWidget {
+class CenterSelectorWidget extends StatefulWidget {
   double height;
   int minValue;
   double middleValue;
   int maxValue;
-  String unit;
+  String unit = '克';
   OnSelectedValue onSelectedValue;
-  bool showHL = true;
   double unitScale = 1;
   int showScaleNum = 9;
-
-  double minScaleLength = 4.0;
-  double middleScaleLength = 8.0;
-  double maxScaleLength = 12.0;
-  double cursorScaleLength = 25.0;
+  List<String> contents;
   int scaleNum;
 
-  Ruler(
+  CenterSelectorWidget(
       {Key key,
       this.height,
       @required this.minValue,
@@ -29,13 +25,9 @@ class Ruler extends StatefulWidget {
       this.middleValue,
       this.onSelectedValue,
       this.unit = 'kg',
-      this.showHL = true,
       this.unitScale = 1,
       this.showScaleNum = 9,
-      this.minScaleLength = 4.0,
-      this.middleScaleLength = 8.0,
-      this.maxScaleLength = 12.0,
-      this.cursorScaleLength = 25.0})
+      this.contents})
       : super(key: key) {
     print('Ruler():middleValue=$middleValue');
     scaleNum = (maxValue - minValue) ~/ unitScale;
@@ -56,11 +48,12 @@ class Ruler extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return RulerState();
+    return CenterSelectorWidgetState();
   }
 }
 
-class RulerState extends State<Ruler> with TickerProviderStateMixin {
+class CenterSelectorWidgetState extends State<CenterSelectorWidget>
+    with TickerProviderStateMixin {
   Offset velocity;
   AnimationController _animationControllerSmooth;
   AnimationController _animationControllerFling;
@@ -136,7 +129,13 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
   }
 
   void caculateCurrentValue() {
-    unitScaleLength = (width ~/ (widget.showScaleNum - 1));
+    if (widget.showScaleNum <= 4) {
+      unitScaleLength = (width ~/ (4));
+    } else if (widget.showScaleNum <= 7) {
+      unitScaleLength = (width ~/ (6));
+    } else {
+      unitScaleLength = (width ~/ (8));
+    }
     sumLength = unitScaleLength *
             ((widget.maxValue * 10 - widget.minValue * 10) ~/
                 (widget.unitScale * 10)) +
@@ -228,23 +227,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       return Container(
         child: GestureDetector(
           onTapUp: (TapUpDetails details) {
-            RenderBox renderBox = globalKey.currentContext.findRenderObject();
-            Offset offset = renderBox.globalToLocal(details.globalPosition);
-            double middle2PointDistance = offset.dx - renderBox.size.width / 2;
-            print(
-                'onTapUp(): details.globalPosition=${details.globalPosition},offset=$offset');
-            if (offsetX <= emptyLenth && offsetX >= maxOffsetX) {
-              double targetScaleDistance = offsetX - middle2PointDistance;
-              if (targetScaleDistance > emptyLenth) {
-                targetScaleDistance = emptyLenth;
-              } else if (targetScaleDistance < maxOffsetX) {
-                targetScaleDistance = maxOffsetX;
-              }
-              tweenFling.begin = offsetX;
-              tweenFling.end = targetScaleDistance;
-              _animationControllerFling.duration = Duration(milliseconds: 500);
-              _animationControllerFling.forward(from: 0);
-            }
+            onTapUp(details);
           },
           onHorizontalDragStart: (DragStartDetails details) {
             if (_animationControllerFling.isAnimating) {
@@ -264,27 +247,46 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
           child: CustomPaint(
             key: globalKey,
             size: Size(constraints.maxWidth, 80),
-            painter: RulerPainter(
+            painter: CenterSelectorPainter(
                 currentSacle: currentScale,
                 unitScale: widget.unitScale,
                 minValue: widget.minValue,
                 maxValue: widget.maxValue,
-                middleValue: middleValue,
+                middleValue: 0,
                 unitScaleLength: unitScaleLength,
                 emptyLenth: emptyLenth,
                 offsetX: offsetX,
                 scaleNum: widget.scaleNum,
                 unit: widget.unit,
-                showHL: widget.showHL,
-                maxScaleLength: widget.maxScaleLength,
-                middleScaleLength: widget.middleScaleLength,
-                minScaleLength: widget.minScaleLength,
-                cursorScaleLength: widget.cursorScaleLength,
-                showScaleNum: widget.showScaleNum),
+                contents: widget.contents),
           ),
         ),
       );
     });
+  }
+
+  void onTapUp(TapUpDetails details) {
+     RenderBox renderBox = globalKey.currentContext.findRenderObject();
+    Offset offset = renderBox.globalToLocal(details.globalPosition);
+    double middle2PointDistance = offset.dx - renderBox.size.width / 2;
+    print(
+        'onTapUp(): details.globalPosition=${details.globalPosition},offset=$offset');
+    if (offsetX <= emptyLenth && offsetX >= maxOffsetX) {
+      double targetScaleDistance = offsetX - middle2PointDistance;
+      if (targetScaleDistance > emptyLenth) {
+        targetScaleDistance = emptyLenth;
+      } else if (targetScaleDistance < maxOffsetX) {
+        targetScaleDistance = maxOffsetX;
+      }
+      double currentTranslationX = targetScaleDistance -
+          (emptyLenth - middleValue2minValueScaleNum() * unitScaleLength);
+      targetScaleDistance =
+          findTargetOffsetX(currentTranslationX, targetScaleDistance);
+      tweenFling.begin = offsetX;
+      tweenFling.end = targetScaleDistance;
+      _animationControllerFling.duration = Duration(milliseconds: 200);
+      _animationControllerFling.forward(from: 0);
+    }
   }
 
   void onHorizontalDragEnd(DragEndDetails details) {

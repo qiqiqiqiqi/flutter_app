@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 
-class RulerTextPainter extends CustomPainter {
+class CenterSelectorPainter extends CustomPainter {
   double unitScale = 0.1;
   int unitScaleLength = 0;
   int scaleNum = 0;
@@ -16,7 +16,7 @@ class RulerTextPainter extends CustomPainter {
   String unit;
   List<String> contents;
 
-  RulerTextPainter(
+  CenterSelectorPainter(
       {this.unitScaleLength,
       this.offsetX,
       this.scaleNum,
