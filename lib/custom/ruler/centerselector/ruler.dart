@@ -14,7 +14,7 @@ class Ruler extends StatefulWidget {
   bool showHL = true;
   double unitScale = 1;
   int showScaleNum = 9;
-
+  bool clickable;
   double minScaleLength = 4.0;
   double middleScaleLength = 8.0;
   double maxScaleLength = 12.0;
@@ -35,7 +35,8 @@ class Ruler extends StatefulWidget {
       this.minScaleLength = 4.0,
       this.middleScaleLength = 8.0,
       this.maxScaleLength = 12.0,
-      this.cursorScaleLength = 25.0})
+      this.cursorScaleLength = 25.0,
+      this.clickable = false})
       : super(key: key) {
     print('Ruler():middleValue=$middleValue');
     scaleNum = (maxValue - minValue) ~/ unitScale;
@@ -228,7 +229,9 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       return Container(
         child: GestureDetector(
           onTapUp: (TapUpDetails details) {
-           onTapUp(details);
+            if (widget.clickable) {
+              onTapUp(details);
+            }
           },
           onHorizontalDragStart: (DragStartDetails details) {
             if (_animationControllerFling.isAnimating) {
@@ -270,6 +273,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       );
     });
   }
+
   void onTapUp(TapUpDetails details) {
     RenderBox renderBox = globalKey.currentContext.findRenderObject();
     Offset offset = renderBox.globalToLocal(details.globalPosition);
@@ -293,6 +297,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       _animationControllerFling.forward(from: 0);
     }
   }
+
   void onHorizontalDragEnd(DragEndDetails details) {
     velocity = details.velocity.pixelsPerSecond;
     if (velocity.dx.abs() > 0 &&
