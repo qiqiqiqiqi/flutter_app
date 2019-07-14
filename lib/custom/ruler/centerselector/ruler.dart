@@ -228,23 +228,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       return Container(
         child: GestureDetector(
           onTapUp: (TapUpDetails details) {
-            RenderBox renderBox = globalKey.currentContext.findRenderObject();
-            Offset offset = renderBox.globalToLocal(details.globalPosition);
-            double middle2PointDistance = offset.dx - renderBox.size.width / 2;
-            print(
-                'onTapUp(): details.globalPosition=${details.globalPosition},offset=$offset');
-            if (offsetX <= emptyLenth && offsetX >= maxOffsetX) {
-              double targetScaleDistance = offsetX - middle2PointDistance;
-              if (targetScaleDistance > emptyLenth) {
-                targetScaleDistance = emptyLenth;
-              } else if (targetScaleDistance < maxOffsetX) {
-                targetScaleDistance = maxOffsetX;
-              }
-              tweenFling.begin = offsetX;
-              tweenFling.end = targetScaleDistance;
-              _animationControllerFling.duration = Duration(milliseconds: 500);
-              _animationControllerFling.forward(from: 0);
-            }
+           onTapUp(details);
           },
           onHorizontalDragStart: (DragStartDetails details) {
             if (_animationControllerFling.isAnimating) {
@@ -286,7 +270,29 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       );
     });
   }
-
+  void onTapUp(TapUpDetails details) {
+    RenderBox renderBox = globalKey.currentContext.findRenderObject();
+    Offset offset = renderBox.globalToLocal(details.globalPosition);
+    double middle2PointDistance = offset.dx - renderBox.size.width / 2;
+    print(
+        'onTapUp(): details.globalPosition=${details.globalPosition},offset=$offset');
+    if (offsetX <= emptyLenth && offsetX >= maxOffsetX) {
+      double targetScaleDistance = offsetX - middle2PointDistance;
+      if (targetScaleDistance > emptyLenth) {
+        targetScaleDistance = emptyLenth;
+      } else if (targetScaleDistance < maxOffsetX) {
+        targetScaleDistance = maxOffsetX;
+      }
+      double currentTranslationX = targetScaleDistance -
+          (emptyLenth - middleValue2minValueScaleNum() * unitScaleLength);
+      targetScaleDistance =
+          findTargetOffsetX(currentTranslationX, targetScaleDistance);
+      tweenFling.begin = offsetX;
+      tweenFling.end = targetScaleDistance;
+      _animationControllerFling.duration = Duration(milliseconds: 200);
+      _animationControllerFling.forward(from: 0);
+    }
+  }
   void onHorizontalDragEnd(DragEndDetails details) {
     velocity = details.velocity.pixelsPerSecond;
     if (velocity.dx.abs() > 0 &&
