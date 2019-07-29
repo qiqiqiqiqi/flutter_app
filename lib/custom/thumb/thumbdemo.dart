@@ -14,6 +14,8 @@ void main() {
       ),
       body: Center(
         child: ListView.separated(
+          shrinkWrap: false,
+          physics: BouncingScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () {
@@ -55,8 +57,9 @@ void main() {
             );
           },
           separatorBuilder: (BuildContext context, int index) {
+//            return Container();
             return Divider(
-              color: Colors.blueAccent,
+              //color: Color(0xFFFF0000),
               height: 1,
             );
           },

@@ -151,50 +151,48 @@ class ThumbState extends State<ThumbWidget>
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      return Container(
-        margin: EdgeInsets.only(left: 20),
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: widget.width,
-              height: widget.height,
-              decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.all(Radius.circular(widget.width / 2)),
-                  image: DecorationImage(
-                    image: AssetImage(widget
-                        .imagePath) /*new NetworkImage(
+    return Container(
+      margin: EdgeInsets.only(left: 20),
+      alignment: Alignment.centerLeft,
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(widget.width / 2)),
+                image: DecorationImage(
+                  image: AssetImage(widget
+                      .imagePath) /*new NetworkImage(
                     'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec'
                         '=1560423242259&di=bf4fc3b98a6500724576c03591dc0c34&imgtype=0&src'
                         '=http%3A%2F%2Fpro.user.img41.51sole.com%2FproductImages3%2F20150731%2Fb_1636865_20150731152744.jpg')*/
-                    ,
-                  )),
-              child: GestureDetector(
-                onTap: () {
-                  startAnima();
-                },
-                child: CustomPaint(
-                  size: Size(widget.width, widget.height),
-                  painter: ThumbPainter(
-                      circleAnimateValue: circleAnimateValue,
-                      pathAnimateValue: pathAnimateValue,
-                      textSizeAnimateValue: textSizeAnimateValue,
-                      reverse: reverse,
-                      text: widget.thumText),
-                ),
+                  ,
+                )),
+            child: GestureDetector(
+              onTap: () {
+                startAnima();
+              },
+              child: CustomPaint(
+                size: Size(widget.width, widget.height),
+                painter: ThumbPainter(
+                    circleAnimateValue: circleAnimateValue,
+                    pathAnimateValue: pathAnimateValue,
+                    textSizeAnimateValue: textSizeAnimateValue,
+                    reverse: reverse,
+                    text: widget.thumText,
+                    ),
               ),
             ),
-            Offstage(
-              offstage: circleAnimateValue != 0,
-              child: widget.child,
-            )
-          ],
-        ),
-      );
-    });
+          ),
+          Offstage(
+            offstage: circleAnimateValue != 0,
+            child: widget.child,
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -202,6 +200,9 @@ class ThumbState extends State<ThumbWidget>
     if (!_pathAnimationController.isAnimating &&
         !_circleAnimationController.isAnimating) {
       reverse = false;
+      circleAnimateValue = 0;
+      pathAnimateValue = 0;
+      textSizeAnimateValue = 0;
       _circleAnimationController.reset();
       _pathAnimationController.reset();
       _circleAnimationController.forward();
