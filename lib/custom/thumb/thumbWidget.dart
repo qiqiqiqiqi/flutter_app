@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'thumbPainter.dart';
 import 'thumbMixin.dart';
+
+typedef OnAnimationEnd = void Function();
+typedef OnAnimationCancle = void Function();
+
 class ThumbController with ThumbMixin {
   Map<int, ThumbMixin> thumbMixins = Map();
 
@@ -37,6 +41,8 @@ class ThumbWidget extends StatefulWidget {
   ThumbController thumbController;
   int index;
   Widget child;
+  OnAnimationEnd onAnimationEnd;
+  OnAnimationCancle onAnimationCancle;
 
   ThumbWidget(
       {@required this.imagePath,
@@ -45,7 +51,9 @@ class ThumbWidget extends StatefulWidget {
       this.height = 60,
       this.thumbController,
       this.index,
-      @required this.child});
+      @required this.child,
+      this.onAnimationEnd,
+      this.onAnimationCancle});
 
   @override
   State<StatefulWidget> createState() {
@@ -73,7 +81,7 @@ class ThumbState extends State<ThumbWidget>
   @override
   void dispose() {
     super.dispose();
-
+    widget?.onAnimationCancle?.call();
     _circleAnimationController?.stop(canceled: true);
     _pathAnimationController?.stop(canceled: true);
     bool remove = widget.thumbController?.remove(widget.index, this);
@@ -99,11 +107,17 @@ class ThumbState extends State<ThumbWidget>
       });
     });
     curvedAnimation.addStatusListener((AnimationStatus animationStatus) {
+      print(
+          "ThumbState--circleAnimateValue():animationStatus=$animationStatus");
       if (animationStatus == AnimationStatus.completed) {
         if (circleAnimateValue == 1 && !reverse) {
           _pathAnimationController.forward();
         }
-      } else if (animationStatus == AnimationStatus.forward) {}
+      } else if (animationStatus == AnimationStatus.dismissed) {
+        if (circleAnimateValue == 0 && reverse) {
+          widget?.onAnimationEnd?.call();
+        }
+      }
     });
 
     //path

@@ -25,6 +25,12 @@ void main() {
                 child: Row(
                   children: <Widget>[
                     ThumbWidget(
+                      onAnimationEnd: () {
+                        print('thumbdemo--onAnimationEnd()');
+                      },
+                      onAnimationCancle: () {
+                        print('thumbdemo--onAnimationCancle()');
+                      },
                       imagePath: 'images/data_record_naozhong.png',
                       child: Container(
                         margin: EdgeInsets.only(left: 16),
