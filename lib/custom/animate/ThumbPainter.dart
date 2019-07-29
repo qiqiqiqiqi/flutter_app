@@ -29,11 +29,11 @@ class ThumbPainter extends CustomPainter {
     _path = Path();
     pointsRaduis = [5, 6, 5, 5, 8];
     pointsColors = [
-      Colors.amber,
-      Colors.deepOrange,
-      Colors.amber,
-      Colors.deepOrange,
-      Colors.deepOrange
+      Color(0xE6E4B055),
+      Color(0xE6E46855),
+      Color(0xE6E4B055),
+      Color(0xE6E46855),
+      Color(0xE6E46855),
     ];
     _paint = Paint()
       ..style = PaintingStyle.fill
@@ -41,13 +41,14 @@ class ThumbPainter extends CustomPainter {
       ..strokeWidth = 4
       ..strokeJoin = StrokeJoin.round
       ..strokeCap = StrokeCap.round
-      ..color = Colors.amber;
+      ..color = Color(0xE6E4B055);
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    drawBigCircles(canvas, size);
+
     drawSmallCircles(canvas, size);
+    drawBigCircles(canvas, size);
     drawPath(canvas, size);
     drawText(canvas, size);
   }
@@ -62,14 +63,12 @@ class ThumbPainter extends CustomPainter {
     drawBigCircle(
         canvas,
         size,
-        Color.fromARGB((255 * 0.8).toInt(), Colors.redAccent.red,
-            Colors.redAccent.green, Colors.redAccent.blue),
+        Color(0xCCE46855),
         size.width / 2 * bottomRadio);
     drawBigCircle(
         canvas,
         size,
-        Color.fromARGB((255 * 0.8).toInt(), Colors.amber.red,
-            Colors.amber.green, Colors.amber.blue),
+        Color(0xCCE4B055),
         size.width / 2 * topRadio);
     canvas.restore();
   }
@@ -107,7 +106,7 @@ class ThumbPainter extends CustomPainter {
     _paint.color = color;
     _paint.style = PaintingStyle.fill;
     canvas.rotate(interverRadians * position);
-    canvas.drawCircle(Offset(0, -size.height / 2 - (radius + 4)),
+    canvas.drawCircle(Offset(0, -size.height / 2 - (radius + 4)*pathAnimateValue),
         radius * (1 - pathAnimateValue), _paint);
     canvas.restore();
   }
@@ -143,8 +142,11 @@ class ThumbPainter extends CustomPainter {
         text: TextSpan(
             text: text,
             style: TextStyle(
-                color: Color.fromARGB((255 * circleAnimateValue).toInt(),
-                    Colors.amber.red, Colors.amber.green, Colors.amber.blue),
+                color: Color.fromARGB(
+                    (255 * circleAnimateValue).toInt(),
+                    Color(0xFFE4B055).red,
+                    Color(0xFFE4B055).green,
+                    Color(0xFFE4B055).blue),
                 fontSize: 16 * textSizeAnimateValue,
                 fontWeight: FontWeight.w600)));
     textPainter.layout();
