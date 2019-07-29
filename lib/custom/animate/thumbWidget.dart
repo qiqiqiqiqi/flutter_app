@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'ThumbPainter.dart';
+import 'thumbPainter.dart';
 import 'thumbMixin.dart';
 class ThumbController with ThumbMixin {
   Map<int, ThumbMixin> thumbMixins = Map();

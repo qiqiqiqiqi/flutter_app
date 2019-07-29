@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ThumbWidget.dart';
+import 'thumbWidget.dart';
 
 void main() {
   ThumbController thumbController = ThumbController();
