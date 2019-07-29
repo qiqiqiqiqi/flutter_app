@@ -46,7 +46,6 @@ class ThumbPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-
     drawSmallCircles(canvas, size);
     drawBigCircles(canvas, size);
     drawPath(canvas, size);
@@ -61,15 +60,8 @@ class ThumbPainter extends CustomPainter {
     bottomRadio = (circleAnimateValue * 1.2 > 1 ? 1 : circleAnimateValue * 1.2);
     topRadio = circleAnimateValue;
     drawBigCircle(
-        canvas,
-        size,
-        Color(0xCCE46855),
-        size.width / 2 * bottomRadio);
-    drawBigCircle(
-        canvas,
-        size,
-        Color(0xCCE4B055),
-        size.width / 2 * topRadio);
+        canvas, size, Color(0xCCE46855), size.width / 2 * bottomRadio);
+    drawBigCircle(canvas, size, Color(0xCCE4B055), size.width / 2 * topRadio);
     canvas.restore();
   }
 
@@ -79,11 +71,14 @@ class ThumbPainter extends CustomPainter {
   }
 
   void drawBigCircle(Canvas canvas, Size size, Color color, double radius) {
-    canvas.save();
-    _paint.color = color;
-    _paint.style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), radius, _paint);
-    canvas.restore();
+    if (circleAnimateValue != null && circleAnimateValue != 0) {
+      canvas.save();
+      _paint.color = color;
+      _paint.style = PaintingStyle.fill;
+      canvas.drawCircle(
+          Offset(size.width / 2, size.height / 2), radius, _paint);
+      canvas.restore();
+    }
   }
 
   void drawSmallCircles(Canvas canvas, Size size) {
@@ -106,8 +101,10 @@ class ThumbPainter extends CustomPainter {
     _paint.color = color;
     _paint.style = PaintingStyle.fill;
     canvas.rotate(interverRadians * position);
-    canvas.drawCircle(Offset(0, -size.height / 2 - (radius + 4)*pathAnimateValue),
-        radius * (1 - pathAnimateValue), _paint);
+    canvas.drawCircle(
+        Offset(0, -size.height / 2 - (radius + 4) * pathAnimateValue),
+        radius * (1 - pathAnimateValue),
+        _paint);
     canvas.restore();
   }
 
@@ -135,23 +132,25 @@ class ThumbPainter extends CustomPainter {
   }
 
   void drawText(Canvas canvas, Size size) {
-    canvas.save();
-    TextPainter textPainter = TextPainter(
-        textDirection: TextDirection.ltr,
-        maxLines: 1,
-        text: TextSpan(
-            text: text,
-            style: TextStyle(
-                color: Color.fromARGB(
-                    (255 * circleAnimateValue).toInt(),
-                    Color(0xFFE4B055).red,
-                    Color(0xFFE4B055).green,
-                    Color(0xFFE4B055).blue),
-                fontSize: 16 * textSizeAnimateValue,
-                fontWeight: FontWeight.w600)));
-    textPainter.layout();
-    textPainter.paint(canvas,
-        Offset(size.width + 16, size.height / 2 - textPainter.height / 2));
-    canvas.restore();
+    if (circleAnimateValue != null && circleAnimateValue != 0) {
+      canvas.save();
+      TextPainter textPainter = TextPainter(
+          textDirection: TextDirection.ltr,
+          maxLines: 1,
+          text: TextSpan(
+              text: text,
+              style: TextStyle(
+                  color: Color.fromARGB(
+                      (255 * circleAnimateValue).toInt(),
+                      Color(0xFFE4B055).red,
+                      Color(0xFFE4B055).green,
+                      Color(0xFFE4B055).blue),
+                  fontSize: 16 * textSizeAnimateValue,
+                  fontWeight: FontWeight.w600)));
+      textPainter.layout();
+      textPainter.paint(canvas,
+          Offset(size.width + 16, size.height / 2 - textPainter.height / 2));
+      canvas.restore();
+    }
   }
 }
