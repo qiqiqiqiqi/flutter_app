@@ -110,20 +110,19 @@ class CardContainerState extends State<CardContainer>
     });
   }
 
-  void startAnima(Offset sourceOffset, bool reverse) {
+  void startAnima({Offset beginOffse, Offset endOffset, bool reverse}) {
     this.reverse = reverse;
-    currentOffset = Offset(sourceOffset.dx, sourceOffset.dy);
-    if (!_animationController.isAnimating) {
+    if (!_animationController.isAnimating &&
+        _animationController.status != AnimationStatus.forward) {
       _animationController.reset();
       if (reverse) {
-        _tween.begin = sourceOffset.dx;
-        _tween.end = 0;
-        _animationController.forward();
+        currentOffset = Offset(beginOffse.dx, beginOffse.dy);
       } else {
-        _tween.begin = 0;
-        _tween.end = sourceOffset.dx;
-        _animationController.forward();
+        currentOffset = Offset(endOffset.dx, endOffset.dy);
       }
+      _tween.begin = beginOffse.dx;
+      _tween.end = endOffset.dx;
+      _animationController.forward();
     }
   }
 
@@ -169,10 +168,26 @@ class CardContainerState extends State<CardContainer>
             currentOffset.dx.abs() >= maxWidth / 2)) {
       setState(() {
         //removeFirst();
-        startAnima(currentOffset, false);
+        startAnima(
+            beginOffse: currentOffset,
+            endOffset: getEndoffset(),
+            reverse: false);
       });
     } else {
-      startAnima(currentCardRecord.offset, true);
+      startAnima(
+          beginOffse: currentCardRecord.offset,
+          endOffset: Offset(0, 0),
+          reverse: true);
+    }
+  }
+
+  Offset getEndoffset() {
+    if (currentOffset.dx.abs() > currentOffset.dy.abs()) {
+      return Offset(maxWidth * (currentOffset.dx / (currentOffset.dx.abs())),
+          currentOffset.dy);
+    } else {
+      return Offset(currentOffset.dx,
+          maxHeight * (currentOffset.dy / (currentOffset.dy.abs())));
     }
   }
 
@@ -198,19 +213,28 @@ class CardContainerState extends State<CardContainer>
 
   @override
   void next() {
-    print('CardContainerState--next()');
-    if (widget.datas.length > 1) {
-      startAnima(Offset(-maxWidth / 2, -maxHeight / 2), false);
+    print(
+        'CardContainerState--next():_animationController.status=${_animationController.status}');
+    if (widget.datas.length > 1 &&
+        _animationController.status != AnimationStatus.forward) {
+      startAnima(
+          beginOffse: Offset(0, 0),
+          endOffset: Offset(-maxWidth / 2, -maxHeight / 2),
+          reverse: false);
     }
   }
 
   @override
   void previous() {
     print('CardContainerState--previous()');
-    if (removeDatas.isNotEmpty) {
+    if (removeDatas.isNotEmpty &&
+        _animationController.status != AnimationStatus.forward) {
       widget.datas.insert(0, removeDatas.removeLast());
       // startAnima(Offset(-maxWidth / 2, -maxHeight / 2), true);
-      startAnima(_itemCardRecordMap[widget.datas[0]].offset, true);
+      startAnima(
+          beginOffse: _itemCardRecordMap[widget.datas[0]].offset,
+          endOffset: Offset.zero,
+          reverse: true);
     }
   }
 }
