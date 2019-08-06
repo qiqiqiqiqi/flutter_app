@@ -87,8 +87,13 @@ class CardContainerState extends State<CardContainer>
       double value = animate.value;
       setState(() {
         //记录移除时的偏移量，等待进入时赋值为开始偏移
-        currentCardRecord.offset =
-            Offset(value, currentOffset.dy * (value / currentOffset.dx));
+        if (_tween.end == currentOffset.dy) {
+          currentCardRecord.offset =
+              Offset(currentOffset.dx * (value / currentOffset.dy), value);
+        } else {
+          currentCardRecord.offset =
+              Offset(value, currentOffset.dy * (value / currentOffset.dx));
+        }
       });
       print(
           'CardContainerState--initState()--addListener():value=$value,currentCardRecord.offset=${currentCardRecord.offset}');
@@ -120,8 +125,13 @@ class CardContainerState extends State<CardContainer>
       } else {
         currentOffset = Offset(endOffset.dx, endOffset.dy);
       }
-      _tween.begin = beginOffse.dx;
-      _tween.end = endOffset.dx;
+      if (beginOffse.dx != endOffset.dx) {
+        _tween.begin = beginOffse.dx;
+        _tween.end = endOffset.dx;
+      } else {
+        _tween.begin = beginOffse.dy;
+        _tween.end = endOffset.dy;
+      }
       _animationController.forward();
     }
   }
@@ -164,13 +174,13 @@ class CardContainerState extends State<CardContainer>
   void onPanEnd(DragEndDetails dragEndDetails) {
     print("CardContainer:onPanEnd():");
     if (widget.datas.length > 1 &&
-        (currentOffset.dy.abs() >= maxHeight / 2 ||
+        (currentOffset.dy.abs() >= maxWidth / 2 ||
             currentOffset.dx.abs() >= maxWidth / 2)) {
       setState(() {
         //removeFirst();
         startAnima(
             beginOffse: currentOffset,
-            endOffset: getEndoffset(),
+            endOffset: getEndOffset(),
             reverse: false);
       });
     } else {
@@ -181,7 +191,7 @@ class CardContainerState extends State<CardContainer>
     }
   }
 
-  Offset getEndoffset() {
+  Offset getEndOffset() {
     if (currentOffset.dx.abs() > currentOffset.dy.abs()) {
       return Offset(maxWidth * (currentOffset.dx / (currentOffset.dx.abs())),
           currentOffset.dy);
@@ -205,8 +215,11 @@ class CardContainerState extends State<CardContainer>
       print('CardContainerState--build():constraints=$constraints');
       maxWidth = constraints.maxWidth;
       maxHeight = constraints.maxHeight;
-      return Stack(
-        children: getWidgets(),
+      return Container(
+        color: Colors.blueAccent,
+        child: Stack(
+          children: getWidgets(),
+        ),
       );
     });
   }

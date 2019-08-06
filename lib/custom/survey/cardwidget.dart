@@ -79,7 +79,7 @@ class DragCardState extends State<DragCard> {
                       right: 20,
                       top: 20,
                       child: AspectRatio(
-                        aspectRatio: 0.75,
+                        aspectRatio: 0.65,
                         child: Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
