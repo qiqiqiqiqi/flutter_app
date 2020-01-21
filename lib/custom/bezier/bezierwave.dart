@@ -113,19 +113,19 @@ class BezierWavePainter extends CustomPainter {
       ? rootBundle
       : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
 
-  static Future<ui.Image> load(String url) async {
-    ImageStream stream = new AssetImage(url, bundle: getAssetBundle())
-        .resolve(ImageConfiguration.empty);
-    Completer<ui.Image> completer = new Completer<ui.Image>();
-    void listener(ImageInfo frame, bool synchronousCall) {
-      ui.Image image = frame.image;
-      completer.complete(image);
-      stream.removeListener(listener);
-    }
-
-    stream.addListener(listener);
-    return completer.future;
-  }
+//  static Future<ui.Image> load(String url) async {
+//    ImageStream stream = new AssetImage(url, bundle: getAssetBundle())
+//        .resolve(ImageConfiguration.empty);
+//    Completer<ui.Image> completer = new Completer<ui.Image>();
+//    void listener(ImageInfo frame, bool synchronousCall) {
+//      ui.Image image = frame.image;
+//      completer.complete(image);
+//      stream.removeListener(listener);
+//    }
+//
+//    stream.addListener(listener);
+//    return completer.future;
+//  }
 
   static Future<ui.Image> getImage(String asset) async {
     ByteData data = await rootBundle.load(asset);
