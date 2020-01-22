@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/custom/tree/TreeNode.dart';
 import 'TreePainter.dart';
+import 'dart:math' as Math;
 
 main() {
   runApp(MaterialApp(
@@ -20,7 +22,19 @@ class TreeWidget extends StatefulWidget {
   }
 }
 
-class TreeWidgetState extends State {
+class TreeWidgetState extends State with TickerProviderStateMixin {
+  AnimationController _animationController;
+  Map<int, List<TreeNode>> treeNodeMap = Map();
+  TreeNode rootTreeNode = TreeNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this);
+    _animationController.addListener(() {});
+    fillLeftRightNode(rootTreeNode, 3);
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -30,9 +44,18 @@ class TreeWidgetState extends State {
         height: constraints.biggest.height,
         color: Colors.black,
         child: CustomPaint(
-          painter: TreePainter(color: Colors.white),
+          painter: TreePainter(color: Colors.white, rootTreeNode: rootTreeNode),
         ),
       );
     });
+  }
+
+  void fillLeftRightNode(TreeNode rootTreeNode, int depth) {
+    if (depth > 0) {
+      rootTreeNode.left = TreeNode();
+      rootTreeNode.right = TreeNode();
+      fillLeftRightNode(rootTreeNode.left, depth - 1);
+      fillLeftRightNode(rootTreeNode.right, depth - 1);
+    }
   }
 }
