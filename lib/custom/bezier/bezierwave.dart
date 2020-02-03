@@ -62,8 +62,7 @@ class BezierWavePainter extends CustomPainter {
       final PathMetrics pathMetrics = path.computeMetrics(forceClosed: false);
       final PathMetric pathMetric = pathMetrics.elementAt(0);
       double length = pathMetric.length;
-      Path extractPath = pathMetric.extractPath(offSetX1,
-          length * (size.width / (waveCount * waveLength)) + offSetX1);
+      Path extractPath = pathMetric.extractPath(offSetX1, length * (size.width / (waveCount * waveLength)) + offSetX1);
       paint.style = PaintingStyle.stroke;
       canvas.drawPath(extractPath, paint);
       Tangent tangentForOffset =

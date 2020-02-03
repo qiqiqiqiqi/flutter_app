@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 
 ///Flutter提供了几种类型的按钮组件：RaisedButton FloatingActionButton FlatButton IconButton PopupMenuButton
 main() {
-  runApp(new ButtonApp());
+  runApp(new MyWidget());
 }
+class MyWidget extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return ErrorWidget('Flutter框架分析');
+  }
 
+}
 class ButtonApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
