@@ -39,13 +39,34 @@ android {
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        debug {
+            keyAlias 'icarbonx_meum'
+            keyPassword '123789'
+            storeFile file('../keystore/icarbonx_meum.keystore')
+            storePassword '123789'
+        }
+
+        release {
+            keyAlias 'icarbonx_meum'
+            keyPassword '123789'
+            storeFile file('../keystore/icarbonx_meum.keystore')
+            storePassword '123789'
+        }
+    }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+
     }
 }
 

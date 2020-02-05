@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/custom/tree/treeWidget.dart';
 import 'custom/chart/chartdemo.dart';
 import 'package:flutter_app/custom/citypicker/address_select_page.dart';
 import 'package:flutter_app/custom/citypicker/address_dialog.dart';
@@ -13,14 +14,9 @@ main() {
     home: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       return Scaffold(
-        appBar: AppBar(title: Text('ruler demo')),
+       /* appBar: AppBar(title: Text('ruler demo')),*/
         body: Center(
-          child: Ruler(
-            minValue: 20,
-            maxValue: 20,
-            width: constraints.maxWidth,
-            height: 80,
-          ),
+          child: TreeWidget(),
         ),
       );
     }),

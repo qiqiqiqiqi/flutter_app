@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter_app/custom/tree/leaf.dart';
 import 'package:flutter_app/custom/tree/treeNode.dart';
 import 'package:flutter_app/custom/tree/treeVector.dart';
 
@@ -10,6 +11,7 @@ class Branch {
   double length = 0;
   TreeVector treeVector;
   int generation;
+  Leaf leaf;
 
   TreeNode get endNode {
     if (treeNodes != null && treeNodes.isNotEmpty) {
