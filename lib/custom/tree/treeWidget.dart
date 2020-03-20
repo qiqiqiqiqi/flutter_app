@@ -81,6 +81,9 @@ class TreeWidgetState extends State with TickerProviderStateMixin {
                   },
                   onScaleEnd: (ScaleEndDetails details) {},
                   onTap: () {
+                    if (mounted) {
+                      size = globalKey.currentContext.size;
+                    }
                     scale = 1;
                     tree = Tree(
                       color: TreeUtil.randomRGBA(0, 255, 0.3),
@@ -155,10 +158,11 @@ class TreeWidgetState extends State with TickerProviderStateMixin {
       }
       branch.length += branch.treeVector.length();
       if (branch.generation != 1) {
-        branch.treeVector
-            .rotate(TreeUtil.random(-angle, angle), branch.generation);
+        branch.treeVector.rotate(TreeUtil.random(-angle, angle), branch.generation);
+      }else{
+
       }
-      double dt = branch.length - TreeUtil.random(45, 90);
+      double dt = branch.length - TreeUtil.random(40, 80);
       if (dt > 0) {
         fork(branch);
         return;

@@ -21,8 +21,8 @@ class CalendarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     for (int day = startDay; day < monthDays; day++) {
-      int column = (day - startDay + weekDay - 1) % 7; //(0~6列共7列)
-      int row = (day - startDay + weekDay - 1) ~/ 7; //(0~5共6行)
+      int column = (day - startDay + weekDay ) % 7; //(0~6列共7列)
+      int row = (day - startDay + weekDay ) ~/ 7; //(0~5共6行)
       drawDay(canvas, day + 1, size, row, column);
     }
   }

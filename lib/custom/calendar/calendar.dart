@@ -44,10 +44,10 @@ class CalendarState extends State<Calendar> {
       weekDay = DateTime.now().weekday;
       startDay = DateTime.now().day - 1;
     }
-    weekDay = weekDay == 7 ? 1 : weekDay + 1;
+    weekDay = weekDay == 7 ? 0: weekDay;
     for (int day = startDay; day < monthDays; day++) {
-      int column = (day - startDay + weekDay - 1) % 7; //(0~6列共7列)
-      int row = (day - startDay + weekDay - 1) ~/ 7; //(0~5共6行)
+      int column = (day - startDay + weekDay ) % 7; //(0~6列共7列)
+      int row = (day - startDay + weekDay ) ~/ 7; //(0~5共6行)
       days[row][column] = day + 1;
     }
   }
