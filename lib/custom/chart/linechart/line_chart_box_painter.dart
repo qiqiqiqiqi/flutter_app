@@ -105,7 +105,7 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
     for (int position = firstVisiablePosition;
         position <= lastVisiablePosition;
         position++) {
-      if ((childCount > 20 && position % 5 == 0) ||
+      if ((childCount > 10 && position % 5 == 0) ||
           (childCount <= 10 && position % 2 == 0)) {
         drawText(
             canvas,
@@ -127,7 +127,7 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
 
   void drawVerticalScale(Canvas canvas, int i, Offset offset) {
     String text =
-        '${((i * ((minMaxChartData.last - minMaxChartData.first) / levels) + minMaxChartData.first) * 100).toInt()}';
+        '${((i * ((minMaxChartData.last - minMaxChartData.first) / levels) + minMaxChartData.first) * 1).toInt()}';
     drawText(canvas, text, offset);
   }
 

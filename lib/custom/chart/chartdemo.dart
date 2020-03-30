@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/custom/tree/treeUtil.dart';
 import 'dart:math' as Math;
 import 'linechart/line_chart.dart';
 import 'linechart/line_chart_decoration.dart';
@@ -29,7 +30,8 @@ class ChartDemoState extends State<ChartDemo> {
   void refresh() {
     if (chartType != ChartType.POINT) {
       datas = List.generate(1000, (int position) {
-        return ChartData()..dataValue = Math.Random().nextDouble();
+        //return ChartData()..dataValue = Math.Random().nextDouble();
+        return ChartData()..dataValue = TreeUtil.random(70, 80)/*Math.Random().nextDouble()*/;
       });
     } else {
       datas = List.generate(1000, (int position) {
@@ -52,7 +54,7 @@ class ChartDemoState extends State<ChartDemo> {
               childCount: childCount,
               chartType: chartType,
               datas: datas,
-              leftPadding: chartType == ChartType.POINT ? 56 : 32,
+              leftPadding: chartType == ChartType.POINT ? 56 :56,
               topPadding: 16,
               rightPadding: 16,
               bottomPadding: 32,

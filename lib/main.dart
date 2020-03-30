@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/custom/boom/boomdemo.dart';
+import 'package:flutter_app/custom/survey/demo.dart';
 import 'package:flutter_app/custom/tree/treeWidget.dart';
 import 'custom/bezier/bezierwavedemo.dart';
 import 'custom/calendar/calendardemo.dart';
@@ -8,6 +10,8 @@ import 'package:flutter_app/custom/citypicker/address_dialog.dart';
 import 'package:flutter_app/custom/citypicker/address_add_page.dart';
 
 import 'custom/circularseekbar/circularseekbardemo.dart';
+import 'custom/dragcard/DragCardDemo.dart';
+import 'custom/ruler/centerselector/ruler_demo.dart';
 import 'custom/ruler/ruler/ruler.dart';
 
 //main() => runApp(new MainApp());
@@ -36,7 +40,7 @@ class MainApp extends StatelessWidget {
           title: new Text("first app"),
         ),
         body: new Center(
-          child: new Text("first flutter demo"),
+          child: new Text("custom demo"),
         ),
       ),
     );
@@ -58,18 +62,21 @@ class MyStatefulWidgetfulState extends State<MyStatefulWidget> {
     'seekBar': CircularSeekBarApp(),
     '地址选择器': AddresAddPage(),
     '梦幻树': TreeWidget(),
+    '尺子': RulerWidget(),
+    'card': CardWidget(),
+    '粒子效果': BoomDemo(),
   };
 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: "first stateful flutter",
-      theme: new ThemeData(primaryColor: const Color(0xffff0000)),
+      title: "custom",
+      theme: new ThemeData(primaryColor: Colors.blueAccent),
       home: new Scaffold(
         appBar: new AppBar(
           title: new Text(
-            "first stateful flutter",
-            style: new TextStyle(color: Colors.blue, fontSize: 20),
+            "custom",
+            style: new TextStyle(color: Colors.white, fontSize: 20),
           ),
         ),
         body: Container(

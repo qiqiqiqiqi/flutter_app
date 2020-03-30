@@ -56,6 +56,7 @@ class RulerWidgetState extends State<RulerWidget> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.blueAccent,
+      alignment: Alignment.center,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[

@@ -3,24 +3,37 @@ import 'package:flutter_app/fitforce/datarecord/common_round_button.dart';
 import 'cardcontainer.dart';
 
 main() {
-  CardController  cardController = CardController();
+
   runApp(MaterialApp(
     title: 'ruler demo',
     home: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       return Scaffold(
         appBar: AppBar(title: Text('ruler demo')),
-        body: Center(
-          child: Column(
-            children: <Widget>[
-              Expanded(child: CardContainer(cardController: cardController,)),
-              buildButtonContainer(cardController)
-            ],
-          ),
-        ),
+        body: new CardWidget(),
       );
     }),
   ));
+}
+
+class CardWidget extends StatelessWidget {
+  CardController  cardController = CardController();
+   CardWidget({
+    Key key,
+  }) : super(key: key);
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Expanded(child: CardContainer(cardController: cardController,)),
+          buildButtonContainer(cardController)
+        ],
+      ),
+    );
+  }
 }
 
 
