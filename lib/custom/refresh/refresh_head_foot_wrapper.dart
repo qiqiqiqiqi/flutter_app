@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/custom/refresh/refresh_state.dart';
+
 import 'refresh_observer.dart';
 
 typedef HeadFootBuilder = Widget Function(BuildContext context);
@@ -54,15 +55,16 @@ class RefreshHeadFootState extends State<BaseRefreshWrapper>
     } else {
       return Container(
         child: Column(
-        children: <Widget>[
-          HeadFootContainerInheritedWidget(
-              child: widget.headFootBuilder(context),
-              refreshObserver: refreshObserver),
-          SizeTransition(
-              sizeFactor: animationController,
-              child: Container(height: widget.height))
-        ],
-      ),);
+          children: <Widget>[
+            HeadFootContainerInheritedWidget(
+                child: widget.headFootBuilder(context),
+                refreshObserver: refreshObserver),
+            SizeTransition(
+                sizeFactor: animationController,
+                child: Container(height: widget.height))
+          ],
+        ),
+      );
     }
   }
 
@@ -108,8 +110,9 @@ class HeadFootContainerInheritedWidget extends InheritedWidget {
   final RefreshObserver refreshObserver;
 
   static HeadFootContainerInheritedWidget of(BuildContext context) {
-    return context
-        .inheritFromWidgetOfExactType(HeadFootContainerInheritedWidget);
+    // return context
+    //     .inheritFromWidgetOfExactType(HeadFootContainerInheritedWidget);
+    return context.findAncestorWidgetOfExactType();
   }
 
   HeadFootContainerInheritedWidget(

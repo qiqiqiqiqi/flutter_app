@@ -1,9 +1,10 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_app/fitforce/datarecord/sleep/date_utils.dart';
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_app/fitforce/datarecord/sleep/date_utils.dart'
+    as DateUtils;
 import 'package:flutter_app/fitforce/datarecord/sleep/timeseekbar/sleepseekbar.dart';
 
 class SleepSeekBarPage extends StatefulWidget {
@@ -33,7 +34,8 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
   DateTime selectedDateTime; //不能修改
   DateTime startDateTime;
   DateTime endDateTime;
-  bool isCurrentDay=false;
+  bool isCurrentDay = false;
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +46,7 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
     pointE =
         calulatePointPosition(endAngle, cirularSize, cirularSize.width / 2);
     selectedDateTime =
-        DateUtils.getOneDayNextDate(DateTime.now(), widget.dayOffset);
+        DateUtils.DateUtils.getOneDayNextDate(DateTime.now(), widget.dayOffset);
     selectedDateTime = DateTime(
         selectedDateTime.year, selectedDateTime.month, selectedDateTime.day);
     startDateTime = selectedDateTime.add(Duration(minutes: -30));
@@ -139,15 +141,16 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
       if (touchS) {
         if (zeroTimeTanS != null) {
           if (zeroTimeTanS > 0) {
-            isCurrentDay=true;
-            print('caculateRadianByTouchPoint():开始从二进入一&&开始时间要跳到当前这一天,结束时间还是当前这一天');
+            isCurrentDay = true;
+            print(
+                'caculateRadianByTouchPoint():开始从二进入一&&开始时间要跳到当前这一天,结束时间还是当前这一天');
           }
         }
         zeroTimeTanS = touchPointTan;
       } else {
         if (zeroTimeTanE != null) {
           if (zeroTimeTanE > 0) {
-            isCurrentDay=false;
+            isCurrentDay = false;
             print(
                 'caculateRadianByTouchPoint():结束从二进入一&&原来开始和结束时间都在当前这一天变成开始时间要跳到前一天，结束时间还是当前这一天(零时)');
           }
@@ -169,7 +172,7 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
       } else {
         if (zeroTimeTanE != null) {
           if (zeroTimeTanE < 0) {
-            isCurrentDay=false;
+            isCurrentDay = false;
             print('caculateRadianByTouchPoint():结束从一进入二&&结束时间要跳到前一天,开始为前一天');
           }
         }
@@ -206,28 +209,26 @@ class CircularSeekBarState extends State<SleepSeekBarPage> {
       pointS =
           calulatePointPosition(startAngle, cirularSize, cirularSize.width / 2);
     }
-    if(startAngle>endAngle){//有时间跨度
+    if (startAngle > endAngle) {
+      //有时间跨度
       startDateTime = selectedDateTime.add(Duration(
-          days: -1,
-          minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
-      endDateTime = selectedDateTime.add(Duration(
-          minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
-    }else if(startAngle<endAngle){
-     // 判断是前一天还是当天
-      if(isCurrentDay){
-        startDateTime = selectedDateTime.add(Duration(
-            minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
-        endDateTime = selectedDateTime.add(Duration(
-            minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
-      }else{
+          days: -1, minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
+      endDateTime = selectedDateTime.add(
+          Duration(minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
+    } else if (startAngle < endAngle) {
+      // 判断是前一天还是当天
+      if (isCurrentDay) {
+        startDateTime = selectedDateTime.add(
+            Duration(minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
+        endDateTime = selectedDateTime.add(
+            Duration(minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
+      } else {
         startDateTime = selectedDateTime.add(Duration(
             days: -1,
             minutes: (startAngleRadian / (2 * pi) * 24 * 60).toInt()));
         endDateTime = selectedDateTime.add(Duration(
-            days: -1,
-            minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
+            days: -1, minutes: (endAngleRadian / (2 * pi) * 24 * 60).toInt()));
       }
-
     }
     rangeChange();
   }

@@ -1,3 +1,5 @@
+// import 'package:baidumapplugin/widgets/native/baidu_map_platform_view.dart';
+// import 'package:baidumapplugin/widgets/native/base_platfrom_view.dart';
 import 'package:flutter/material.dart';
 
 main() {
@@ -26,15 +28,6 @@ class ColumnApp extends StatelessWidget {
                 child: new Text("column 1"),
               ),
             ),
-            Expanded(
-                flex: 2,
-                child: new RaisedButton(
-                  elevation: 0.0,
-                  highlightElevation: 0.0,
-                  onPressed: () {},
-                  color: Colors.lightGreen,
-                  child: new Text("column 2"),
-                )),
             new RaisedButton(
               onPressed: () {},
               color: Colors.lightBlue,

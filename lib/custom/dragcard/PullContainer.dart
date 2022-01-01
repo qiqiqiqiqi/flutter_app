@@ -75,8 +75,10 @@ class PullDragState extends State<PullDragContiner>
                 top: -(PullController.REFRESH_HEIGHT - offsetY),
                 left: 0,
                 right: 0,
-                child: PullHeadContainer(
-                    pullState: currentPullState) /*widget.headWidget*/),
+                child:
+                    /*PullHeadContainer(
+                    pullState: currentPullState)*/
+                    widget.headWidget),
             Positioned(
                 bottom: -offsetY,
                 top: offsetY,

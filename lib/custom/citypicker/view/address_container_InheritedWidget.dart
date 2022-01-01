@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/custom/citypicker/data/address.dart';
 import 'package:flutter_app/custom/citypicker/observer/address_observer.dart';
 import 'package:flutter_app/custom/citypicker/observer/tab_observer.dart';
-import 'package:flutter_app/custom/citypicker/data/address.dart';
-typedef OnSelectedAddress =Function(Address address);
+
+typedef OnSelectedAddress = Function(Address address);
+
 class AddressContainerInheritedWidget extends InheritedWidget {
   AddressObserver addressObserver;
   TabObserver tabObserver;
@@ -11,17 +13,14 @@ class AddressContainerInheritedWidget extends InheritedWidget {
   final Map city;
 
   static AddressContainerInheritedWidget of(BuildContext context) {
-    return context
-        .inheritFromWidgetOfExactType(AddressContainerInheritedWidget);
+    // return context
+    //     .inheritFromWidgetOfExactType(AddressContainerInheritedWidget);
+    return context.findAncestorWidgetOfExactType();
   }
 
-  AddressContainerInheritedWidget({
-    Key key,
-    Widget child,
-    this.province,
-    this.city,
-    this.onSelectedAddress
-  }) : super(key: key, child: child) {
+  AddressContainerInheritedWidget(
+      {Key key, Widget child, this.province, this.city, this.onSelectedAddress})
+      : super(key: key, child: child) {
     addressObserver = AddressObserver();
     tabObserver = TabObserver();
   }

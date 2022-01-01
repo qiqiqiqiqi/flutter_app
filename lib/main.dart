@@ -1,38 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/custom/boom/boomdemo.dart';
+import 'package:flutter_app/custom/citypicker/address_add_page.dart';
 import 'package:flutter_app/custom/survey/demo.dart';
 import 'package:flutter_app/custom/tree/treeWidget.dart';
+
 import 'custom/bezier/bezierwavedemo.dart';
 import 'custom/calendar/calendardemo.dart';
 import 'custom/chart/chartdemo.dart';
-import 'package:flutter_app/custom/citypicker/address_select_page.dart';
-import 'package:flutter_app/custom/citypicker/address_dialog.dart';
-import 'package:flutter_app/custom/citypicker/address_add_page.dart';
-
 import 'custom/circularseekbar/circularseekbardemo.dart';
-import 'custom/dragcard/DragCardDemo.dart';
 import 'custom/ruler/centerselector/ruler_demo.dart';
-import 'custom/ruler/ruler/ruler.dart';
 
-//main() => runApp(new MainApp());
-main() {
-  return runApp(MaterialApp(
-    title: 'ruler demo',
-    home: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      return Scaffold(
-        /* appBar: AppBar(title: Text('ruler demo')),*/
-        body: Center(
-          child: MyStatefulWidget(),
-        ),
-      );
-    }),
-  ));
-}
+main() => runApp(new MainApp());
+// main() {
+//   return runApp(MaterialApp(
+//     title: 'ruler demo',
+//     home: LayoutBuilder(
+//         builder: (BuildContext context, BoxConstraints constraints) {
+//       return Scaffold(
+//         /* appBar: AppBar(title: Text('ruler demo')),*/
+//         body: Center(
+//           child: MyStatefulWidget(),
+//         ),
+//       );
+//     }),
+//   ));
+// }
 
 class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //todo
     return new MaterialApp(
       title: "first flutter",
       home: new Scaffold(
@@ -64,7 +60,7 @@ class MyStatefulWidgetfulState extends State<MyStatefulWidget> {
     '梦幻树': TreeWidget(),
     '尺子': RulerWidget(),
     'card': CardWidget(),
-    '粒子效果': BoomDemo(),
+    //  '粒子效果': BoomDemo(),
   };
 
   @override
@@ -96,7 +92,10 @@ class MyStatefulWidgetfulState extends State<MyStatefulWidget> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       '${itemWidgets.keys.toList()[index]}',
-                      style: TextStyle(color: Colors.black, fontSize: 16,fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
                 );

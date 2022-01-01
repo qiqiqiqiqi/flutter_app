@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'calendar_painter.dart';
-import 'date_utils.dart';
+import 'date_utils.dart' as DateUtils;
 
 typedef OnSelectedDateTime = void Function(DateTime dateTime);
 
@@ -34,9 +35,9 @@ class CalendarState extends State<Calendar> {
       List<int> childList = List(7);
       days[i] = childList;
     }
-    monthDays =
-        DateUtils.getMonthDays(widget._dateTime.year, widget._dateTime.month);
-    weekDay = DateUtils.getFirstDayWeek(
+    monthDays = DateUtils.DateUtils.getMonthDays(
+        widget._dateTime.year, widget._dateTime.month);
+    weekDay = DateUtils.DateUtils.getFirstDayWeek(
         widget._dateTime.year, widget._dateTime.month);
     startDay = 0;
     if (widget._dateTime.year == DateTime.now().year &&
@@ -44,10 +45,10 @@ class CalendarState extends State<Calendar> {
       weekDay = DateTime.now().weekday;
       startDay = DateTime.now().day - 1;
     }
-    weekDay = weekDay == 7 ? 0: weekDay;
+    weekDay = weekDay == 7 ? 0 : weekDay;
     for (int day = startDay; day < monthDays; day++) {
-      int column = (day - startDay + weekDay ) % 7; //(0~6列共7列)
-      int row = (day - startDay + weekDay ) ~/ 7; //(0~5共6行)
+      int column = (day - startDay + weekDay) % 7; //(0~6列共7列)
+      int row = (day - startDay + weekDay) ~/ 7; //(0~5共6行)
       days[row][column] = day + 1;
     }
   }
@@ -89,7 +90,8 @@ class CalendarState extends State<Calendar> {
     if (dateTime.year == DateTime.now().year &&
         dateTime.month == DateTime.now().month) {
       // 获取当月一共有多少天
-      int monthDays = DateUtils.getMonthDays(dateTime.year, dateTime.month);
+      int monthDays =
+          DateUtils.DateUtils.getMonthDays(dateTime.year, dateTime.month);
       // 获取当月今天位于周几
       int dayOfWeek = DateTime.now().weekday;
       dayOfWeek = dayOfWeek == 7 ? 1 : dayOfWeek + 1;
@@ -102,10 +104,11 @@ class CalendarState extends State<Calendar> {
           ',NUM_ROWS=$NUM_ROWS,height=${NUM_ROWS * (width / 7) * 5 / 5 + offsetHeight}');
     } else {
       // 获取当月一共有多少天
-      int monthDays = DateUtils.getMonthDays(dateTime.year, dateTime.month);
+      int monthDays =
+          DateUtils.DateUtils.getMonthDays(dateTime.year, dateTime.month);
       // 获取当月第一天位于周几
       int firstDayWeek =
-          DateUtils.getFirstDayWeek(dateTime.year, dateTime.month);
+          DateUtils.DateUtils.getFirstDayWeek(dateTime.year, dateTime.month);
       firstDayWeek = firstDayWeek == 7 ? 1 : firstDayWeek + 1;
       NUM_ROWS = (monthDays + firstDayWeek - 1) ~/ 7 +
           ((monthDays + firstDayWeek - 1) % 7 == 0 ? 0 : 1);

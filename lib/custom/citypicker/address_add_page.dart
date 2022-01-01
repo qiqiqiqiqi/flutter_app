@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/custom/citypicker/view/round_button.dart';
-import 'address_dialog.dart';
 import 'package:flutter_app/custom/citypicker/data/address.dart';
+import 'package:flutter_app/custom/citypicker/view/round_button.dart';
+
+import 'address_dialog.dart';
 
 class AddresAddPage extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class AddressAddPageState extends State<AddresAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.white,
@@ -116,31 +117,32 @@ class AddressAddPageState extends State<AddresAddPage> {
                       ),
                       Expanded(
                           child: Container(
-                            child: InkWell(
-                            onTap: () {
-                              selectAddress(context);
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 20),
-                              child: TextField(
-                                enabled: false,
-                                style: TextStyle(
-                                    color: Color(0xFF374147), fontSize: 14),
-                                controller: TextEditingController.fromValue(
-                                    TextEditingValue(
-                                      // 设置内容
-                                      text: selectedAddress == null
-                                          ? ''
-                                          : '${selectedAddress.provinceData.provinceName}${selectedAddress.cityData.cityName}${selectedAddress.areaData.areaName}',
-                                    )),
-                                decoration: new InputDecoration(
-                                    hintStyle: TextStyle(
-                                        color: Color(0xFFAAB2B7), fontSize: 14),
-                                    hintText: "请选择省/市/县区",
-                                    border: InputBorder.none),
-                              ),
+                        child: InkWell(
+                          onTap: () {
+                            selectAddress(context);
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 20),
+                            child: TextField(
+                              enabled: false,
+                              style: TextStyle(
+                                  color: Color(0xFF374147), fontSize: 14),
+                              controller: TextEditingController.fromValue(
+                                  TextEditingValue(
+                                // 设置内容
+                                text: selectedAddress == null
+                                    ? ''
+                                    : '${selectedAddress.provinceData.provinceName}${selectedAddress.cityData.cityName}${selectedAddress.areaData.areaName}',
+                              )),
+                              decoration: new InputDecoration(
+                                  hintStyle: TextStyle(
+                                      color: Color(0xFFAAB2B7), fontSize: 14),
+                                  hintText: "请选择省/市/县区",
+                                  border: InputBorder.none),
                             ),
-                          ),))
+                          ),
+                        ),
+                      ))
                     ],
                   ),
                   Divider(
@@ -150,10 +152,7 @@ class AddressAddPageState extends State<AddresAddPage> {
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        top: 20,
-                        right: 20
-                      ),
+                      padding: EdgeInsets.only(top: 20, right: 20),
                       child: TextField(
                           style:
                               TextStyle(color: Color(0xFF374147), fontSize: 14),

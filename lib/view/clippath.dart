@@ -29,7 +29,7 @@ class ClipPathState extends State<ClipPathDemo> {
                 top: 0,
                 height: 240,
                 child: ClipPath(
-                  clipper: null/*BottomCustomClipper(offsetY: offsetY)*/,
+                  clipper: BottomCustomClipper(offsetY: offsetY),
                   child: Container(
                     color: Colors.redAccent,
                     child: Image.asset(
@@ -151,7 +151,8 @@ class BottomCustomClipper extends CustomClipper<Path> {
     Path path = Path();
     path.moveTo(0, 0);
     path.lineTo(0, size.height - 40);
-    path.quadraticBezierTo( size.width / 2, size.height, size.width, size.height-40);
+    path.quadraticBezierTo(
+        size.width / 2, size.height, size.width, size.height - 40);
     path.lineTo(size.width, 0);
     path.close();
     return path;

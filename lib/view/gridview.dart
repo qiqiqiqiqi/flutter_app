@@ -22,14 +22,17 @@ class GridViewApp extends StatelessWidget {
             appBar: new AppBar(title: new Text("gridview demo")),
             body: GridView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: items.length,
+              itemCount: 100000000,
               gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: 2.0,
                   crossAxisCount: 2,
                   crossAxisSpacing: 2.0,
                   childAspectRatio: 0.7),
               itemBuilder: (BuildContext context, int index) {
-                return new Image.network("${items[index]}",fit: BoxFit.cover,);
+                return new Image.network(
+                  "${items[0]}",
+                  fit: BoxFit.cover,
+                );
               },
             )));
   }

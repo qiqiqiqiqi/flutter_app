@@ -25,7 +25,9 @@ class DragCardState extends State<DragCardDemo> {
         ),
         body: PullDragContiner(
           //todo 把refresh...方法移出
-          headWidget: PullHeadContainer(),
+          headWidget: Container(
+            color: Colors.red,
+          ) /*PullHeadContainer()*/,
           contentWidget: PullContentContainer(),
         ));
   }

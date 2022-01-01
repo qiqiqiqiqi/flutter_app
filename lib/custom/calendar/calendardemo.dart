@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'calendar.dart';
-import 'date_utils.dart';
 import 'calendar_week_day.dart';
+import 'date_utils.dart' as DateUtils;
 
 main() {
   runApp(CalendarDemo());
@@ -34,11 +35,12 @@ class CalendarDemoState extends State {
                       Padding(
                           padding: EdgeInsets.symmetric(vertical: 8),
                           child: Text(
-                            '${DateUtils.getNextMonth(DateTime.now(), index).year}-${DateUtils.getNextMonth(DateTime.now(), index).month}',
+                            '${DateUtils.DateUtils.getNextMonth(DateTime.now(), index).year}-${DateUtils.DateUtils.getNextMonth(DateTime.now(), index).month}',
                             style: TextStyle(fontSize: 16),
                           )),
-                      Calendar(DateUtils.getNextMonth(DateTime.now(), index),
-                          (DateTime dateTime) {
+                      Calendar(
+                          DateUtils.DateUtils.getNextMonth(
+                              DateTime.now(), index), (DateTime dateTime) {
                         setState(() {
                           print(
                               'CalendarDemoState:dateTime=${dateTime.toString()}');

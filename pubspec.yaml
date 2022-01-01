@@ -10,7 +10,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -18,9 +18,18 @@ dependencies:
   http: '>=0.11.3+12'
   lpinyin: ^1.0.7
   rxdart: ^0.19.0
+  drag_list: ^1.0.8
+  webview_flutter: ^0.3.22+1
+  pull_to_refresh: ^1.5.7
+  #  photo: ^0.4.8
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+#  baidumapplugin:
+#    #    git:
+#    #      url: git@gitlab.ctirobot.com:mobile-app-team/flutter/modules/baidu_map_view_module.git
+#    #      ref: feature/add_baidu_map
+#    path: /Users/cti/AndroidStudioProjects/candela/flutter/feature/baidu_map_plugin
 
 dev_dependencies:
   flutter_test:
@@ -58,11 +67,12 @@ flutter:
     - images/data_record_naozhong.png
     - images/data_record_sleep.png
     - images/dd.jpg
+    - images/icon_abnormal_position.png
 
   fonts:
     - family: digital
       fonts:
-       - asset: fonts/digital.ttf
+        - asset: fonts/digital.ttf
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

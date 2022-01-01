@@ -1,5 +1,6 @@
 package com.example.flutterapp;
 
+/*
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugins.GeneratedPluginRegistrant;
@@ -9,9 +10,23 @@ public class MainActivity extends FlutterActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     GeneratedPluginRegistrant.registerWith(this);
-    double doub=7;
-    int a=8;
-    doub=a;
 
   }
 }
+*/
+
+import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.engine.FlutterEngine;
+
+import io.flutter.plugins.GeneratedPluginRegistrant;
+
+public class MainActivity extends FlutterActivity {
+
+    @Override
+    public void configureFlutterEngine(FlutterEngine flutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine);
+    }
+
+}
+
+

@@ -81,7 +81,7 @@ class CustomScrollViewState extends State<CustomScrollViewDemo> {
             CustomScrollView(
               slivers: <Widget>[
                 SliverAppBar(
-                   title: Text("SliverAppBarTitle"),
+                  title: Text("SliverAppBarTitle"),
                   centerTitle: true,
                   leading: Padding(
                     padding: EdgeInsets.only(left: 16),
@@ -94,7 +94,6 @@ class CustomScrollViewState extends State<CustomScrollViewDemo> {
                     title: Text("FlexibleSpaceBarTitle"),
                     centerTitle: true,
                     collapseMode: CollapseMode.pin,
-
                     background: Center(
                       child: Stack(
                         alignment: AlignmentDirectional(0, 0),

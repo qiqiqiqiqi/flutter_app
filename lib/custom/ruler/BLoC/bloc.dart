@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
 //https://www.jianshu.com/p/024b19dea138
 //https://www.jianshu.com/p/e7e1bced6890
 void main() => runApp(new MyApp());
@@ -8,7 +9,6 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return new MaterialApp(
       title: 'Streams Demo',
       theme: new ThemeData(
@@ -31,17 +31,16 @@ class CounterPage extends StatelessWidget {
       appBar: AppBar(title: Text('Stream version of the Counter App')),
       body: Center(
         child: StreamBuilder<int>(
-          // StreamBuilder控件中没有任何处理业务逻辑的代码
+            // StreamBuilder控件中没有任何处理业务逻辑的代码
             stream: bloc.outCounter,
             initialData: 0,
-            builder: (BuildContext context, AsyncSnapshot<int> snapshot){
+            builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
               return Text('You hit me: ${snapshot.data} times');
-            }
-        ),
+            }),
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: (){
+        onPressed: () {
           bloc.incrementCounter.add(null);
         },
       ),
@@ -62,18 +61,17 @@ class IncrementBloc implements BlocBase {
   StreamSink get incrementCounter => _actionController.sink;
 
   // 构造器
-  IncrementBloc(){
+  IncrementBloc() {
     _counter = 0;
-    _actionController.stream
-        .listen(_handleLogic);
+    _actionController.stream.listen(_handleLogic);
   }
 
-  void dispose(){
+  void dispose() {
     _actionController.close();
     _counterController.close();
   }
 
-  void _handleLogic(data){
+  void _handleLogic(data) {
     _counter = _counter + 1;
     _inAdd.add(_counter);
   }
@@ -90,7 +88,7 @@ class BlocProvider<T extends BlocBase> extends StatefulWidget {
     Key key,
     @required this.child,
     @required this.bloc,
-  }): super(key: key);
+  }) : super(key: key);
 
   final T bloc;
   final Widget child;
@@ -98,24 +96,25 @@ class BlocProvider<T extends BlocBase> extends StatefulWidget {
   @override
   _BlocProviderState<T> createState() => _BlocProviderState<T>();
 
-  static T of<T extends BlocBase>(BuildContext context){
+  static T of<T extends BlocBase>(BuildContext context) {
     final type = _typeOf<BlocProvider<T>>();
-    BlocProvider<T> provider = context.ancestorWidgetOfExactType(type);
+    // BlocProvider<T> provider = context.ancestorWidgetOfExactType(type);
+    BlocProvider<T> provider = context.findAncestorWidgetOfExactType();
     return provider.bloc;
   }
 
   static Type _typeOf<T>() => T;
 }
 
-class _BlocProviderState<T> extends State<BlocProvider<BlocBase>>{
+class _BlocProviderState<T> extends State<BlocProvider<BlocBase>> {
   @override
-  void dispose(){
+  void dispose() {
     widget.bloc.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return widget.child;
   }
 }
