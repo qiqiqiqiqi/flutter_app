@@ -44,15 +44,15 @@ class MainState extends State<MainPager> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.camera),
-            title: new Text("main1"),
+            label: "main1",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.camera),
-            title: new Text("main2"),
+            label: "main2",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.camera),
-            title: new Text("main3"),
+            label: "main3",
           )
         ],
         currentIndex: index,
@@ -115,5 +115,4 @@ class PagerBodyState extends State<PagerBody> {
   void dispose() {
     super.dispose();
   }
-
 }

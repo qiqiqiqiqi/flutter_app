@@ -36,7 +36,8 @@ class ContainerLayout extends StatelessWidget {
           constraints: new BoxConstraints.expand(
             //添加到child上额外的约束条件。
             width: double.infinity,
-            height: Theme.of(context).textTheme.display1.fontSize * 1.0 + 200.0,
+            height: Theme.of(context).textTheme.displayMedium.fontSize * 1.0 +
+                200.0,
           ),
           decoration: new BoxDecoration(
             //绘制在child后面的装饰，设置了decoration的话，就不能设置color属性，否则会报错，此时应该在decoration中进行颜色的设置。
@@ -46,8 +47,8 @@ class ContainerLayout extends StatelessWidget {
             image: new DecorationImage(
               image: new NetworkImage(
                   'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec'
-                      '=1560423242259&di=bf4fc3b98a6500724576c03591dc0c34&imgtype=0&src'
-                      '=http%3A%2F%2Fpro.user.img41.51sole.com%2FproductImages3%2F20150731%2Fb_1636865_20150731152744.jpg'),
+                  '=1560423242259&di=bf4fc3b98a6500724576c03591dc0c34&imgtype=0&src'
+                  '=http%3A%2F%2Fpro.user.img41.51sole.com%2FproductImages3%2F20150731%2Fb_1636865_20150731152744.jpg'),
               centerSlice: new Rect.fromLTRB(270.0, 180.0, 1360.0, 730.0),
             ),
           ),
@@ -59,7 +60,7 @@ class ContainerLayout extends StatelessWidget {
               textDirection: TextDirection.ltr,
               style: Theme.of(context)
                   .textTheme
-                  .display1
+                  .displayMedium
                   .copyWith(color: Colors.black)),
           transform: new Matrix4.rotationZ(0.1),
           //设置container的变换矩阵，类型为Matrix4。

@@ -13,7 +13,8 @@ class FlutterApp extends StatelessWidget {
             backgroundColor: Colors.orange,
             accentColor: Colors.amber[400],
             textTheme: new TextTheme(
-                body1: new TextStyle(color: Colors.blueGrey, fontSize: 16.0)),
+                bodySmall:
+                    new TextStyle(color: Colors.blueGrey, fontSize: 16.0)),
             iconTheme:
                 new IconThemeData(color: Colors.deepPurpleAccent, size: 40.0)),
         home: new FlutterHomePage());
@@ -51,21 +52,22 @@ class FlutterHomePageState extends State<FlutterHomePage>
       appBar: new AppBar(title: Text("flutter app")),
       body: Column(
         children: <Widget>[
-         Expanded(child:  new TabBarView(
-             children: <Widget>[
-               new PageBody("组件"),
-               new PageBody("main1"),
-               new PageBody("main2"),
-               new PageBody("main3"),
-               new PageBody("main3"),
-               new PageBody("main3"),
-               new PageBody("main3"),
-               new PageBody("main3"),
-               new PageBody("main3"),
-               new PageBody("main3"),
-             ],
-             physics: NeverScrollableScrollPhysics(),
-             controller: tabController)),
+          Expanded(
+              child: new TabBarView(
+                  children: <Widget>[
+                new PageBody("组件"),
+                new PageBody("main1"),
+                new PageBody("main2"),
+                new PageBody("main3"),
+                new PageBody("main3"),
+                new PageBody("main3"),
+                new PageBody("main3"),
+                new PageBody("main3"),
+                new PageBody("main3"),
+                new PageBody("main3"),
+              ],
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: tabController)),
           Container(
             width: 1000,
             color: Colors.blueGrey,
@@ -86,7 +88,6 @@ class FlutterHomePageState extends State<FlutterHomePage>
                 new Tab(text: "main3"),
                 new Tab(text: "main3"),
                 new Tab(text: "main3"),
-
               ],
               controller: tabController,
             ),

@@ -1,7 +1,8 @@
 import 'dart:math' as Math;
+
 class TreeNode {
-   Math.Point point;
+  Math.Point point;
   double r;
 
-  TreeNode({this.point, this.r });
+  TreeNode({this.point, this.r});
 }

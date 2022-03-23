@@ -9,21 +9,21 @@ import 'custom/chart/chartdemo.dart';
 import 'custom/circularseekbar/circularseekbardemo.dart';
 import 'custom/ruler/centerselector/ruler_demo.dart';
 
-main() => runApp(new MainApp());
-// main() {
-//   return runApp(MaterialApp(
-//     title: 'ruler demo',
-//     home: LayoutBuilder(
-//         builder: (BuildContext context, BoxConstraints constraints) {
-//       return Scaffold(
-//         /* appBar: AppBar(title: Text('ruler demo')),*/
-//         body: Center(
-//           child: MyStatefulWidget(),
-//         ),
-//       );
-//     }),
-//   ));
-// }
+// main() => runApp(new MainApp());
+main() {
+  return runApp(MaterialApp(
+    title: 'ruler demo',
+    home: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      return Scaffold(
+        /* appBar: AppBar(title: Text('ruler demo')),*/
+        body: Center(
+          child: MyStatefulWidget(),
+        ),
+      );
+    }),
+  ));
+}
 
 class MainApp extends StatelessWidget {
   @override

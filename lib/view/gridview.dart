@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 main() {
-
-  runApp(new GridViewApp(items: <String>['http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
-  'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
-  'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
-  'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
-  'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
- ]));
+  runApp(new GridViewApp(items: <String>[
+    'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
+    'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
+    'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
+    'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
+    'http://img5.mtime.cn/mt/2018/10/22/104316.77318635_180X260X4.jpg',
+  ]));
 }
 
 class GridViewApp extends StatelessWidget {

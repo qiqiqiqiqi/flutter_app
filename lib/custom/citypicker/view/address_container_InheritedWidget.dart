@@ -13,9 +13,9 @@ class AddressContainerInheritedWidget extends InheritedWidget {
   final Map city;
 
   static AddressContainerInheritedWidget of(BuildContext context) {
-    // return context
-    //     .inheritFromWidgetOfExactType(AddressContainerInheritedWidget);
-    return context.findAncestorWidgetOfExactType();
+    return context
+        .dependOnInheritedWidgetOfExactType<AddressContainerInheritedWidget>();
+    // return context.findAncestorWidgetOfExactType();
   }
 
   AddressContainerInheritedWidget(

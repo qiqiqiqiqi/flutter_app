@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import 'ruler_painter.dart';
 import 'dart:math' as Math;
+
+import 'package:flutter/material.dart';
+
+import 'ruler_painter.dart';
 
 typedef OnSelectedValue = void Function(BuildContext context, double value);
 
@@ -21,23 +23,23 @@ class Ruler extends StatefulWidget {
   double cursorScaleLength = 25.0;
   int scaleNum;
 
-  Ruler(
-      {Key key,
-      this.height,
-      @required this.minValue,
-      @required this.maxValue,
-      this.middleValue,
-      this.onSelectedValue,
-      this.unit = 'kg',
-      this.showHL = true,
-      this.unitScale = 1,
-      this.showScaleNum = 9,
-      this.minScaleLength = 4.0,
-      this.middleScaleLength = 8.0,
-      this.maxScaleLength = 12.0,
-      this.cursorScaleLength = 25.0,
-      this.clickable = false})
-      : super(key: key) {
+  Ruler({
+    Key key,
+    this.height,
+    @required this.minValue,
+    @required this.maxValue,
+    this.middleValue,
+    this.onSelectedValue,
+    this.unit = 'kg',
+    this.showHL = true,
+    this.unitScale = 1,
+    this.showScaleNum = 9,
+    this.minScaleLength = 4.0,
+    this.middleScaleLength = 8.0,
+    this.maxScaleLength = 12.0,
+    this.cursorScaleLength = 25.0,
+    this.clickable = false,
+  }) : super(key: key) {
     print('Ruler():middleValue=$middleValue');
     scaleNum = (maxValue - minValue) ~/ unitScale;
     if (middleValue == null) {
@@ -66,6 +68,8 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
   AnimationController _animationControllerSmooth;
   AnimationController _animationControllerFling;
   double width = 0.0;
+
+  //平移的值
   double translationX = 0.0;
 
   //************会引起视图改变的一些配置*****************
@@ -79,8 +83,12 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
   int unitScaleLength = 10;
   int sumLength;
   double emptyLenth = 0;
+
+  //绘制的起始点
   double offsetX = 0.0;
   int currentScale = 0;
+
+  //最左边绘制的起始点
   double maxOffsetX;
 
   Tween<double> tweenSmooth;
@@ -107,7 +115,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
     translationX = 0.0;
     width = globalKey.currentContext.size.width;
     emptyLenth = width / 2;
-    caculateCurrentValue();
+    calculateCurrentValue();
   }
 
   void reSet() {
@@ -119,7 +127,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
         _animationControllerFling.stop();
       }
       translationX = 0;
-      caculateCurrentValue();
+      calculateCurrentValue();
       middleValue = widget.middleValue;
       minValue = widget.minValue;
       maxValue = widget.maxValue;
@@ -136,7 +144,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
         widget.showScaleNum == showScaleNum);
   }
 
-  void caculateCurrentValue() {
+  void calculateCurrentValue() {
     unitScaleLength = (width ~/ (widget.showScaleNum - 1));
     sumLength = unitScaleLength *
             ((widget.maxValue * 10 - widget.minValue * 10) ~/
@@ -226,52 +234,52 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
     reSet();
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      return Container(
-        child: GestureDetector(
-          onTapUp: (TapUpDetails details) {
-            if (widget.clickable) {
-              onTapUp(details);
-            }
-          },
-          onHorizontalDragStart: (DragStartDetails details) {
-            if (_animationControllerFling.isAnimating) {
-              _animationControllerFling.stop();
-            }
-          },
-          onHorizontalDragUpdate: (DragUpdateDetails details) {
-            setState(() {
-              onHorizontalDragUpdate(details);
-            });
-          },
-          onHorizontalDragEnd: (DragEndDetails details) {
-            setState(() {
-              onHorizontalDragEnd(details);
-            });
-          },
-          child: CustomPaint(
-            key: globalKey,
-            size: Size(constraints.maxWidth, 80),
-            painter: RulerPainter(
-                currentSacle: currentScale,
-                unitScale: widget.unitScale,
-                minValue: widget.minValue,
-                maxValue: widget.maxValue,
-                middleValue: middleValue,
-                unitScaleLength: unitScaleLength,
-                emptyLenth: emptyLenth,
-                offsetX: offsetX,
-                scaleNum: widget.scaleNum,
-                unit: widget.unit,
-                showHL: widget.showHL,
-                maxScaleLength: widget.maxScaleLength,
-                middleScaleLength: widget.middleScaleLength,
-                minScaleLength: widget.minScaleLength,
-                cursorScaleLength: widget.cursorScaleLength,
-                showScaleNum: widget.showScaleNum),
-          ),
-        ),
-      );
-    });
+          return Container(
+            child: GestureDetector(
+              onTapUp: (TapUpDetails details) {
+                if (widget.clickable) {
+                  onTapUp(details);
+                }
+              },
+              onHorizontalDragStart: (DragStartDetails details) {
+                if (_animationControllerFling.isAnimating) {
+                  _animationControllerFling.stop();
+                }
+              },
+              onHorizontalDragUpdate: (DragUpdateDetails details) {
+                setState(() {
+                  onHorizontalDragUpdate(details);
+                });
+              },
+              onHorizontalDragEnd: (DragEndDetails details) {
+                setState(() {
+                  onHorizontalDragEnd(details);
+                });
+              },
+              child: CustomPaint(
+                key: globalKey,
+                size: Size(constraints.maxWidth, 80),
+                painter: RulerPainter(
+                    currentSacle: currentScale,
+                    unitScale: widget.unitScale,
+                    minValue: widget.minValue,
+                    maxValue: widget.maxValue,
+                    middleValue: middleValue,
+                    unitScaleLength: unitScaleLength,
+                    emptyLenth: emptyLenth,
+                    offsetX: offsetX,
+                    scaleNum: widget.scaleNum,
+                    unit: widget.unit,
+                    showHL: widget.showHL,
+                    maxScaleLength: widget.maxScaleLength,
+                    middleScaleLength: widget.middleScaleLength,
+                    minScaleLength: widget.minScaleLength,
+                    cursorScaleLength: widget.cursorScaleLength,
+                    showScaleNum: widget.showScaleNum),
+              ),
+            ),
+          );
+        });
   }
 
   void onTapUp(TapUpDetails details) {
@@ -303,14 +311,14 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
     if (velocity.dx.abs() > 0 &&
         offsetX >
             -(unitScaleLength *
-                    ((widget.maxValue - widget.minValue) / widget.unitScale) -
+                ((widget.maxValue - widget.minValue) / widget.unitScale) -
                 emptyLenth) &&
         offsetX < emptyLenth) {
       //fling
       v0 = velocity.dx;
       double period = (v0 / a).abs(); //以毫秒为单位
       double targetScaleDistance =
-          find2TargetScaleDistanceByVelocity(v0, period / 1000, a);
+      find2TargetScaleDistanceByVelocity(v0, period / 1000, a);
       if (offsetX != targetScaleDistance) {
         tweenFling.begin = offsetX;
         tweenFling.end = targetScaleDistance;
@@ -393,21 +401,23 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
       {bool refreshCurrentScale = false}) {
     double end = offsetX;
     int leftScale =
-        (middleValue2minValueScaleNum() - translationScaleNum(translationX)) > 0
-            ? (middleValue2minValueScaleNum() -
-                translationScaleNum(translationX))
-            : 0;
+    (middleValue2minValueScaleNum() - translationScaleNum(translationX)) > 0
+        ? (middleValue2minValueScaleNum() -
+        translationScaleNum(translationX))
+        : 0;
+    //往右滑动时
     if (translationX >= 0 && leftScale > 0) {
       if ((translationX % unitScaleLength).abs() > 0) {
         leftScale = leftScale - 1;
       }
     }
+    //计算距离中点左边最近刻度的偏移
     double leftScalePositionLeft = emptyLenth +
         (translationX < 0
             ? -(translationX.abs() % unitScaleLength)
             : translationX.abs() % unitScaleLength == 0
-                ? 0
-                : (translationX.abs() % unitScaleLength - unitScaleLength));
+            ? 0
+            : (translationX.abs() % unitScaleLength - unitScaleLength));
     if (((leftScalePositionLeft - emptyLenth).abs() >
         ((leftScalePositionLeft + unitScaleLength) - emptyLenth).abs())) {
       if (refreshCurrentScale) {
@@ -428,7 +438,7 @@ class RulerState extends State<Ruler> with TickerProviderStateMixin {
 
   int middleValue2minValueScaleNum() =>
       (widget.middleValue * 10 - widget.minValue * 10) ~/
-      (widget.unitScale * 10);
+          (widget.unitScale * 10);
 
   void startAnima(double start, double end, {int duration = 200}) {
     tweenSmooth.begin = start;

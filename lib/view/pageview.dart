@@ -54,19 +54,17 @@ class PageViewState extends State<PageViewDemo> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(Icons.android), title: Text("one")),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.android), title: Text("two")),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.android), title: Text("tree")),
+          BottomNavigationBarItem(icon: Icon(Icons.android), label: "one"),
+          BottomNavigationBarItem(icon: Icon(Icons.android), label: "two"),
+          BottomNavigationBarItem(icon: Icon(Icons.android), label: "tree"),
         ],
         onTap: (int position) {
           setState(() {
             currentPosition = position;
             //  _pageController.jumpToPage(currentPosition);直接切换，无动画过渡
             _pageController.animateToPage(currentPosition,
-                duration: Duration(milliseconds: 300), curve: Curves.fastOutSlowIn);
+                duration: Duration(milliseconds: 300),
+                curve: Curves.fastOutSlowIn);
           });
         },
         currentIndex: currentPosition,

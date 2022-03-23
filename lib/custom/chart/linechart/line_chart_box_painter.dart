@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'line_chart_data.dart';
 
 abstract class BaseChartDecorationBoxPainter extends BoxPainter {
@@ -18,17 +19,18 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
   List<double> minMaxChartData;
   int levels;
 
-  BaseChartDecorationBoxPainter(
-      {this.itemWidth,
-      this.scrollController,
-      this.datas,
-      this.leftPadding,
-      this.rightPadding,
-      this.topPadding,
-      this.bottomPadding,
-      this.animationValue,
-      this.levels = 4});
+  BaseChartDecorationBoxPainter({this.itemWidth,
+    this.scrollController,
+    this.datas,
+    this.leftPadding,
+    this.rightPadding,
+    this.topPadding,
+    this.bottomPadding,
+    this.animationValue,
+    this.levels = 4});
 
+  /// paint方法的Offset offset参数表示控件左上角的位置。
+  /// configuration.size 可以得到控件的宽高。
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
     double pixels = scrollController.position.pixels;
@@ -51,11 +53,25 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
       offsetX = 0;
     }
     print(
-        'BaseChartDecorationBoxPainter--paint():firstVisiablePosition=$firstVisiablePosition,lastVisiablePosition=$lastVisiablePosition,childCount=$childCount,offsetX=$offsetX');
+      'BaseChartDecorationBoxPainter--paint():'
+      'firstVisiablePosition=$firstVisiablePosition,'
+      'lastVisiablePosition=$lastVisiablePosition,'
+      'childCount=$childCount,'
+      'offsetX=$offsetX',
+    );
     print(
-        'BaseChartDecorationBoxPainter--paint():pixels=$pixels,extentBefore=$extentBefore,extentInside=$extentInside,extentAfter=$extentAfter');
+      'BaseChartDecorationBoxPainter--paint():'
+      'pixels=$pixels,'
+      'extentBefore=$extentBefore,'
+      'extentInside=$extentInside,'
+      'extentAfter=$extentAfter',
+    );
     print(
-        'BaseChartDecorationBoxPainter--paint():itemWith=$itemWidth,offset=$offset,configuration.size=${configuration.size}');
+      'BaseChartDecorationBoxPainter--paint():'
+      'itemWith=$itemWidth,'
+      'offset=$offset,'
+      'configuration.size=${configuration.size}',
+    );
     minMaxChartData = getMinMaxChartData();
     drawCoordinate(canvas, offset, configuration.size);
     _drawContent(canvas, offset, configuration.size);
@@ -69,8 +85,10 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
       scrollPosition = scrollPosition + 1;
     }
     double left = (position - scrollPosition) * itemWidth - offsetX;
-    print(
-        "BaseChartDecorationBoxPainter--getLeft():left=$left,position=$position,position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWidth},offsetX=$offsetX");
+    print("BaseChartDecorationBoxPainter--getLeft():"
+        "left=$left,position=$position,"
+        "position - scrollController.position.pixels ~/ itemWith=${position - scrollController.position.pixels ~/ itemWidth}"
+        ",offsetX=$offsetX");
     return left;
   }
 
@@ -380,6 +398,7 @@ class BarChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
     canvas.restore();
   }
 }
+
 ///点图
 class PointChartDecorationBoxPainter extends BaseChartDecorationBoxPainter {
   List<String> levelStrings;

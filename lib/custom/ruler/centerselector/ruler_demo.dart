@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+
 import 'center_selector_widget.dart';
 import 'ruler.dart';
 
 main() {
-  runApp(MaterialApp(
-    title: 'ruler demo',
-    home: LayoutBuilder(
+  runApp(
+    MaterialApp(
+      title: 'ruler demo',
+      home: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      return Scaffold(
-        appBar: AppBar(title: Text('ruler demo')),
-        body: Center(
-          child: RulerWidget(),
-        ),
-      );
-    }),
-  ));
+          return Scaffold(
+            appBar: AppBar(title: Text('ruler demo')),
+            body: Center(
+              child: RulerWidget(),
+            ),
+          );
+        },
+      ),
+    ),
+  );
 }
 
 class RulerWidget extends StatefulWidget {
@@ -181,7 +185,7 @@ class RulerWidgetState extends State<RulerWidget> {
                   minValue = 0;
                   maxValue = 1000;
                   middleValue = 100;
-                }else{
+                } else {
                   unitScale = 1;
                   showScaleNum = 9;
                   minValue = 0;
@@ -189,7 +193,6 @@ class RulerWidgetState extends State<RulerWidget> {
                   middleValue = 1;
                 }
               });
-
             },
           ),
         ],

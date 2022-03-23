@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'line_chart_box_painter.dart';
 import 'line_chart_data.dart';
 
@@ -21,16 +22,17 @@ class LineChartDecoration extends Decoration {
   final double animationValue;
   final ChartType chartType;
 
-  LineChartDecoration(
-      {this.itemWidth,
-      this.scrollController,
-      this.datas,
-      this.leftPadding = 0,
-      this.rightPadding = 0,
-      this.topPadding = 0,
-      this.bottomPadding = 0,
-      this.animationValue = 1,
-      this.chartType = ChartType.LINE});
+  LineChartDecoration({
+    this.itemWidth,
+    this.scrollController,
+    this.datas,
+    this.leftPadding = 0,
+    this.rightPadding = 0,
+    this.topPadding = 0,
+    this.bottomPadding = 0,
+    this.animationValue = 1,
+    this.chartType = ChartType.LINE,
+  });
 
   @override
   BoxPainter createBoxPainter([onChanged]) {

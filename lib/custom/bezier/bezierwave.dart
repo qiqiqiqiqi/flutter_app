@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'dart:math' as Math;
+import 'dart:async';
 import 'dart:ui';
 import 'dart:ui' as ui;
 
-import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 
@@ -32,7 +31,7 @@ class BezierWavePainter extends CustomPainter {
     drawWave(canvas, size, offSetX1, Colors.blueAccent[100], true);
     drawWave(canvas, size, offSetX1, Colors.blueAccent[100], false);
     drawWave(canvas, size, offSetX2, Colors.blueAccent, false);
-    drawCenter(canvas,size);
+    drawCenter(canvas, size);
   }
 
   void drawWave(
@@ -49,8 +48,12 @@ class BezierWavePainter extends CustomPainter {
           waveHeight + wavePeak,
           -2 / 4 * waveLength + i * waveLength + offSetX,
           waveHeight);
-      path.quadraticBezierTo(-1 / 4 * waveLength + i * waveLength + offSetX,
-          waveHeight - wavePeak, i * waveLength + offSetX, waveHeight);
+      path.quadraticBezierTo(
+        -1 / 4 * waveLength + i * waveLength + offSetX,
+        waveHeight - wavePeak,
+        i * waveLength + offSetX,
+        waveHeight,
+      );
     }
 
     Paint paint = Paint()
@@ -62,7 +65,8 @@ class BezierWavePainter extends CustomPainter {
       final PathMetrics pathMetrics = path.computeMetrics(forceClosed: false);
       final PathMetric pathMetric = pathMetrics.elementAt(0);
       double length = pathMetric.length;
-      Path extractPath = pathMetric.extractPath(offSetX1, length * (size.width / (waveCount * waveLength)) + offSetX1);
+      Path extractPath = pathMetric.extractPath(offSetX1 - waveLength,
+          length * (size.width / (waveCount * waveLength)) /*+ offSetX1*/);
       paint.style = PaintingStyle.stroke;
       canvas.drawPath(extractPath, paint);
       Tangent tangentForOffset =
@@ -77,7 +81,12 @@ class BezierWavePainter extends CustomPainter {
           Rect.fromLTRB(-20, -20 - 2 * wavePeak / 3, 20, 20 - 2 * wavePeak / 3),
           paint);
       print(
-          "drawWave():position=${position},angle=$angle,progress=$progress,extractPath=${extractPath.computeMetrics().elementAt(0).length},width=${size.width}");
+        "drawWave():position=${position},"
+        "angle=$angle,"
+        "progress=$progress,"
+        "extractPath=${extractPath.computeMetrics().elementAt(0).length},"
+        "width=${size.width}",
+      );
     } else {
       path.lineTo(size.width + offSetX, size.height);
       path.lineTo(-waveLength + offSetX, size.height);
@@ -86,6 +95,7 @@ class BezierWavePainter extends CustomPainter {
     }
     canvas.restore();
   }
+
   void drawCenter(Canvas canvas, Size size) {
     canvas.save();
     TextPainter textPainter = TextPainter(
@@ -100,9 +110,10 @@ class BezierWavePainter extends CustomPainter {
     textPainter.paint(
         canvas,
         Offset(size.width / 2 - textPainter.size.width / 2,
-            size.height  - textPainter.size.height / 2-50));
+            size.height - textPainter.size.height / 2 - 50));
     canvas.restore();
   }
+
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true;

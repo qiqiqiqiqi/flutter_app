@@ -1,16 +1,16 @@
 import 'dart:async';
+import 'dart:math' as Math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/custom/tree/branch.dart';
 import 'package:flutter_app/custom/tree/leaf.dart';
+import 'package:flutter_app/custom/tree/tree.dart';
 import 'package:flutter_app/custom/tree/treeNode.dart';
 import 'package:flutter_app/custom/tree/treePainter.dart';
-import 'dart:math' as Math;
-import 'package:flutter_app/custom/tree/branch.dart';
-import 'package:flutter_app/custom/tree/tree.dart';
 import 'package:flutter_app/custom/tree/treeUtil.dart';
 import 'package:flutter_app/custom/tree/treeVector.dart';
-import 'dart:ui' as ui;
 
 main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +50,7 @@ class TreeWidgetState extends State with TickerProviderStateMixin {
         .then((value) {
       initData();
     });
-    TreePainter.getImage("images/dd.jpg").then((image2) {
+    TreePainter.getImage("images/boat.png").then((image2) {
       setState(() {
         image = image2;
       });
@@ -158,9 +158,8 @@ class TreeWidgetState extends State with TickerProviderStateMixin {
       }
       branch.length += branch.treeVector.length();
       if (branch.generation != 1) {
-        branch.treeVector.rotate(TreeUtil.random(-angle, angle), branch.generation);
-      }else{
-
+        branch.treeVector
+            .rotate(TreeUtil.random(-angle, angle), branch.generation);
       }
       double dt = branch.length - TreeUtil.random(40, 80);
       if (dt > 0) {

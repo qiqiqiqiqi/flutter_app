@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'line_chart_decoration.dart';
 
 class LineChart<ChartData> extends StatefulWidget {
@@ -34,9 +35,13 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     animationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 3000));
+      vsync: this,
+      duration: Duration(milliseconds: 3000),
+    );
     Animation curvedAnimation = CurvedAnimation(
-        parent: animationController, curve: ElasticOutCurve(1.0));
+      parent: animationController,
+      curve: ElasticOutCurve(1.0),
+    );
 
     curvedAnimation.addListener(() {
       setState(() {
@@ -53,12 +58,12 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      double itemWidth =
-          (constraints.maxWidth - (widget.leftPadding + widget.rightPadding)) /
-              widget.childCount;
-      return Container(
-        foregroundDecoration: LineChartDecoration(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        double itemWidth = (constraints.maxWidth -
+                (widget.leftPadding + widget.rightPadding)) /
+            widget.childCount;
+        return Container(
+          foregroundDecoration: LineChartDecoration(
             itemWidth: itemWidth,
             scrollController: scrollController,
             datas: widget.datas,
@@ -67,24 +72,26 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
             topPadding: widget.topPadding,
             bottomPadding: widget.bottomPadding,
             animationValue: animationValue,
-            chartType: widget.chartType),
-        height: 300,
-        child: GestureDetector(
-          onScaleStart: (ScaleStartDetails details) {
-            print(
-                'LineChartState-build()-onScaleEnd:details.focalPoint=${details.focalPoint}');
-          },
-          onScaleUpdate: (ScaleUpdateDetails details) {
-            print(
-                'LineChartState-build()-onScaleUpdate:details.scale=${details.scale}');
-          },
-          onScaleEnd: (ScaleEndDetails details) {
-            print(
-                'LineChartState-build()-onScaleEnd:details.scale=${details.velocity}');
-          },
-          child: NotificationListener(
+            chartType: widget.chartType,
+          ),
+          height: 300,
+          child: GestureDetector(
+            onScaleStart: (ScaleStartDetails details) {
+              print(
+                  'LineChartState-build()-onScaleEnd:details.focalPoint=${details.focalPoint}');
+            },
+            onScaleUpdate: (ScaleUpdateDetails details) {
+              print(
+                  'LineChartState-build()-onScaleUpdate:details.scale=${details.scale}');
+            },
+            onScaleEnd: (ScaleEndDetails details) {
+              print(
+                  'LineChartState-build()-onScaleEnd:details.scale=${details.velocity}');
+            },
+            child: NotificationListener(
               onNotification: (ScrollNotification scrollNotification) {
                 setState(() {});
+                return true;
               },
               child: ListView.builder(
                 padding: EdgeInsets.only(
@@ -116,9 +123,11 @@ class LineChartState extends State<LineChart> with TickerProviderStateMixin {
                 },
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.datas.length,
-              )),
-        ),
-      );
-    });
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
