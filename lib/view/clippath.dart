@@ -150,9 +150,9 @@ class BottomCustomClipper extends CustomClipper<Path> {
 
     Path path = Path();
     path.moveTo(0, 0);
-    path.lineTo(0, size.height - 40);
+    path.lineTo(0, size.height - 80);
     path.quadraticBezierTo(
-        size.width / 2, size.height, size.width, size.height - 40);
+        size.width / 2, size.height, size.width, size.height - 80);
     path.lineTo(size.width, 0);
     path.close();
     return path;

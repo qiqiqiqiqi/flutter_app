@@ -19,15 +19,16 @@ abstract class BaseChartDecorationBoxPainter extends BoxPainter {
   List<double> minMaxChartData;
   int levels;
 
-  BaseChartDecorationBoxPainter({this.itemWidth,
-    this.scrollController,
-    this.datas,
-    this.leftPadding,
-    this.rightPadding,
-    this.topPadding,
-    this.bottomPadding,
-    this.animationValue,
-    this.levels = 4});
+  BaseChartDecorationBoxPainter(
+      {this.itemWidth,
+      this.scrollController,
+      this.datas,
+      this.leftPadding,
+      this.rightPadding,
+      this.topPadding,
+      this.bottomPadding,
+      this.animationValue,
+      this.levels = 4});
 
   /// paint方法的Offset offset参数表示控件左上角的位置。
   /// configuration.size 可以得到控件的宽高。

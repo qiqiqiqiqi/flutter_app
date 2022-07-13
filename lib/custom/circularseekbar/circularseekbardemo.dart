@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import 'circularseekbar.dart';
 import 'dart:math' as Math;
+
+import 'package:flutter/material.dart';
+
+import 'circularseekbar.dart';
 
 main() {
   runApp(MaterialApp(title: "seekbar demo", home: CircularSeekBarApp()));
@@ -37,19 +39,18 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
           onPanDown: (DragDownDetails dragDownDetails) {
             setState(() {
               angle =
-                  caculateRadianByTouchPoint(dragDownDetails.globalPosition);
+                  calculateRadianByTouchPoint(dragDownDetails.globalPosition);
             });
           },
           onPanUpdate: (DragUpdateDetails dragUpdateDetails) {
             print(
                 "build():dragUpdateDetails.delta.dy=${dragUpdateDetails.delta.dy},"
-                    "dragUpdateDetails.delta.dx=${dragUpdateDetails.delta.dx},dragUpdateDetails.primaryDelta=${dragUpdateDetails.primaryDelta}");
+                "dragUpdateDetails.delta.dx=${dragUpdateDetails.delta.dx},dragUpdateDetails.primaryDelta=${dragUpdateDetails.primaryDelta}");
             setState(() {
               angle =
-                  caculateRadianByTouchPoint(dragUpdateDetails.globalPosition);
+                  calculateRadianByTouchPoint(dragUpdateDetails.globalPosition);
             });
           },
-
           onPanCancel: () {},
           onPanEnd: (DragEndDetails dragEndDetails) {},
           child: CustomPaint(
@@ -62,10 +63,11 @@ class CircularSeekBarState extends State<CircularSeekBarApp> {
     );
   }
 
-  double caculateRadianByTouchPoint(Offset globalPosition) {
+  double calculateRadianByTouchPoint(Offset globalPosition) {
     RenderBox renderBox = globalKey.currentContext.findRenderObject();
     Offset globalToLocal = renderBox.globalToLocal(globalPosition);
-    print("caculateRadianByTouchPoint():globalPosition=$globalPosition,globalToLocal=$globalToLocal");
+    print(
+        "calculateRadianByTouchPoint():globalPosition=$globalPosition,globalToLocal=$globalToLocal");
     double tan = ((globalToLocal.dy - cirularSize.height / 2) /
             (globalToLocal.dx - cirularSize.width / 2))
         .abs();
