@@ -5,6 +5,9 @@ import 'package:flutter_app/custom/calendar2/calendar_enum.dart';
 
 import '../utils/calendar_date_utils.dart';
 
+const selectedColor = Color(0xFF06AB92);
+const innerSelectedColor = Color(0x5206AB92);
+
 class CalendarPainter extends CustomPainter {
   DateTime dateTime;
   Offset offset;
@@ -41,6 +44,7 @@ class CalendarPainter extends CustomPainter {
   }
 
   void drawDay(Canvas canvas, int day, Size size, int row, int column) {
+    var dayDateTime = DateTime(dateTime.year, dateTime.month, day);
     canvas.save();
     double dayItemWidth = size.width / 7;
     double dayItemHeight = size.height / 6;
@@ -51,8 +55,8 @@ class CalendarPainter extends CustomPainter {
         row * dayItemHeight + dayItemHeight / 2);
     Paint paint = Paint()
       ..isAntiAlias = true
-      ..color = Color(0x520459FD);
-    double radius = min(dayItemWidth, dayItemHeight) / 2;
+      ..color = selectedColor;
+    double radius = min(dayItemWidth, dayItemHeight) / 2 - 10;
     if (selectMode == SelectMode.multiple && selectedDateTimeRange != null) {
       if (selectedDateTimeRange.end.year == selectedDateTimeRange.start.year &&
           selectedDateTimeRange.end.month ==
@@ -62,9 +66,9 @@ class CalendarPainter extends CustomPainter {
           selectedDateTimeRange.start.month == dateTime.month &&
           selectedDateTimeRange.start.day == day) {
         //同一天
-        paint.color = Color(0xFF0459FD);
+        paint.color = selectedColor;
         canvas.drawCircle(Offset.zero, radius, paint);
-        paint.color = Color(0x520459FD);
+        paint.color = innerSelectedColor;
       } else if (selectedDateTimeRange.start.year == dateTime.year &&
           selectedDateTimeRange.start.month == dateTime.month &&
           selectedDateTimeRange.start.day == day) {
@@ -80,9 +84,9 @@ class CalendarPainter extends CustomPainter {
           ),
           paint,
         );
-        paint.color = Color(0xFF0459FD);
+        paint.color = selectedColor;
         canvas.drawCircle(Offset.zero, radius, paint);
-        paint.color = Color(0x520459FD);
+        paint.color = innerSelectedColor;
       } else if (selectedDateTimeRange.end.year == dateTime.year &&
           selectedDateTimeRange.end.month == dateTime.month &&
           selectedDateTimeRange.end.day == day) {
@@ -98,13 +102,11 @@ class CalendarPainter extends CustomPainter {
           ),
           paint,
         );
-        paint.color = Color(0xFF0459FD);
+        paint.color = selectedColor;
         canvas.drawCircle(Offset.zero, radius, paint);
-        paint.color = Color(0x520459FD);
-      } else if (DateTime(dateTime.year, dateTime.month, day)
-              .isAfter(selectedDateTimeRange.start) &&
-          DateTime(dateTime.year, dateTime.month, day)
-              .isBefore(selectedDateTimeRange.end)) {
+        paint.color = innerSelectedColor;
+      } else if (dayDateTime.isAfter(selectedDateTimeRange.start) &&
+          dayDateTime.isBefore(selectedDateTimeRange.end)) {
         canvas.drawRRect(
           RRect.fromLTRBAndCorners(
             -dayItemWidth / 2,
@@ -129,12 +131,22 @@ class CalendarPainter extends CustomPainter {
 
     TextPainter textPainter = TextPainter(
       textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
       text: TextSpan(
         text: '$day',
         style: TextStyle(
-          color: isSelected(day) ? Colors.white : Color(0xFF5D5D5D),
-          fontSize: 16.0,
+          color: isSelected(dayDateTime) ? Colors.white : Color(0xFF5D5D5D),
+          fontSize: 20.0,
         ),
+        children: [
+          TextSpan(
+            text: '\n${CalendarDateUtils.dateTimeToLunar(dayDateTime)}',
+            style: TextStyle(
+              color: isSelected(dayDateTime) ? Colors.white : Color(0xFF5D5D5D),
+              fontSize: 12.0,
+            ),
+          )
+        ],
       ),
     );
     textPainter.layout();
@@ -148,8 +160,7 @@ class CalendarPainter extends CustomPainter {
     canvas.restore();
   }
 
-  bool isSelected(int day) {
-    var time = DateTime(dateTime.year, dateTime.month, day);
+  bool isSelected(DateTime time) {
     if ((selectMode == SelectMode.multiple &&
             selectedDateTimeRange != null &&
             (time.isAfter(selectedDateTimeRange.start) &&

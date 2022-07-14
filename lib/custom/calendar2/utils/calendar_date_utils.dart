@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'lunar_util.dart';
+
 class CalendarDateUtils {
   /// 通过年份和月份 得到当月的日子，dart中月份是从1开始的
   static int getMonthDays(int year, int month) {
@@ -227,5 +229,11 @@ class CalendarDateUtils {
           '${getYYYYMMDDString(selectedDateTimeRange.end)}';
     }
     return dateString;
+  }
+
+  static String dateTimeToLunar(DateTime dateTime) {
+    List<int> lunar =
+        LunarUtil.solarToLunar(dateTime.year, dateTime.month, dateTime.day);
+    return LunarUtil.numToChinese(lunar[1], lunar[2], lunar[3]);
   }
 }

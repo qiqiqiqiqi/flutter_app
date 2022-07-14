@@ -110,7 +110,7 @@ class CalendarState extends State<Calendar> {
 
             int row = offset.dy ~/ dayItemSizeHeight;
             int column = offset.dx ~/ dayItemSizeWidth;
-            if (row > 5 || column > 7 || days[row][column] == null) {
+            if (row > 5 || column > 7 || days[row][column] == 0) {
               return;
             }
             var dateTime = DateTime(

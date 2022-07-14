@@ -5,6 +5,9 @@ import 'package:flutter_app/custom/calendar2/calendar_enum.dart';
 
 import '../utils/calendar_date_utils.dart';
 
+const selectedColor = Color(0xFF06AB92);
+const innerSelectedColor = Color(0x5206AB92);
+
 class CalendarWeekPainter extends CustomPainter {
   DateTime dateTime;
   Offset offset;
@@ -56,8 +59,8 @@ class CalendarWeekPainter extends CustomPainter {
         row * dayItemHeight + dayItemHeight / 2);
     Paint paint = Paint()
       ..isAntiAlias = true
-      ..color = Color(0x520459FD);
-    double radius = min(dayItemWidth, dayItemHeight) / 2;
+      ..color = selectedColor;
+    double radius = min(dayItemWidth, dayItemHeight) / 2 - 10;
     if (selectMode == SelectMode.multiple && selectedDateTimeRange != null) {
       if (selectedDateTimeRange.end.year == selectedDateTimeRange.start.year &&
           selectedDateTimeRange.end.month ==
@@ -67,9 +70,9 @@ class CalendarWeekPainter extends CustomPainter {
           selectedDateTimeRange.start.month == dateTime.month &&
           selectedDateTimeRange.start.day == day) {
         //同一天
-        paint.color = Color(0xFF0459FD);
+        paint.color = selectedColor;
         canvas.drawCircle(Offset.zero, radius, paint);
-        paint.color = Color(0x520459FD);
+        paint.color = innerSelectedColor;
       } else if (selectedDateTimeRange.start.year == dateTime.year &&
           selectedDateTimeRange.start.month == dateTime.month &&
           selectedDateTimeRange.start.day == day) {
@@ -85,9 +88,9 @@ class CalendarWeekPainter extends CustomPainter {
           ),
           paint,
         );
-        paint.color = Color(0xFF0459FD);
+        paint.color = selectedColor;
         canvas.drawCircle(Offset.zero, radius, paint);
-        paint.color = Color(0x520459FD);
+        paint.color = innerSelectedColor;
       } else if (selectedDateTimeRange.end.year == dateTime.year &&
           selectedDateTimeRange.end.month == dateTime.month &&
           selectedDateTimeRange.end.day == day) {
@@ -103,9 +106,9 @@ class CalendarWeekPainter extends CustomPainter {
           ),
           paint,
         );
-        paint.color = Color(0xFF0459FD);
+        paint.color = selectedColor;
         canvas.drawCircle(Offset.zero, radius, paint);
-        paint.color = Color(0x520459FD);
+        paint.color = innerSelectedColor;
       } else if (DateTime(dateTime.year, dateTime.month, day)
               .isAfter(selectedDateTimeRange.start) &&
           DateTime(dateTime.year, dateTime.month, day)
@@ -134,12 +137,22 @@ class CalendarWeekPainter extends CustomPainter {
 
     TextPainter textPainter = TextPainter(
       textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
       text: TextSpan(
         text: '$day',
         style: TextStyle(
           color: isSelected(dateTime) ? Colors.white : Color(0xFF5D5D5D),
           fontSize: 16.0,
         ),
+        children: [
+          TextSpan(
+            text: '\n${CalendarDateUtils.dateTimeToLunar(dateTime)}',
+            style: TextStyle(
+              color: isSelected(dateTime) ? Colors.white : Color(0xFF5D5D5D),
+              fontSize: 12.0,
+            ),
+          )
+        ],
       ),
     );
     textPainter.layout();

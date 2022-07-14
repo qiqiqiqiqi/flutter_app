@@ -4,7 +4,6 @@ class WeekDay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 48,
       width: MediaQuery.of(context).size.width,
       child: CustomPaint(
         painter: WeekDayCustomPainter(),

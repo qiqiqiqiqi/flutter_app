@@ -25,6 +25,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  sliding_up_panel: ^2.0.0+1
 #  baidumapplugin:
 #    #    git:
 #    #      url: git@gitlab.ctirobot.com:mobile-app-team/flutter/modules/baidu_map_view_module.git

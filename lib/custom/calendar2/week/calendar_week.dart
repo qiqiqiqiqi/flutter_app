@@ -102,7 +102,7 @@ class CalendarWeekState extends State<CalendarWeek> {
 
             int row = offset.dy ~/ dayItemSizeHeight;
             int column = offset.dx ~/ dayItemSizeWidth;
-            if (row > 5 || column > 7 || days[column] == null) {
+            if (row > 5 || column > 7 || days[column] == 0) {
               return;
             }
             var dateTime = widget.dateTime.add(Duration(days: column));
